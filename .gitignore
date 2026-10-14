@@ -1,0 +1,27 @@
+# Dependencias y compilados
+node_modules/
+dist/
+build/
+target/
+.angular/
+*.class
+
+# Secretos (NUNCA se suben)
+.env
+.env.*
+!.env.example
+
+# Configuración personal de Claude (la común sí se sube: .claude/settings.json)
+.claude/settings.local.json
+
+# Sistema y editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Restos de LaTeX
+*.aux
+*.log
+*.out
+*.toc
