@@ -1,0 +1,54 @@
+/* Diseño de móvil: barra arriba, contenido y menú fijo abajo */
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--color-superficie);
+}
+
+.barra {
+  padding: 16px;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.barra h1 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.contenido {
+  flex: 1;
+  padding: 16px;
+}
+
+.vacio {
+  margin-top: 48px;
+  text-align: center;
+}
+
+.suave {
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+.menu-inferior {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  border-top: 1px solid var(--color-borde);
+  background: var(--color-superficie);
+}
+
+.menu-inferior a {
+  flex: 1;
+  padding: 14px 0;
+  text-align: center;
+  text-decoration: none;
+  color: var(--color-texto-suave);
+}
+
+.menu-inferior a:hover {
+  color: var(--color-primario);
+}

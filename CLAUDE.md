@@ -91,3 +91,5 @@ scripts/                 ← script que genera el PDF
 | 2026-10-13 | La memoria se escribe en Markdown y GitHub genera el PDF solo | Así nadie pierde tiempo maquetando y siempre está actualizada |
 | 2026-10-14 | Stack: Angular + Node.js/Express + MongoDB | Tecnologías vistas en clase; MongoDB guarda bien rutas con puntos GPS |
 | 2026-10-14 | La app será una web en Angular con diseño de reloj, no una app nativa de reloj | Mucho más sencillo de desarrollar y presentar |
+| 2026-10-14 | Frontend en `src/frontend` (Angular 22) dividido en tres zonas con carga diferida: `/reloj`, `/app` y `/web` (cada una en `src/app/zonas/<zona>/` con su propio `<zona>.routes.ts`) | Cada compañero puede trabajar en una zona sin pisar a los demás, y el navegador solo descarga la zona que usa |
+| 2026-10-14 | La app es una PWA (`@angular/pwa`: manifest + service worker) | Se puede instalar en el móvil y funciona sin conexión; el service worker solo se activa en la build de producción |

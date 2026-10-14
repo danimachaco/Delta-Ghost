@@ -1,0 +1,78 @@
+:host {
+  display: block;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 16px 48px;
+}
+
+.cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+}
+
+.marca {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--color-primario);
+}
+
+nav a {
+  margin-left: 20px;
+  text-decoration: none;
+  color: var(--color-texto-suave);
+}
+
+nav a:hover {
+  color: var(--color-texto);
+}
+
+.hero {
+  padding: 64px 0 48px;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  margin: 0 0 16px;
+}
+
+.hero p {
+  color: var(--color-texto-suave);
+  font-size: 1.1rem;
+  margin: 0 0 32px;
+}
+
+.boton {
+  display: inline-block;
+  padding: 12px 28px;
+  border-radius: 999px;
+  background: var(--color-primario);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.tarjeta {
+  padding: 20px;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+}
+
+.tarjeta h2 {
+  font-size: 1.1rem;
+  margin: 0 0 8px;
+}
+
+.tarjeta p {
+  margin: 0;
+  color: var(--color-texto-suave);
+}

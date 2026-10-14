@@ -1,0 +1,24 @@
+<header class="cabecera">
+  <span class="marca">Ruta Fantasma</span>
+  <nav>
+    <a routerLink="/app">App</a>
+    <a routerLink="/reloj">Reloj</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>Corre contra tu mejor marca</h1>
+    <p>Tu reloj te enseña dónde estás tú y dónde está tu sombra, sector a sector.</p>
+    <a class="boton" routerLink="/reloj">Probar el reloj</a>
+  </section>
+
+  <section class="tarjetas">
+    @for (c of caracteristicas; track c.titulo) {
+      <article class="tarjeta">
+        <h2>{{ c.titulo }}</h2>
+        <p>{{ c.texto }}</p>
+      </article>
+    }
+  </section>
+</main>

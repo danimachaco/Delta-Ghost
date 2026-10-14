@@ -1,0 +1,21 @@
+<div class="esfera" [class.mejor]="vasMejor()" [class.peor]="!vasMejor()">
+  <!-- Pista circular con los dos puntos: tú y tu sombra -->
+  <svg class="pista" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="44" class="recorrido" />
+    <circle cx="50" cy="6" r="4" class="punto-sombra" />
+    <circle cx="81" cy="19" r="4" class="punto-tu" />
+  </svg>
+
+  <div class="datos">
+    <span class="etiqueta">Sector 2</span>
+    <span class="tiempo">{{ tiempo() }}</span>
+    <span class="diferencia">{{ textoDiferencia() }}</span>
+  </div>
+</div>
+
+<p class="leyenda">
+  <span class="tu">● Tú</span>
+  <span class="sombra">● Sombra</span>
+</p>
+
+<a class="salir" routerLink="/app">← Salir</a>
