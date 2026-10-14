@@ -10,14 +10,17 @@
 - **Metodología:** Scrum
 - **Producto:** Ruta Fantasma — app de reloj para correr contra tu mejor marca: dos puntos en pantalla (tú y tu "sombra") y avisos por sectores en verde/rojo, como en la Fórmula 1.
   _(Si el equipo cambia de idea, actualizad esta línea.)_
-- **Stack:** _(rellenad cuando lo decidáis, por ejemplo: Angular + Node.js + MongoDB)_
+- **Stack:**
+  - Frontend: Angular + TypeScript (web con diseño de pantalla de reloj que simula la carrera)
+  - Backend: Node.js + Express (API REST)
+  - Base de datos: MongoDB (rutas como listas de puntos GPS con tiempos)
 
 ## 2. El equipo
 
 | Rol | Persona |
 |---|---|
-| Product Owner | _(nombre)_ |
-| Scrum Master | _(nombre)_ |
+| Product Owner | Daniel Martín |
+| Scrum Master | Aitor |
 | Desarrollador | Asi (Asier García) |
 | Desarrollador | Daniel Rodríguez |
 | Desarrollador | Adam |
@@ -86,3 +89,5 @@ scripts/                 ← script que genera el PDF
 | Fecha | Decisión | Motivo |
 |---|---|---|
 | 2026-10-13 | La memoria se escribe en Markdown y GitHub genera el PDF solo | Así nadie pierde tiempo maquetando y siempre está actualizada |
+| 2026-10-14 | Stack: Angular + Node.js/Express + MongoDB | Tecnologías vistas en clase; MongoDB guarda bien rutas con puntos GPS |
+| 2026-10-14 | La app será una web en Angular con diseño de reloj, no una app nativa de reloj | Mucho más sencillo de desarrollar y presentar |

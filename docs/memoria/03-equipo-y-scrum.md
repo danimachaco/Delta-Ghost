@@ -4,11 +4,19 @@
 
 | Rol | Persona | Responsabilidad |
 |---|---|---|
-| Product Owner | _(nombre)_ | Define y prioriza el Product Backlog |
-| Scrum Master | _(nombre)_ | Facilita las ceremonias y elimina impedimentos |
+| Product Owner | Daniel Martín | Define y prioriza el Product Backlog |
+| Scrum Master | Aitor | Facilita las ceremonias y elimina impedimentos |
 | Desarrollador | Asier García Catalán | Desarrollo |
 | Desarrollador | Daniel Rodríguez | Desarrollo |
 | Desarrollador | Adam | Desarrollo |
+
+## Tecnologías (stack)
+
+| Parte | Tecnología | Motivo |
+|---|---|---|
+| Frontend | Angular + TypeScript | Vista en clase; permite simular la pantalla del reloj en el navegador |
+| Backend | Node.js + Express | JavaScript en servidor, conocido por el equipo |
+| Base de datos | MongoDB | Guarda de forma natural las rutas (listas de puntos GPS y tiempos) |
 
 ## Herramientas
 
