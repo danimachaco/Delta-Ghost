@@ -28,12 +28,19 @@ jobs:
       - name: Instalar Pandoc y LaTeX
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            pandoc texlive-xetex texlive-latex-extra texlive-lang-spanish \
-            lmodern fonts-dejavu
+          sudo apt-get install -y \
+            pandoc texlive-xetex texlive-latex-recommended texlive-latex-extra \
+            texlive-fonts-recommended texlive-lang-spanish lmodern fonts-dejavu
 
       - name: Generar el PDF
-        run: bash scripts/generar-memoria.sh
+        run: |
+          if ! bash scripts/generar-memoria.sh > salida.log 2>&1; then
+            cat salida.log
+            # Muestra el error como aviso en la ejecución para verlo fácil
+            grep -E '^!|Error|not found' salida.log | head -5 | while read -r l; do echo "::error::$l"; done
+            exit 1
+          fi
+          cat salida.log
 
       - name: Guardar el PDF como descarga de la ejecución
         uses: actions/upload-artifact@v4
