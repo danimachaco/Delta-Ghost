@@ -19,8 +19,8 @@
 | Product Owner | _(nombre)_ |
 | Scrum Master | _(nombre)_ |
 | Desarrollador | Asi (Asier García) |
-| Desarrollador | _(nombre)_ |
-| Desarrollador | _(nombre)_ |
+| Desarrollador | Daniel Rodríguez |
+| Desarrollador | Adam |
 
 ## 3. Sprint actual
 

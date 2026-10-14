@@ -7,8 +7,8 @@
 | Product Owner | _(nombre)_ | Define y prioriza el Product Backlog |
 | Scrum Master | _(nombre)_ | Facilita las ceremonias y elimina impedimentos |
 | Desarrollador | Asier García Catalán | Desarrollo |
-| Desarrollador | _(nombre)_ | Desarrollo |
-| Desarrollador | _(nombre)_ | Desarrollo |
+| Desarrollador | Daniel Rodríguez | Desarrollo |
+| Desarrollador | Adam | Desarrollo |
 
 ## Herramientas
 
