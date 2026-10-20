@@ -35,21 +35,50 @@
 ## 4. Estructura del repositorio
 
 ```
-CLAUDE.md                ← este archivo (contexto común)
-README.md                ← guía rápida para el equipo
-src/                     ← código de la aplicación
-docs/memoria/            ← la memoria final, en Markdown
-  00-portada.md            portada y datos del trabajo
-  01-introduccion.md       qué es el proyecto
-  02-producto.md           visión del producto y backlog
-  03-equipo-y-scrum.md     roles, herramientas, cómo trabajamos
-  sprint-01/               una carpeta por sprint
-    _sprint.md             objetivo, planning y retrospectiva del sprint
-    2026-10-13-asi-xxx.md  una entrada por tarea terminada
-  99-conclusiones.md       conclusiones finales
-docs/memoria.pdf         ← PDF generado AUTOMÁTICAMENTE (no tocar a mano)
-scripts/                 ← script que genera el PDF
+CLAUDE.md                    ← este archivo (contexto común)
+README.md                    ← guía rápida para el equipo
+.claude/commands/            ← comandos /empezar y /terminar
+.github/                     ← plantillas de issues/PR y workflow que genera el PDF
+src/                         ← código de la aplicación
+  frontend/                  ← Angular 22 (PWA)
+    public/                    iconos, favicon y manifest
+    src/app/
+      core/                    lo que se usa en TODA la app (una sola instancia)
+        servicios/               llamadas a la API, GPS, lógica de carrera
+        modelos/                 interfaces TypeScript (Ruta, PuntoGps, Sector…)
+      compartido/              piezas reutilizables entre zonas
+        componentes/             botones, marcadores, mapa de puntos…
+        utilidades/              funciones auxiliares (formatear tiempos…)
+      zonas/                   una carpeta por zona, con carga diferida
+        reloj/                   pantalla del reloj (/reloj)
+        app/                     app del móvil (/app)
+        web/                     web pública (/web)
+  backend/                   ← Node.js + Express + MongoDB (ver su README)
+    .env.example               variables de entorno de ejemplo
+    src/
+      config/                    conexión a MongoDB y variables
+      modelos/                   esquemas de datos
+      api/                       endpoints Express
+      controladores/             reciben la petición y responden
+      servicios/                 lógica de negocio
+      middlewares/               validaciones y errores
+      utilidades/                funciones auxiliares
+    tests/                     pruebas del backend
+docs/memoria/                ← la memoria final, en Markdown
+  00-portada.md                portada y datos del trabajo
+  01-introduccion.md           qué es el proyecto
+  02-producto.md               visión del producto y backlog
+  03-equipo-y-scrum.md         roles, herramientas, cómo trabajamos
+  sprint-01/                   una carpeta por sprint
+    _sprint.md                 objetivo, planning y retrospectiva del sprint
+    2026-10-13-asi-xxx.md      una entrada por tarea terminada
+  img/                         capturas para la memoria
+  99-conclusiones.md           conclusiones finales
+docs/memoria.pdf             ← PDF generado AUTOMÁTICAMENTE (no tocar a mano)
+scripts/                     ← script que genera el PDF
 ```
+
+**Dónde va cada cosa nueva:** una pantalla → `zonas/<zona>/`; algo que usan varias zonas → `compartido/`; servicios e interfaces de datos → `core/`. En el backend, un endpoint nuevo toca `api/` → `controladores/` → `servicios/` → `modelos/`.
 
 ## 5. Reglas para Claude (OBLIGATORIAS)
 
@@ -93,3 +122,4 @@ scripts/                 ← script que genera el PDF
 | 2026-10-14 | La app será una web en Angular con diseño de reloj, no una app nativa de reloj | Mucho más sencillo de desarrollar y presentar |
 | 2026-10-14 | Frontend en `src/frontend` (Angular 22) dividido en tres zonas con carga diferida: `/reloj`, `/app` y `/web` (cada una en `src/app/zonas/<zona>/` con su propio `<zona>.routes.ts`) | Cada compañero puede trabajar en una zona sin pisar a los demás, y el navegador solo descarga la zona que usa |
 | 2026-10-14 | La app es una PWA (`@angular/pwa`: manifest + service worker) | Se puede instalar en el móvil y funciona sin conexión; el service worker solo se activa en la build de producción |
+| 2026-10-20 | Árbol del proyecto: `src/frontend` con `core/`, `compartido/` y `zonas/`; `src/backend` por capas (`api` → `controladores` → `servicios` → `modelos`) | Cada cosa tiene un sitio fijo, así los 3 desarrolladores saben dónde poner el código sin pisarse |

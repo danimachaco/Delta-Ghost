@@ -32,6 +32,7 @@ Ya está. En unos minutos el PDF de la memoria (`docs/memoria.pdf`) se actualiza
 | Qué | Dónde |
 |---|---|
 | Contexto común de los Claudes | `CLAUDE.md` |
-| Código de la app | `src/` |
+| Código de la app (Angular) | `src/frontend/` |
+| API y base de datos (Express + MongoDB) | `src/backend/` |
 | Textos de la memoria | `docs/memoria/` |
 | PDF final de la memoria | `docs/memoria.pdf` |
