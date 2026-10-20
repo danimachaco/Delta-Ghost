@@ -8,9 +8,9 @@ Proyecto de Desarrollo de Interfaces (1º DAM).
 
 1. Clona el repositorio:
    ```
-   git clone https://github.com/danimachaco/proyecto-scrum.git
+   git clone https://github.com/danimachaco/Delta-Ghost.git
    ```
-2. Abre la carpeta `proyecto-scrum` con Claude Code (terminal, app de escritorio o web).
+2. Abre la carpeta `Delta-Ghost` con Claude Code (terminal, app de escritorio o web).
 
 ### Cada día que trabajes
 
