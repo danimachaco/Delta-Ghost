@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AppInicio } from './app-inicio/app-inicio';
+import { ListaRutas } from './lista-rutas/lista-rutas';
 import { Login } from './login/login';
 import { Registro } from './registro/registro';
 
@@ -7,5 +8,10 @@ import { Registro } from './registro/registro';
 export const APP_ROUTES: Routes = [
   { path: 'login', component: Login, title: 'Ruta Fantasma · Iniciar sesión' },
   { path: 'registro', component: Registro, title: 'Ruta Fantasma · Crear cuenta' },
-  { path: '', component: AppInicio, title: 'Ruta Fantasma · App' },
+  {
+    // AppInicio es el marco (cabecera + menú); las pantallas van como hijas
+    path: '',
+    component: AppInicio,
+    children: [{ path: '', component: ListaRutas, title: 'Ruta Fantasma · Mis rutas' }],
+  },
 ];

@@ -1,0 +1,41 @@
+@switch (estado()) {
+  @case ('cargando') {
+    <!-- Esqueletos de carga: dan sensación de rapidez mientras llegan los datos -->
+    <ul class="lista" aria-busy="true" aria-label="Cargando rutas">
+      @for (n of esqueletos; track n) {
+        <li class="tarjeta esqueleto"></li>
+      }
+    </ul>
+  }
+
+  @case ('error') {
+    <div class="aviso" role="alert">
+      <p>{{ mensajeError() }}</p>
+      <button type="button" class="boton" (click)="cargar()">Reintentar</button>
+    </div>
+  }
+
+  @case ('listo') {
+    @if (filas().length === 0) {
+      <div class="aviso">
+        <p>Todavía no tienes rutas guardadas.</p>
+        <p class="suave">Sal a correr con el reloj y tu primera ruta aparecerá aquí.</p>
+      </div>
+    } @else {
+      <p class="contador suave">
+        {{ filas().length }} {{ filas().length === 1 ? 'ruta guardada' : 'rutas guardadas' }}
+      </p>
+      <ul class="lista">
+        @for (ruta of filas(); track ruta.id) {
+          <li class="tarjeta">
+            <div class="info">
+              <span class="nombre">{{ ruta.nombre }}</span>
+              <span class="detalle">sombra {{ ruta.sombra }} · {{ ruta.fecha }}</span>
+            </div>
+            <span class="distancia">{{ ruta.distancia }}</span>
+          </li>
+        }
+      </ul>
+    }
+  }
+}

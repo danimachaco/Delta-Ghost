@@ -1,10 +1,13 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { Auth } from '../../../core/servicios/auth';
 
-/** Pantalla principal de la app móvil: lista de rutas del corredor. */
+/**
+ * Marco de la app móvil: cabecera con la sesión, menú inferior y,
+ * en medio, la pantalla hija que toque (lista de rutas…).
+ */
 @Component({
-  imports: [RouterLink],
+  imports: [RouterLink, RouterOutlet],
   selector: 'app-app-inicio',
   styleUrl: './app-inicio.css',
   templateUrl: './app-inicio.html',

@@ -1,0 +1,93 @@
+/* Lista de rutas con el estilo de tarjeta del mockup "Elegir ruta" */
+:host {
+  display: block;
+}
+
+.contador {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tarjeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-fondo);
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.nombre {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detalle {
+  color: var(--color-texto-suave);
+  font-size: 0.8rem;
+}
+
+.distancia {
+  flex-shrink: 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tarjeta gris que "late" mientras carga */
+.esqueleto {
+  height: 64px;
+  animation: latido 1.2s ease-in-out infinite;
+}
+
+@keyframes latido {
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .esqueleto {
+    animation: none;
+  }
+}
+
+.aviso {
+  margin-top: 48px;
+  text-align: center;
+}
+
+.suave {
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+.boton {
+  padding: 10px 24px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-primario);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
