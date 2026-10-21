@@ -1,0 +1,113 @@
+/*
+ * Estilos comunes de las pantallas con formulario (login, registro…).
+ * Se incluyen desde el componente con: styleUrls: ['.../compartido/estilos/formulario.css']
+ */
+:host {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 32px 20px;
+}
+
+.cabecera {
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.marca {
+  color: var(--color-primario);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+h1 {
+  margin: 12px 0 6px;
+  font-size: 1.6rem;
+}
+
+.subtitulo {
+  margin: 0;
+  color: var(--color-texto-suave);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+input {
+  padding: 12px 14px;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  font: inherit;
+}
+
+input:focus {
+  outline: 2px solid var(--color-primario);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+input.invalido {
+  border-color: var(--color-peor);
+}
+
+.error-campo {
+  color: var(--color-peor);
+  font-size: 0.85rem;
+}
+
+.error-servidor {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--color-peor);
+  border-radius: var(--radio);
+  background: color-mix(in srgb, var(--color-peor) 12%, transparent);
+  color: var(--color-texto);
+  font-size: 0.9rem;
+}
+
+.boton {
+  margin-top: 4px;
+  padding: 13px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-primario);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.boton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.pie {
+  margin-top: 24px;
+  text-align: center;
+  color: var(--color-texto-suave);
+}
+
+.pie a {
+  color: var(--color-primario);
+  font-weight: 600;
+}

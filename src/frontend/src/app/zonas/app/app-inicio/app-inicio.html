@@ -1,5 +1,14 @@
 <header class="barra">
   <h1>Mis rutas</h1>
+  <!-- Sesión: saludo + salir si has entrado; enlace para entrar si no -->
+  @if (auth.usuario(); as usuario) {
+    <div class="sesion">
+      <span class="suave">Hola, {{ usuario.nombre }}</span>
+      <button type="button" class="enlace" (click)="auth.cerrarSesion()">Salir</button>
+    </div>
+  } @else {
+    <a class="enlace" routerLink="/app/login">Entrar</a>
+  }
 </header>
 
 <main class="contenido">
