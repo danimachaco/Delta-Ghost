@@ -64,6 +64,9 @@ src/                         ← código de la aplicación
       middlewares/               validaciones y errores
       utilidades/                funciones auxiliares
     tests/                     pruebas del backend
+docs/diseno/                 ← diseño de las pantallas (ver su README)
+  README.md                    enlace a Figma, reglas de nombres y estado de cada pantalla
+  mockups/                     imágenes PNG exportadas de Figma (reloj-carrera.png…)
 docs/memoria/                ← la memoria final, en Markdown
   00-portada.md                portada y datos del trabajo
   01-introduccion.md           qué es el proyecto
@@ -123,3 +126,4 @@ scripts/                     ← script que genera el PDF
 | 2026-10-14 | Frontend en `src/frontend` (Angular 22) dividido en tres zonas con carga diferida: `/reloj`, `/app` y `/web` (cada una en `src/app/zonas/<zona>/` con su propio `<zona>.routes.ts`) | Cada compañero puede trabajar en una zona sin pisar a los demás, y el navegador solo descarga la zona que usa |
 | 2026-10-14 | La app es una PWA (`@angular/pwa`: manifest + service worker) | Se puede instalar en el móvil y funciona sin conexión; el service worker solo se activa en la build de producción |
 | 2026-10-20 | Árbol del proyecto: `src/frontend` con `core/`, `compartido/` y `zonas/`; `src/backend` por capas (`api` → `controladores` → `servicios` → `modelos`) | Cada cosa tiene un sitio fijo, así los 3 desarrolladores saben dónde poner el código sin pisarse |
+| 2026-10-21 | Los mockups se diseñan en Figma y se suben exportados en PNG a `docs/diseno/mockups/`, con nombres `zona-pantalla.png` | El equipo y el profesor pueden ver los diseños desde GitHub, y el nombre indica a qué zona del frontend pertenece cada pantalla |
