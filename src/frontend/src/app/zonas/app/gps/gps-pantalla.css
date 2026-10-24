@@ -1,0 +1,88 @@
+/* Mismo diseño de móvil que la pantalla de inicio de /app */
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--color-superficie);
+}
+
+.barra {
+  padding: 16px;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.barra h1 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.contenido {
+  flex: 1;
+  padding: 16px;
+}
+
+.datos {
+  display: grid;
+  gap: 12px;
+  margin: 0 0 16px;
+}
+
+.dato {
+  padding: 16px;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-fondo);
+}
+
+.dato dt {
+  color: var(--color-texto-suave);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.dato dd {
+  margin: 4px 0 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Precisión de 20 m o menos: verde */
+.precision.buena {
+  color: var(--color-mejor);
+}
+
+.aviso-error {
+  padding: 12px 16px;
+  border: 1px solid var(--color-peor);
+  border-radius: var(--radio);
+  color: var(--color-peor);
+}
+
+.suave {
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+.menu-inferior {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  border-top: 1px solid var(--color-borde);
+  background: var(--color-superficie);
+}
+
+.menu-inferior a {
+  flex: 1;
+  padding: 14px 0;
+  text-align: center;
+  text-decoration: none;
+  color: var(--color-texto-suave);
+}
+
+.menu-inferior a:hover {
+  color: var(--color-primario);
+}

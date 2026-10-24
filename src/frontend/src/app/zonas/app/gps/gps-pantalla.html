@@ -1,0 +1,34 @@
+<header class="barra">
+  <h1>Mi posición GPS</h1>
+</header>
+
+<main class="contenido">
+  @if (mensajeError(); as mensaje) {
+    <p class="aviso-error" role="alert">{{ mensaje }}</p>
+  }
+
+  @if (!posicion() && !error()) {
+    <p class="suave">Buscando señal GPS…</p>
+  }
+
+  <dl class="datos">
+    <div class="dato">
+      <dt>Latitud</dt>
+      <dd class="latitud">{{ latitud() }}</dd>
+    </div>
+    <div class="dato">
+      <dt>Longitud</dt>
+      <dd class="longitud">{{ longitud() }}</dd>
+    </div>
+    <div class="dato">
+      <dt>Precisión</dt>
+      <dd class="precision" [class.buena]="precisionBuena()">{{ precision() }}</dd>
+    </div>
+  </dl>
+
+  <p class="suave">Los datos se actualizan solos cuando te mueves.</p>
+</main>
+
+<nav class="menu-inferior">
+  <a routerLink="/app">← Volver a Rutas</a>
+</nav>

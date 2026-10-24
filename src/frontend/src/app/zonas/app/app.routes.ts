@@ -3,6 +3,7 @@ import { AppInicio } from './app-inicio/app-inicio';
 import { ListaRutas } from './lista-rutas/lista-rutas';
 import { Login } from './login/login';
 import { Registro } from './registro/registro';
+import { GpsPantalla } from './gps/gps-pantalla';
 
 /** Rutas de la zona /app. Las nuevas pantallas de la app móvil se añaden aquí. */
 export const APP_ROUTES: Routes = [
@@ -14,4 +15,5 @@ export const APP_ROUTES: Routes = [
     component: AppInicio,
     children: [{ path: '', component: ListaRutas, title: 'Ruta Fantasma · Mis rutas' }],
   },
+  { path: 'gps', component: GpsPantalla, title: 'Ruta Fantasma · GPS' },
 ];
