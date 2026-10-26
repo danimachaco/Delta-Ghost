@@ -85,36 +85,61 @@ scripts/                     ← script que genera el PDF
 
 ## 5. Reglas para Claude (OBLIGATORIAS)
 
+### Flujo de Git: ramas y Pull Requests (lo exige el enunciado, sección 5)
+**Nunca se trabaja ni se hace commit en `main`.** Toda tarea de código o documentación sigue este flujo,
+aunque el usuario no lo pida y aunque no haya usado `/empezar`:
+
+1. **Antes de tocar ningún archivo**, comprueba la rama con `git branch --show-current`.
+   Si estás en `main`: `git switch main`, `git pull --rebase` y crea la rama de la tarea con
+   `git switch -c PS-XX-descripcion-corta` (clave de Jira + 2–4 palabras en minúsculas con guiones,
+   p. ej. `PS-20-login-registro`). Si no sabes la clave de Jira, pregúntasela al usuario.
+   Si la rama ya existe, cámbiate a ella y trae lo nuevo de `main` con `git fetch origin` + `git merge origin/main`.
+2. **Una rama por historia o subtarea.** Si el usuario pide varias tareas, cada una va en su propia rama
+   creada desde `main` actualizado, con su propia Pull Request.
+3. **Commits pequeños y frecuentes**, cada uno con la clave de Jira: `PS-XX: descripción en español`
+   (p. ej. `PS-21: añadir interceptor de errores`). Mejor varios commits por pasos lógicos que uno gigante.
+4. **Antes de subir**, trae el trabajo de los compañeros a tu rama: `git fetch origin` + `git merge origin/main`.
+   Así se ve en el historial que integramos el trabajo de los demás. Si hay conflictos, **PARA y explícaselos al usuario**.
+5. **Sube la rama** (`git push -u origin <rama>`), nunca `main`.
+6. **Abre la Pull Request** hacia `main`: con `gh pr create` si está instalado; si no, da al usuario el enlace
+   `https://github.com/danimachaco/Delta-Ghost/compare/main...<rama>?expand=1` con el título y la descripción ya escritos
+   (título `PS-XX: descripción`, cuerpo según `.github/pull_request_template.md`).
+7. **No hagas tú el merge a `main`.** La PR la revisa y aprueba **otro DT** (Daniel Rodríguez o Adam, o Asier si la
+   PR es de otro) y se fusiona desde GitHub con **"Create a merge commit"**, para que la rama quede visible en el historial.
+8. Cuando la PR esté fusionada: `git switch main`, `git pull --rebase` y borra la rama local con `git branch -d <rama>`.
+
+Para **revisar la PR de un compañero** usa `/revisar <rama o PS-XX>`.
+
 ### Al empezar a trabajar
-1. Ejecuta `git pull --rebase` antes de tocar nada.
-2. Lee este archivo y mira qué hay en `docs/memoria/` del sprint actual para saber qué han hecho los demás.
+- Sigue el paso 1 del flujo de Git (rama de la tarea creada desde `main` actualizado).
+- Lee este archivo y mira qué hay en `docs/memoria/` del sprint actual para saber qué han hecho los demás.
 
 ### Mientras trabajas
-3. Escribe código claro y con comentarios en español donde ayude a entenderlo.
-4. No borres ni reescribas trabajo de otros compañeros sin preguntar antes.
-5. Si se toma una decisión importante (tecnología, estructura, diseño), anótala en la sección 7 de este archivo.
+- Escribe código claro y con comentarios en español donde ayude a entenderlo.
+- No borres ni reescribas trabajo de otros compañeros sin preguntar antes.
+- Si se toma una decisión importante (tecnología, estructura, diseño), anótala en la sección 7 de este archivo.
 
 ### Al terminar CADA tarea
-6. Crea una entrada de memoria NUEVA en `docs/memoria/sprint-XX/` (la del sprint actual) con el nombre
-   `AAAA-MM-DD-nombre-tarea-corta.md` (ejemplo: `2026-10-14-asi-pantalla-inicio.md`).
-   Usa la plantilla de `docs/memoria/_plantilla-entrada.md`.
-   **Nunca edites la entrada de otro compañero**: cada uno crea la suya, así no hay conflictos.
-7. Escribe la entrada en español, en tono de memoria académica, explicando QUÉ se hizo, CÓMO y POR QUÉ.
-8. Haz commit con un mensaje claro en español, siguiendo este formato:
-   `tipo: descripción corta (#número-de-issue)`
-   Tipos: `feat` (nueva función), `fix` (arreglo), `docs` (memoria/documentación), `style` (diseño/CSS), `refactor`, `test`.
-9. Ejecuta `git pull --rebase` y luego `git push`.
-10. Si al hacer pull hay conflictos, **para y explícale al usuario qué pasa** antes de resolver nada.
+- Crea una entrada de memoria NUEVA en `docs/memoria/sprint-XX/` (la del sprint actual) con el nombre
+  `AAAA-MM-DD-nombre-tarea-corta.md` (ejemplo: `2026-10-14-asi-pantalla-inicio.md`).
+  Usa la plantilla de `docs/memoria/_plantilla-entrada.md`.
+  **Nunca edites la entrada de otro compañero**: cada uno crea la suya, así no hay conflictos.
+- Escribe la entrada en español, en tono de memoria académica, explicando QUÉ se hizo, CÓMO y POR QUÉ.
+- Si hay código del frontend, comprueba que `npx ng build` y `npx ng test --watch=false` pasan antes de subir.
+- Después sigue los pasos 3 a 7 del flujo de Git (commit en la rama → merge de `main` → push de la rama → Pull Request).
 
 ### Nunca
+- Nunca hagas commit ni `git push` en `main` (ni `git push origin main`): todo entra por Pull Request.
+- Nunca hagas tú el merge de tu propia PR.
 - Nunca edites `docs/memoria.pdf`: lo genera GitHub automáticamente.
 - Nunca subas contraseñas, claves de API ni archivos `.env`.
 - Nunca uses `git push --force`.
 
 ## 6. Comandos rápidos
 
-- `/empezar` → actualiza el repo y te cuenta en qué punto está el proyecto.
-- `/terminar` → escribe la entrada de la memoria, hace commit y lo sube.
+- `/empezar PS-XX` → actualiza `main`, te cuenta en qué punto está el proyecto y crea (o retoma) la rama de la tarea.
+- `/terminar` → escribe la entrada de la memoria, hace commit en la rama, integra `main`, la sube y prepara la Pull Request.
+- `/revisar PS-XX` → descarga la rama de un compañero, la compila, la prueba y te da la revisión para su Pull Request.
 
 ## 7. Decisiones tomadas
 
@@ -129,3 +154,4 @@ scripts/                     ← script que genera el PDF
 | 2026-10-21 | Los mockups se diseñan en Figma y se suben exportados en PNG a `docs/diseno/mockups/`, con nombres `zona-pantalla.png` | El equipo y el profesor pueden ver los diseños desde GitHub, y el nombre indica a qué zona del frontend pertenece cada pantalla |
 | 2026-10-21 | Toda llamada al backend pasa por el servicio `Api` (`core/servicios/api.ts`); la URL del servidor está en `src/environments/` y los errores los traduce `erroresInterceptor` a un `ErrorApi` con `mensaje` en español | La dirección del servidor se cambia en un solo sitio y las pantallas solo tienen que mostrar `error.mensaje` |
 | 2026-10-21 | Autenticación por token: `POST /api/auth/login` y `POST /api/auth/registro` devuelven `{ token, usuario }`; el frontend guarda la sesión en el servicio `Auth` y envía `Authorization: Bearer <token>`. El `authGuard` está creado pero aún sin aplicar | El backend todavía no tiene login; este es el contrato que debe implementar (ver la entrada de memoria de PS-20). Proteger rutas antes de eso bloquearía la app |
+| 2026-10-26 | Flujo de ramas: una rama `PS-XX-descripcion` por historia, commits `PS-XX: ...`, se integra `main` en la rama antes de subir y todo entra en `main` por Pull Request aprobada por otro DT (merge commit) | Lo exige el enunciado (sección 5 y Definición de Hecho); además deja constancia en GitHub de quién hizo qué y de que se integra el trabajo de los compañeros |
