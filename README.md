@@ -14,14 +14,20 @@ Proyecto de Desarrollo de Interfaces (1º DAM).
 
 ### Cada día que trabajes
 
-1. Escribe **`/empezar`** → Claude baja lo último de tus compañeros y te dice cómo va el proyecto.
-2. Dile a Claude qué tarea vas a hacer y trabajad juntos normalmente.
-3. Cuando acabes, escribe **`/terminar`** → Claude escribe la parte de la memoria, guarda y lo sube a GitHub.
+1. Escribe **`/empezar PS-XX`** (con la clave de Jira de tu tarea) → Claude baja lo último de tus compañeros,
+   te dice cómo va el proyecto y crea tu rama `PS-XX-descripcion`.
+2. Trabajad juntos normalmente: todo se guarda en tu rama, nunca en `main`.
+3. Cuando acabes, escribe **`/terminar`** → Claude escribe la parte de la memoria, hace los commits en tu rama,
+   le añade lo último de `main`, la sube y te da el enlace de la **Pull Request**.
+4. Pide a otro DT que revise tu PR. Él puede usar **`/revisar PS-XX`** y, si está bien, la aprueba y la fusiona
+   en GitHub con **"Create a merge commit"**.
 
-Ya está. En unos minutos el PDF de la memoria (`docs/memoria.pdf`) se actualiza solo.
+Cuando la PR se fusiona en `main`, el PDF de la memoria (`docs/memoria.pdf`) se actualiza solo en unos minutos.
 
 ### Reglas de oro
 
+- **Nadie sube nada directamente a `main`**: todo entra por Pull Request aprobada por otro DT (lo exige el enunciado).
+- Una rama por historia, con la clave de Jira en el nombre (`PS-20-login-registro`) y en cada commit (`PS-20: ...`).
 - Empieza siempre con `/empezar` y acaba siempre con `/terminar`.
 - Si Claude dice que hay un **conflicto**, no aceptes nada a ciegas: avisa al equipo.
 - No edites `docs/memoria.pdf` a mano; se genera solo.
