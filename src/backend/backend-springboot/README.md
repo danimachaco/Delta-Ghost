@@ -37,7 +37,8 @@ backend-springboot/
     │   ├── controlador/                    endpoints REST (/api/...)
     │   ├── dto/                            JSON que entra y sale de la API, con validaciones
     │   ├── excepcion/                      errores → respuestas HTTP con mensaje en español
-    │   └── config/                         CORS y cifrador de contraseñas (BCrypt)
+    │   ├── config/                         CORS, cifrador BCrypt y qué rutas necesitan token
+    │   └── seguridad/                      TokenInterceptor: comprueba el token JWT
     ├── main/resources/application.properties   conexión a MySQL (contraseñas solo en variables de entorno)
     └── test/                               pruebas (H2 en memoria)
 ```
@@ -48,8 +49,12 @@ backend-springboot/
 |---|---|---|---|
 | POST | `/api/auth/registro` → `201 { token, usuario }` | No | PS-19 |
 | POST | `/api/auth/login` → `200 { token, usuario }` | No | PS-19 |
+| POST | `/api/rutas` → `201` ruta creada (se divide en 3 sectores si no se indica `numeroSectores`) | Sí | PS-24 |
+| GET | `/api/rutas` → `200` rutas del usuario, la más nueva primero | Sí | PS-24 |
+| GET | `/api/rutas/{id}` → `200` la ruta (`404` si no existe o es de otro usuario) | Sí | PS-24 |
 
-Errores: `400 { campo: mensaje }` en validaciones, `401 { error }` login incorrecto, `409 { error }` email repetido.
+Los endpoints con token necesitan la cabecera `Authorization: Bearer <token>` (la comprueba `seguridad/TokenInterceptor`).
+Errores: `400 { campo: mensaje }` en validaciones, `401 { error }` sin sesión o login incorrecto, `404 { error }`, `409 { error }` email repetido.
 El token es un JWT; la clave se define con la variable `JWT_SECRETO` (mínimo 32 caracteres).
 
 ## Tablas
