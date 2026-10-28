@@ -39,6 +39,6 @@ Cuando la PR se fusiona en `main`, el PDF de la memoria (`docs/memoria.pdf`) se 
 |---|---|
 | Contexto común de los Claudes | `CLAUDE.md` |
 | Código de la app (Angular) | `src/frontend/` |
-| API y base de datos (Express + MongoDB) | `src/backend/` |
+| API y base de datos (Spring Boot + MySQL) | `src/backend/backend-springboot/` |
 | Textos de la memoria | `docs/memoria/` |
 | PDF final de la memoria | `docs/memoria.pdf` |
