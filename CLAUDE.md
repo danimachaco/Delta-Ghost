@@ -27,7 +27,7 @@
 
 ## 3. Sprint actual
 
-- **Sprint:** 1
+- **Sprint:** 2 (las entradas de memoria van en `docs/memoria/sprint-02/`)
 - **Fechas:** _(inicio — fin)_
 - **Objetivo del sprint:** _(una frase)_
 - **Tareas:** están en GitHub Issues y en el tablero de GitHub Projects.

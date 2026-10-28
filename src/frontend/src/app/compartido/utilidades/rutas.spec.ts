@@ -5,6 +5,7 @@ import {
   formatearDuracion,
   formatearFecha,
   formatearKm,
+  formatearRitmo,
 } from './rutas';
 
 describe('utilidades de rutas', () => {
@@ -38,6 +39,12 @@ describe('utilidades de rutas', () => {
   it('formatea la fecha en español y tolera fechas no válidas', () => {
     expect(formatearFecha('2026-10-18T09:12:00')).toBe('18 oct 2026');
     expect(formatearFecha('no es una fecha')).toBe('');
+  });
+
+  it('formatea el ritmo como m:ss /km', () => {
+    expect(formatearRitmo(317)).toBe('5:17 /km');
+    expect(formatearRitmo(null)).toBe('—');
+    expect(formatearRitmo(Infinity)).toBe('—');
   });
 
   it('formatea los km con coma', () => {
