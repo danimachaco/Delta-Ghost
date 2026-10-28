@@ -32,10 +32,25 @@ backend-springboot/
     ├── main/java/com/rutafantasma/backend/
     │   ├── RutaFantasmaApplication.java   punto de entrada
     │   ├── modelo/                         entidades JPA (una por tabla)
-    │   └── repositorio/                    acceso a las tablas (JpaRepository)
+    │   ├── repositorio/                    acceso a las tablas (JpaRepository)
+    │   ├── servicio/                       lógica (registro, login, token JWT…)
+    │   ├── controlador/                    endpoints REST (/api/...)
+    │   ├── dto/                            JSON que entra y sale de la API, con validaciones
+    │   ├── excepcion/                      errores → respuestas HTTP con mensaje en español
+    │   └── config/                         CORS y cifrador de contraseñas (BCrypt)
     ├── main/resources/application.properties   conexión a MySQL (contraseñas solo en variables de entorno)
     └── test/                               pruebas (H2 en memoria)
 ```
+
+## Endpoints
+
+| Método | Ruta | Token | Tarea |
+|---|---|---|---|
+| POST | `/api/auth/registro` → `201 { token, usuario }` | No | PS-19 |
+| POST | `/api/auth/login` → `200 { token, usuario }` | No | PS-19 |
+
+Errores: `400 { campo: mensaje }` en validaciones, `401 { error }` login incorrecto, `409 { error }` email repetido.
+El token es un JWT; la clave se define con la variable `JWT_SECRETO` (mínimo 32 caracteres).
 
 ## Tablas
 
