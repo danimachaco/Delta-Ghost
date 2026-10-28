@@ -86,3 +86,8 @@
 .menu-inferior a:hover {
   color: var(--color-primario);
 }
+
+/* Filtro de GPS (PS-32): separa el motivo del número de lecturas descartadas */
+.filtro .motivo {
+  margin-left: 0.3em;
+}
