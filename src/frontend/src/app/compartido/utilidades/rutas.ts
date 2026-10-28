@@ -1,29 +1,16 @@
 import { PuntoGps } from '../../core/modelos/ruta';
-
-/** Radio medio de la Tierra en km */
-const RADIO_TIERRA_KM = 6371;
+import { haversineMetros } from '../../core/servicios/calculo';
 
 /**
  * Distancia total de una ruta en km, sumando la distancia entre cada par
- * de puntos consecutivos con la fórmula del semiverseno (haversine).
+ * de puntos consecutivos. Usa la misma fórmula de Haversine que el servicio Calculo.
  */
 export function distanciaKm(puntos: PuntoGps[]): number {
-  let total = 0;
+  let metros = 0;
   for (let i = 1; i < puntos.length; i++) {
-    total += distanciaEntre(puntos[i - 1], puntos[i]);
+    metros += haversineMetros(puntos[i - 1], puntos[i]);
   }
-  return total;
-}
-
-/** Distancia en km entre dos puntos GPS */
-function distanciaEntre(a: PuntoGps, b: PuntoGps): number {
-  const rad = (grados: number) => (grados * Math.PI) / 180;
-  const dLat = rad(b.latitud - a.latitud);
-  const dLon = rad(b.longitud - a.longitud);
-  const h =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(rad(a.latitud)) * Math.cos(rad(b.latitud)) * Math.sin(dLon / 2) ** 2;
-  return 2 * RADIO_TIERRA_KM * Math.asin(Math.sqrt(h));
+  return metros / 1000;
 }
 
 /** Duración de la carrera en segundos (tiempo del último punto menos el del primero) */
@@ -54,6 +41,14 @@ export function formatearFecha(iso: string): string {
   return new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })
     .format(fecha)
     .replace('.', '');
+}
+
+/** Formatea un ritmo en segundos por km como "5:17 /km", o "—" si no hay ritmo */
+export function formatearRitmo(segundosPorKm: number | null): string {
+  if (segundosPorKm === null || !Number.isFinite(segundosPorKm)) {
+    return '—';
+  }
+  return `${formatearDuracion(segundosPorKm)} /km`;
 }
 
 /** Formatea km con una decimal y coma española: 5.234 → "5,2 km" */
