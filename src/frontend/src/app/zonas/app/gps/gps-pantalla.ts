@@ -1,6 +1,14 @@
 import { Component, OnDestroy, OnInit, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { MotivoDescarte } from '../../../core/servicios/filtro-gps';
 import { ErrorGps, Gps } from '../../../core/servicios/gps';
+
+/** Explicación de cada motivo por el que el filtro descarta una lectura (PS-32). */
+const MOTIVOS: Record<MotivoDescarte, string> = {
+  precision: 'precisión peor de 20 m',
+  salto: 'salto imposible',
+  repetida: 'lectura repetida',
+};
 
 /** Texto de ayuda para cada tipo de error del GPS. */
 const MENSAJES: Record<ErrorGps, string> = {
@@ -39,6 +47,13 @@ export class GpsPantalla implements OnInit, OnDestroy {
 
   /** Precisión aceptable: 20 m o menos (el mismo umbral que usará la grabación) */
   protected readonly precisionBuena = computed(() => (this.posicion()?.precision ?? Infinity) <= 20);
+
+  /** Resumen del filtro: cuántas lecturas se han descartado y por qué la última */
+  protected readonly descartadas = this.gps.descartadas;
+  protected readonly motivoDescarte = computed(() => {
+    const motivo = this.gps.ultimoDescarte();
+    return motivo ? MOTIVOS[motivo] : null;
+  });
 
   protected readonly mensajeError = computed(() => {
     const e = this.error();

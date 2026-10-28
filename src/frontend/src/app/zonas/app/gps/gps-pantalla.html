@@ -26,6 +26,14 @@
     </div>
   </dl>
 
+  <!-- Filtro de GPS (PS-32): lecturas que no se usarán para medir la carrera -->
+  <p class="filtro suave" aria-live="polite">
+    Lecturas descartadas: <strong>{{ descartadas() }}</strong>
+    @if (motivoDescarte(); as motivo) {
+      <span class="motivo">(la última por {{ motivo }})</span>
+    }
+  </p>
+
   <p class="suave">Los datos se actualizan solos cuando te mueves.</p>
 </main>
 

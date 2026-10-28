@@ -52,6 +52,14 @@ describe('GpsPantalla', () => {
     expect(texto('.aviso-error')).toContain('permiso de ubicación');
   });
 
+  it('cuenta las lecturas descartadas por el filtro y explica el motivo', async () => {
+    exito({ coords: { latitude: 40.4, longitude: -3.7, accuracy: 60 }, timestamp: 1000 });
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(texto('.filtro')).toContain('Lecturas descartadas: 1');
+    expect(texto('.motivo')).toContain('precisión peor de 20 m');
+  });
+
   it('deja de escuchar el GPS al destruirse', () => {
     fixture.destroy();
     expect(mock.clearWatch).toHaveBeenCalled();
