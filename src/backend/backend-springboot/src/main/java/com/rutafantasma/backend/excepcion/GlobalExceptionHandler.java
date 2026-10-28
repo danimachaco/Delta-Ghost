@@ -27,6 +27,16 @@ public class GlobalExceptionHandler {
         return error(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
+    @ExceptionHandler(RutaNoEncontradaException.class)
+    public ResponseEntity<Map<String, String>> rutaNoEncontrada(RutaNoEncontradaException ex) {
+        return error(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(DatosRutaIncorrectosException.class)
+    public ResponseEntity<Map<String, String>> datosRuta(DatosRutaIncorrectosException ex) {
+        return error(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> validacion(MethodArgumentNotValidException ex) {
         Map<String, String> errores = ex.getBindingResult().getFieldErrors().stream()
