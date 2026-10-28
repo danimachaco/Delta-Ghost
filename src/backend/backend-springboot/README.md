@@ -57,3 +57,10 @@ El token es un JWT; la clave se define con la variable `JWT_SECRETO` (mínimo 32
 | Tabla | Tarea | Qué guarda |
 |---|---|---|
 | `usuario` | PS-18 | Corredores registrados (email único, contraseña como hash BCrypt) |
+| `ruta` | PS-23 | Recorrido guardado por un usuario |
+| `punto` | PS-23 | Puntos GPS de la ruta en orden, con el tiempo de la sombra en cada uno |
+| `sector` | PS-23 | Tramos de la ruta (como en la F1), del punto `punto_inicio` al `punto_fin` |
+| `carrera` | PS-23 | Cada vez que se corre una ruta; la más rápida es la sombra |
+
+Al borrar una ruta se borran sus puntos, sectores y carreras (`ON DELETE CASCADE`).
+Los scripts de `base-de-datos/` se ejecutan en orden: `01-usuario.sql` y después `02-ruta-punto-sector-carrera.sql`.
