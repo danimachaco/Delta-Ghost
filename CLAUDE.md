@@ -12,8 +12,8 @@
   _(Si el equipo cambia de idea, actualizad esta línea.)_
 - **Stack:**
   - Frontend: Angular + TypeScript (web con diseño de pantalla de reloj que simula la carrera)
-  - Backend: Node.js + Express (API REST)
-  - Base de datos: MongoDB (rutas como listas de puntos GPS con tiempos)
+  - Backend: Java 17 + Spring Boot 3.5 (API REST)
+  - Base de datos: MySQL 8 con JPA/Hibernate (usuarios, rutas, puntos GPS, sectores y carreras)
 
 ## 2. El equipo
 
@@ -53,17 +53,18 @@ src/                         ← código de la aplicación
         reloj/                   pantalla del reloj (/reloj)
         app/                     app del móvil (/app)
         web/                     web pública (/web)
-  backend/                   ← Node.js + Express + MongoDB (ver su README)
+  backend/                   ← Spring Boot + MySQL (ver su README)
     .env.example               variables de entorno de ejemplo
-    src/
-      config/                    conexión a MongoDB y variables
-      modelos/                   esquemas de datos
-      api/                       endpoints Express
-      controladores/             reciben la petición y responden
-      servicios/                 lógica de negocio
-      middlewares/               validaciones y errores
-      utilidades/                funciones auxiliares
-    tests/                     pruebas del backend
+    backend-springboot/        proyecto Maven
+      base-de-datos/             scripts SQL de las tablas
+      src/main/java/com/rutafantasma/backend/
+        modelo/                    entidades JPA (una por tabla)
+        repositorio/               acceso a las tablas
+        servicio/                  lógica de negocio
+        controlador/               endpoints REST (/api/...)
+        dto/                       JSON que entra y sale de la API
+        config/                    configuración (CORS, cifrado…)
+      src/test/                  pruebas (H2 en memoria, sin MySQL)
 docs/diseno/                 ← diseño de las pantallas (ver su README)
   README.md                    enlace a Figma, reglas de nombres y estado de cada pantalla
   mockups/                     imágenes PNG exportadas de Figma (reloj-carrera.png…)
@@ -81,7 +82,7 @@ docs/memoria.pdf             ← PDF generado AUTOMÁTICAMENTE (no tocar a mano)
 scripts/                     ← script que genera el PDF
 ```
 
-**Dónde va cada cosa nueva:** una pantalla → `zonas/<zona>/`; algo que usan varias zonas → `compartido/`; servicios e interfaces de datos → `core/`. En el backend, un endpoint nuevo toca `api/` → `controladores/` → `servicios/` → `modelos/`.
+**Dónde va cada cosa nueva:** una pantalla → `zonas/<zona>/`; algo que usan varias zonas → `compartido/`; servicios e interfaces de datos → `core/`. En el backend todo va dentro del único proyecto `src/backend/backend-springboot/` (nunca una carpeta por tarea): un endpoint nuevo toca `controlador/` → `servicio/` → `repositorio/` → `modelo/`, sus pruebas van en `src/test/` y los scripts SQL en `base-de-datos/`.
 
 ## 5. Reglas para Claude (OBLIGATORIAS)
 
@@ -155,3 +156,4 @@ Para **revisar la PR de un compañero** usa `/revisar <rama o PS-XX>`.
 | 2026-10-21 | Toda llamada al backend pasa por el servicio `Api` (`core/servicios/api.ts`); la URL del servidor está en `src/environments/` y los errores los traduce `erroresInterceptor` a un `ErrorApi` con `mensaje` en español | La dirección del servidor se cambia en un solo sitio y las pantallas solo tienen que mostrar `error.mensaje` |
 | 2026-10-21 | Autenticación por token: `POST /api/auth/login` y `POST /api/auth/registro` devuelven `{ token, usuario }`; el frontend guarda la sesión en el servicio `Auth` y envía `Authorization: Bearer <token>`. El `authGuard` está creado pero aún sin aplicar | El backend todavía no tiene login; este es el contrato que debe implementar (ver la entrada de memoria de PS-20). Proteger rutas antes de eso bloquearía la app |
 | 2026-10-26 | Flujo de ramas: una rama `PS-XX-descripcion` por historia, commits `PS-XX: ...`, se integra `main` en la rama antes de subir y todo entra en `main` por Pull Request aprobada por otro DT (merge commit) | Lo exige el enunciado (sección 5 y Definición de Hecho); además deja constancia en GitHub de quién hizo qué y de que se integra el trabajo de los compañeros |
+| 2026-10-28 | El backend pasa de MongoDB a **Spring Boot + MySQL (JPA)**, en el paquete `com.rutafantasma.backend` dentro de `src/backend/backend-springboot/`. Se elimina el esqueleto de Node/Express | Las historias de Jira (PS-18, PS-23) piden MySQL: los datos (usuarios, rutas, puntos, sectores, carreras) son relacionales y MySQL es lo visto en clase. Un solo backend evita duplicar código |

@@ -1,9 +1,9 @@
-package com.rutafantasma.desarrollador1;
+package com.rutafantasma.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-/** Punto de entrada de la aplicación Ruta Fantasma. */
+/** Punto de entrada del backend de Ruta Fantasma. */
 @SpringBootApplication
 public class RutaFantasmaApplication {
 

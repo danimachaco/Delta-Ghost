@@ -15,8 +15,8 @@
 | Parte | Tecnología | Motivo |
 |---|---|---|
 | Frontend | Angular + TypeScript | Vista en clase; permite simular la pantalla del reloj en el navegador |
-| Backend | Node.js + Express | JavaScript en servidor, conocido por el equipo |
-| Base de datos | MongoDB | Guarda de forma natural las rutas (listas de puntos GPS y tiempos) |
+| Backend | Java + Spring Boot | Visto en clase; organiza la API REST por capas (controlador, servicio, repositorio) |
+| Base de datos | MySQL (con JPA/Hibernate) | Los datos son relacionales (usuarios, rutas, puntos, sectores y carreras) y MySQL es el gestor visto en clase |
 
 ## Herramientas
 

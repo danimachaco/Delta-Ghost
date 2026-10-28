@@ -7,15 +7,15 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.5</version>
+        <version>3.5.6</version>
         <relativePath/>
     </parent>
 
     <groupId>com.rutafantasma</groupId>
-    <artifactId>desarrollador1</artifactId>
+    <artifactId>backend-mysql</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ruta-fantasma-desarrollador1</name>
-    <description>Backend de Ruta Fantasma (Spring Boot + MongoDB)</description>
+    <name>ruta-fantasma-backend-mysql</name>
+    <description>Backend de Ruta Fantasma (Spring Boot + MySQL)</description>
 
     <properties>
         <java.version>17</java.version>
@@ -26,13 +26,28 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!-- JPA/Hibernate: convierte las clases Java en tablas de MySQL -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <!-- Driver para conectar con MySQL -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Pruebas: H2 es una base de datos en memoria que imita a MySQL,
+             así los tests funcionan sin tener MySQL instalado -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
