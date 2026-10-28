@@ -6,7 +6,8 @@ ahí se explica cómo arrancarlo, cómo pasar las pruebas y cómo está organiza
 ```
 src/backend/
 ├── .env.example          variables de entorno de ejemplo (el .env real NUNCA se sube)
-└── backend-springboot/   proyecto Spring Boot (Maven)
+├── backend-springboot/   proyecto Spring Boot (Maven)
+└── postman/              colección de Postman para probar toda la API (ver su README)
 ```
 
 Flujo de una petición: `controlador/` → `servicio/` → `repositorio/` → `modelo/` (MySQL).

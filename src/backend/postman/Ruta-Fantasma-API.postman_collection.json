@@ -1,0 +1,536 @@
+{
+  "info": {
+    "name": "Ruta Fantasma API",
+    "description": "Colección de la API de Ruta Fantasma (Spring Boot + MySQL).\n\nEjecútala en orden (Run collection): el registro crea un usuario con un email nuevo, el login guarda el token y las peticiones de rutas lo usan automáticamente.\n\nVariables: baseUrl (por defecto http://localhost:8080), email, password, token y rutaId.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Autenticación",
+      "description": "PS-19 · Registro e inicio de sesión. No necesitan token.",
+      "item": [
+        {
+          "name": "1. Registro",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/registro",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "registro"
+              ]
+            },
+            "description": "Crea un usuario nuevo con un email distinto cada vez. Guarda el token en {{token}}.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ana\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Email distinto en cada ejecución para poder repetir la colección sin error 409",
+                  "pm.collectionVariables.set('email', 'ana' + Date.now() + '@correo.com');"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 201 Created', () => pm.response.to.have.status(201));",
+                  "const r = pm.response.json();",
+                  "pm.test('Devuelve token y usuario', () => {",
+                  "  pm.expect(r.token).to.be.a('string').and.not.empty;",
+                  "  pm.expect(r.usuario).to.include.keys('id', 'nombre', 'email');",
+                  "});",
+                  "pm.test('No devuelve la contraseña', () => pm.expect(r.usuario).to.not.have.property('password'));",
+                  "pm.collectionVariables.set('token', r.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2. Registro con email repetido (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/registro",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "registro"
+              ]
+            },
+            "description": "Usa el mismo email que la petición 1.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Otra Ana\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 409 Conflict', () => pm.response.to.have.status(409));",
+                  "pm.test('Explica el error', () => pm.expect(pm.response.json().error).to.eql('Ya existe una cuenta con ese email'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3. Registro con datos incorrectos (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/registro",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "registro"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"\",\n  \"email\": \"no-es-un-email\",\n  \"password\": \"123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 400 Bad Request', () => pm.response.to.have.status(400));",
+                  "pm.test('Indica el error de cada campo', () => pm.expect(pm.response.json()).to.include.keys('nombre', 'email', 'password'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4. Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Inicia sesión y guarda el token en {{token}} para las peticiones de rutas.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 200 OK', () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json();",
+                  "pm.test('Devuelve token y usuario', () => {",
+                  "  pm.expect(r.token).to.be.a('string').and.not.empty;",
+                  "  pm.expect(r.usuario.email).to.eql(pm.collectionVariables.get('email'));",
+                  "});",
+                  "pm.collectionVariables.set('token', r.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5. Login con contraseña incorrecta (401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"contraseña-mala\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 401 Unauthorized', () => pm.response.to.have.status(401));",
+                  "pm.test('Explica el error', () => pm.expect(pm.response.json().error).to.eql('El email o la contraseña no son correctos'));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Rutas",
+      "description": "PS-24 · Crear y listar rutas. Usan el token de la colección (Bearer {{token}}).",
+      "item": [
+        {
+          "name": "6. Crear ruta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/rutas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "rutas"
+              ]
+            },
+            "description": "Crea una ruta de 7 puntos. Sin numeroSectores se divide en 3. Guarda el id en {{rutaId}}.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Parque del Retiro\",\n  \"puntos\": [\n    {\n      \"latitud\": 40.4153,\n      \"longitud\": -3.6845,\n      \"tiempoSegundos\": 0\n    },\n    {\n      \"latitud\": 40.416,\n      \"longitud\": -3.685,\n      \"tiempoSegundos\": 40\n    },\n    {\n      \"latitud\": 40.417,\n      \"longitud\": -3.6858,\n      \"tiempoSegundos\": 85\n    },\n    {\n      \"latitud\": 40.418,\n      \"longitud\": -3.6865,\n      \"tiempoSegundos\": 130\n    },\n    {\n      \"latitud\": 40.4188,\n      \"longitud\": -3.6872,\n      \"tiempoSegundos\": 172\n    },\n    {\n      \"latitud\": 40.4195,\n      \"longitud\": -3.688,\n      \"tiempoSegundos\": 215\n    },\n    {\n      \"latitud\": 40.42,\n      \"longitud\": -3.689,\n      \"tiempoSegundos\": 260\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 201 Created', () => pm.response.to.have.status(201));",
+                  "const r = pm.response.json();",
+                  "pm.test('Guarda los 7 puntos', () => pm.expect(r.puntos).to.have.lengthOf(7));",
+                  "pm.test('Divide la ruta en 3 sectores', () => {",
+                  "  pm.expect(r.sectores).to.have.lengthOf(3);",
+                  "  pm.expect(r.sectores[0]).to.eql({ numero: 1, puntoInicio: 0, puntoFin: 2 });",
+                  "});",
+                  "pm.collectionVariables.set('rutaId', r.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "7. Listar mis rutas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/rutas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "rutas"
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 200 OK', () => pm.response.to.have.status(200));",
+                  "const lista = pm.response.json();",
+                  "pm.test('Es una lista con la ruta creada', () => {",
+                  "  pm.expect(lista).to.be.an('array');",
+                  "  pm.expect(lista.map(r => r.id)).to.include(pm.collectionVariables.get('rutaId'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "8. Ver una ruta",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/rutas/{{rutaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "rutas",
+                "{{rutaId}}"
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 200 OK', () => pm.response.to.have.status(200));",
+                  "pm.test('Es la ruta pedida', () => pm.expect(pm.response.json().id).to.eql(pm.collectionVariables.get('rutaId')));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "9. Crear ruta con datos incorrectos (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/rutas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "rutas"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"\",\n  \"puntos\": [\n    {\n      \"latitud\": 100,\n      \"longitud\": -3.7,\n      \"tiempoSegundos\": 0\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 400 Bad Request', () => pm.response.to.have.status(400));",
+                  "pm.test('Indica los errores', () => pm.expect(pm.response.json()).to.include.keys('nombre', 'puntos', 'puntos[0].latitud'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "10. Ver ruta que no existe (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/rutas/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "rutas",
+                "999999"
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 404 Not Found', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "11. Listar rutas sin token (401)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/rutas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "rutas"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 401 Unauthorized', () => pm.response.to.have.status(401));",
+                  "pm.test('Explica el error', () => pm.expect(pm.response.json().error).to.eql('Tienes que iniciar sesión para hacer esto'));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "email",
+      "value": "ana@correo.com"
+    },
+    {
+      "key": "password",
+      "value": "secreta1"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "rutaId",
+      "value": ""
+    }
+  ]
+}
