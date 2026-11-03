@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
+import { authGuard } from '../../core/guardias/auth-guard';
 import { AppInicio } from './app-inicio/app-inicio';
+import { GrabarRuta } from './grabar/grabar-ruta';
 import { ListaRutas } from './lista-rutas/lista-rutas';
 import { Login } from './login/login';
 import { Registro } from './registro/registro';
@@ -16,4 +18,11 @@ export const APP_ROUTES: Routes = [
     children: [{ path: '', component: ListaRutas, title: 'Ruta Fantasma · Mis rutas' }],
   },
   { path: 'gps', component: GpsPantalla, title: 'Ruta Fantasma · GPS' },
+  // Grabar necesita sesión: la ruta se guarda en la cuenta del usuario (POST /api/rutas pide token)
+  {
+    path: 'grabar',
+    component: GrabarRuta,
+    canActivate: [authGuard],
+    title: 'Ruta Fantasma · Grabar ruta',
+  },
 ];
