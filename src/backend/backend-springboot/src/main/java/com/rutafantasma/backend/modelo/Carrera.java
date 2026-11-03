@@ -1,10 +1,13 @@
 package com.rutafantasma.backend.modelo;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,6 +17,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
@@ -48,6 +53,11 @@ public class Carrera {
     @Column(name = "mejor_marca", nullable = false)
     private boolean mejorMarca;
 
+    /** Puntos GPS grabados en esta carrera. Se guardan y borran junto con ella (cascade + orphanRemoval). */
+    @OneToMany(mappedBy = "carrera", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("orden ASC")
+    private List<PuntoCarrera> puntos = new ArrayList<>();
+
     public Carrera() {
     }
 
@@ -62,6 +72,13 @@ public class Carrera {
         if (fecha == null) {
             fecha = LocalDateTime.now();
         }
+    }
+
+    /** Añade un punto al final de la carrera y mantiene las dos caras de la relación sincronizadas. */
+    public void anadirPunto(PuntoCarrera punto) {
+        punto.setCarrera(this);
+        punto.setOrden(puntos.size());
+        puntos.add(punto);
     }
 
     public Long getId() { return id; }
@@ -81,4 +98,6 @@ public class Carrera {
 
     public boolean isMejorMarca() { return mejorMarca; }
     public void setMejorMarca(boolean mejorMarca) { this.mejorMarca = mejorMarca; }
+
+    public List<PuntoCarrera> getPuntos() { return puntos; }
 }
