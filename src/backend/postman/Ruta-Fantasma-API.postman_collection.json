@@ -509,6 +509,106 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Carreras",
+      "description": "PS-33 · Subir una carrera con sus puntos. Usan el token y el {{rutaId}} guardado al crear la ruta.",
+      "item": [
+        {
+          "name": "12. Subir carrera",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/rutas/{{rutaId}}/carreras",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "rutas",
+                "{{rutaId}}",
+                "carreras"
+              ]
+            },
+            "description": "Sube una carrera de 4 puntos que termina en 250 s. La ruta se grabó en 260 s, así que pasa a ser la mejor marca (la sombra).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"puntos\": [\n    {\n      \"latitud\": 40.4153,\n      \"longitud\": -3.6845,\n      \"tiempoSegundos\": 0\n    },\n    {\n      \"latitud\": 40.417,\n      \"longitud\": -3.6858,\n      \"tiempoSegundos\": 80\n    },\n    {\n      \"latitud\": 40.4188,\n      \"longitud\": -3.6872,\n      \"tiempoSegundos\": 160\n    },\n    {\n      \"latitud\": 40.42,\n      \"longitud\": -3.689,\n      \"tiempoSegundos\": 250\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 201 Created', () => pm.response.to.have.status(201));",
+                  "const c = pm.response.json();",
+                  "pm.test('Guarda los 4 puntos', () => pm.expect(c.puntos).to.have.lengthOf(4));",
+                  "pm.test('El tiempo total es el del último punto', () => pm.expect(c.tiempoTotalSegundos).to.eql(250));",
+                  "pm.test('Es la nueva mejor marca', () => pm.expect(c.mejorMarca).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "13. Subir carrera a ruta que no existe (404)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/rutas/999999/carreras",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "rutas",
+                "999999",
+                "carreras"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"puntos\": [\n    {\n      \"latitud\": 40.4153,\n      \"longitud\": -3.6845,\n      \"tiempoSegundos\": 0\n    },\n    {\n      \"latitud\": 40.417,\n      \"longitud\": -3.6858,\n      \"tiempoSegundos\": 80\n    },\n    {\n      \"latitud\": 40.4188,\n      \"longitud\": -3.6872,\n      \"tiempoSegundos\": 160\n    },\n    {\n      \"latitud\": 40.42,\n      \"longitud\": -3.689,\n      \"tiempoSegundos\": 250\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 404 Not Found', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "variable": [
