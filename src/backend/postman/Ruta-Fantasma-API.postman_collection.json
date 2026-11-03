@@ -512,7 +512,7 @@
     },
     {
       "name": "Carreras",
-      "description": "PS-33 · Subir una carrera con sus puntos. Usan el token y el {{rutaId}} guardado al crear la ruta.",
+      "description": "PS-33 y PS-36 · Subir una carrera con sus puntos y descargar la sombra de la ruta. Usan el token y el {{rutaId}} guardado al crear la ruta.",
       "item": [
         {
           "name": "12. Subir carrera",
@@ -603,6 +603,41 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('Devuelve 404 Not Found', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "14. Descargar la sombra",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/rutas/{{rutaId}}/sombra",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "rutas",
+                "{{rutaId}}",
+                "sombra"
+              ]
+            },
+            "description": "Devuelve la sombra de la ruta: la carrera subida en la petición 12 (250 s), con el tiempo de la sombra al final de cada sector."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 200 OK', () => pm.response.to.have.status(200));",
+                  "const s = pm.response.json();",
+                  "pm.test('La sombra es la carrera más rápida', () => pm.expect(s.tiempoTotalSegundos).to.eql(250));",
+                  "pm.test('Trae los puntos de la sombra', () => pm.expect(s.puntos).to.have.lengthOf(4));",
+                  "pm.test('Trae el tiempo de cada sector', () => pm.expect(s.sectores).to.have.lengthOf(3));"
                 ]
               }
             }
