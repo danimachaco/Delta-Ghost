@@ -1,6 +1,7 @@
 package com.rutafantasma.backend.dto;
 
 import com.rutafantasma.backend.modelo.Punto;
+import com.rutafantasma.backend.modelo.PuntoCarrera;
 
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
@@ -24,6 +25,10 @@ public record PuntoDto(
         @Min(value = 0, message = "El tiempo no puede ser negativo") Long tiempoSegundos) {
 
     public static PuntoDto de(Punto p) {
+        return new PuntoDto(p.getLatitud(), p.getLongitud(), p.getTiempoSegundos());
+    }
+
+    public static PuntoDto de(PuntoCarrera p) {
         return new PuntoDto(p.getLatitud(), p.getLongitud(), p.getTiempoSegundos());
     }
 }
