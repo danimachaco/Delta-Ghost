@@ -52,6 +52,7 @@ backend-springboot/
 | POST | `/api/rutas` → `201` ruta creada (se divide en 3 sectores si no se indica `numeroSectores`) | Sí | PS-24 |
 | GET | `/api/rutas` → `200` rutas del usuario, la más nueva primero | Sí | PS-24 |
 | GET | `/api/rutas/{id}` → `200` la ruta (`404` si no existe o es de otro usuario) | Sí | PS-24 |
+| POST | `/api/rutas/{id}/carreras` → `201` carrera guardada con sus puntos y `mejorMarca` (`404` si la ruta no es tuya) | Sí | PS-33 |
 
 Los endpoints con token necesitan la cabecera `Authorization: Bearer <token>` (la comprueba `seguridad/TokenInterceptor`).
 Errores: `400 { campo: mensaje }` en validaciones, `401 { error }` sin sesión o login incorrecto, `404 { error }`, `409 { error }` email repetido.
@@ -66,6 +67,7 @@ El token es un JWT; la clave se define con la variable `JWT_SECRETO` (mínimo 32
 | `punto` | PS-23 | Puntos GPS de la ruta en orden, con el tiempo de la sombra en cada uno |
 | `sector` | PS-23 | Tramos de la ruta (como en la F1), del punto `punto_inicio` al `punto_fin` |
 | `carrera` | PS-23 | Cada vez que se corre una ruta; la más rápida es la sombra |
+| `punto_carrera` | PS-33 | Puntos GPS grabados en cada carrera, con los tiempos de esa carrera |
 
-Al borrar una ruta se borran sus puntos, sectores y carreras (`ON DELETE CASCADE`).
-Los scripts de `base-de-datos/` se ejecutan en orden: `01-usuario.sql` y después `02-ruta-punto-sector-carrera.sql`.
+Al borrar una ruta se borran sus puntos, sectores y carreras, y al borrar una carrera sus puntos (`ON DELETE CASCADE`).
+Los scripts de `base-de-datos/` se ejecutan en orden: `01-usuario.sql`, `02-ruta-punto-sector-carrera.sql` y `03-punto-carrera.sql`.

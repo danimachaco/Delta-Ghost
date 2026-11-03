@@ -13,6 +13,9 @@ public interface CarreraRepository extends JpaRepository<Carrera, Long> {
     /** La sombra: la carrera con menor tiempo total de la ruta */
     Optional<Carrera> findFirstByRutaIdOrderByTiempoTotalSegundosAsc(Long rutaId);
 
+    /** La carrera marcada como mejor marca de la ruta (solo hay una, o ninguna si aún no se ha batido la grabación) */
+    Optional<Carrera> findFirstByRutaIdAndMejorMarcaTrue(Long rutaId);
+
     /** Historial de carreras de una ruta, de la más reciente a la más antigua */
     List<Carrera> findByRutaIdOrderByFechaDesc(Long rutaId);
 }

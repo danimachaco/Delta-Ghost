@@ -59,8 +59,11 @@ public class RutaService {
         return RutaResponse.de(rutas.save(ruta));
     }
 
-    /** El tiempo de cada punto tiene que ser igual o mayor que el del anterior: el reloj no va hacia atrás. */
-    private static void comprobarTiempos(List<PuntoDto> puntos) {
+    /**
+     * El tiempo de cada punto tiene que ser igual o mayor que el del anterior: el reloj no va hacia atrás.
+     * También la usa CarreraService para los puntos de las carreras.
+     */
+    static void comprobarTiempos(List<PuntoDto> puntos) {
         for (int i = 1; i < puntos.size(); i++) {
             if (puntos.get(i).tiempoSegundos() < puntos.get(i - 1).tiempoSegundos()) {
                 throw new DatosRutaIncorrectosException(
