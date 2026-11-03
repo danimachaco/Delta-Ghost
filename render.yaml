@@ -1,0 +1,36 @@
+# Blueprint de Render: publica el backend Spring Boot en Internet.
+# En Render: New → Blueprint → elegir este repositorio. Render lee este archivo y crea el servicio.
+# Guía completa: docs/despliegue.md
+services:
+  - type: web
+    name: ruta-fantasma-api          # dirección: https://ruta-fantasma-api.onrender.com
+    runtime: docker
+    plan: free
+    region: frankfurt                # el más cercano a España
+    branch: main
+    dockerContext: src/backend/backend-springboot
+    dockerfilePath: src/backend/backend-springboot/Dockerfile
+    healthCheckPath: /api/salud
+    autoDeploy: true
+    # Solo se vuelve a publicar cuando cambia el backend
+    buildFilter:
+      paths:
+        - src/backend/backend-springboot/**
+    envVars:
+      # Datos de la base de datos MySQL en la nube (Aiven). Se rellenan a mano en Render,
+      # nunca en el repositorio. Ejemplo de URL:
+      # jdbc:mysql://HOST:PUERTO/ruta_fantasma?createDatabaseIfNotExist=true&sslMode=REQUIRED&serverTimezone=Europe/Madrid
+      - key: MYSQL_URL
+        sync: false
+      - key: MYSQL_USER
+        sync: false
+      - key: MYSQL_PASSWORD
+        sync: false
+      # Render genera una clave aleatoria y segura: nadie tiene que escribirla
+      - key: JWT_SECRETO
+        generateValue: true
+      # Webs que pueden llamar a la API: la de Vercel y la app en local
+      - key: CORS_ORIGENES
+        value: https://*.vercel.app,http://localhost:*,http://127.0.0.1:*
+      - key: MOSTRAR_SQL
+        value: "false"
