@@ -53,6 +53,7 @@ backend-springboot/
 | GET | `/api/rutas` → `200` rutas del usuario, la más nueva primero | Sí | PS-24 |
 | GET | `/api/rutas/{id}` → `200` la ruta (`404` si no existe o es de otro usuario) | Sí | PS-24 |
 | POST | `/api/rutas/{id}/carreras` → `201` carrera guardada con sus puntos y `mejorMarca` (`404` si la ruta no es tuya) | Sí | PS-33 |
+| GET | `/api/rutas/{id}/sombra` → `200` puntos de la mejor marca y tiempo de la sombra en cada sector (`404` si la ruta no es tuya) | Sí | PS-36 |
 
 Los endpoints con token necesitan la cabecera `Authorization: Bearer <token>` (la comprueba `seguridad/TokenInterceptor`).
 Errores: `400 { campo: mensaje }` en validaciones, `401 { error }` sin sesión o login incorrecto, `404 { error }`, `409 { error }` email repetido.
