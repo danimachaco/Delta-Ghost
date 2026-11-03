@@ -1,0 +1,112 @@
+<header class="barra">
+  <h1>Grabar ruta</h1>
+</header>
+
+<main class="contenido">
+  @switch (grabacion.estado()) {
+    <!-- 1. Antes de empezar: esperar a tener señal GPS fiable -->
+    @case ('parada') {
+      <section class="estado-gps" aria-live="polite">
+        @if (errorGps(); as error) {
+          <p class="aviso-error" role="alert">{{ error }}</p>
+        } @else if (senalLista()) {
+          <p class="senal lista">● Señal GPS lista{{ precision() ? ' · precisión ' + precision() : '' }}</p>
+        } @else {
+          <p class="senal">
+            Buscando señal GPS fiable…{{ precision() ? ' (precisión actual ' + precision() + ')' : '' }}
+          </p>
+        }
+      </section>
+
+      <p class="suave">Pulsa Empezar cuando estés en la salida. Mantén la pantalla en esta página mientras corres.</p>
+
+      <button type="button" class="boton boton-grande" (click)="empezar()" [disabled]="!grabacion.puedeEmpezar()">
+        Empezar
+      </button>
+    }
+
+    <!-- 2. Grabando -->
+    @case ('grabando') {
+      <p class="grabando" aria-live="polite"><span class="punto-rojo" aria-hidden="true"></span> Grabando</p>
+      <p class="tiempo">{{ tiempo() }}</p>
+
+      <dl class="datos">
+        <div class="dato">
+          <dt>Distancia</dt>
+          <dd class="distancia">{{ distancia() }}</dd>
+        </div>
+        <div class="dato">
+          <dt>Ritmo</dt>
+          <dd class="ritmo">{{ ritmo() }}</dd>
+        </div>
+        <div class="dato">
+          <dt>Puntos</dt>
+          <dd class="puntos">{{ numeroPuntos() }}</dd>
+        </div>
+      </dl>
+
+      <p class="suave">Lecturas del GPS descartadas por el filtro: {{ descartadas() }}</p>
+
+      <button type="button" class="boton boton-grande terminar" (click)="terminar()">Terminar</button>
+    }
+
+    <!-- 3. Resumen y guardar -->
+    @case ('terminada') {
+      <h2>Ruta terminada</h2>
+
+      <dl class="datos">
+        <div class="dato">
+          <dt>Tiempo</dt>
+          <dd class="tiempo-final">{{ tiempo() }}</dd>
+        </div>
+        <div class="dato">
+          <dt>Distancia</dt>
+          <dd class="distancia">{{ distancia() }}</dd>
+        </div>
+        <div class="dato">
+          <dt>Ritmo</dt>
+          <dd class="ritmo">{{ ritmo() }}</dd>
+        </div>
+      </dl>
+
+      @if (demasiadoCorta()) {
+        <p class="aviso-error" role="alert">
+          La ruta es demasiado corta para guardarla: hacen falta al menos 2 puntos GPS. Muévete un poco más y vuelve a intentarlo.
+        </p>
+        <button type="button" class="boton" (click)="descartar()">Volver a empezar</button>
+      } @else {
+        <form [formGroup]="formulario" (ngSubmit)="guardar()" novalidate>
+          <label for="nombre">Nombre de la ruta</label>
+          <input
+            id="nombre"
+            type="text"
+            formControlName="nombre"
+            [attr.maxlength]="maxNombre"
+            [class.invalido]="nombreInvalido()"
+          />
+          @if (nombreInvalido()) {
+            <span class="error-campo">Escribe un nombre de hasta {{ maxNombre }} caracteres.</span>
+          }
+
+          @if (errorServidor(); as error) {
+            <p class="aviso-error" role="alert">{{ error }}</p>
+          }
+
+          <button type="submit" class="boton" [disabled]="enviando()">
+            {{ enviando() ? 'Guardando…' : 'Guardar ruta' }}
+          </button>
+          <button type="button" class="boton secundario" (click)="descartar()" [disabled]="enviando()">
+            Descartar
+          </button>
+        </form>
+      }
+    }
+  }
+</main>
+
+<!-- Mientras se graba no se muestra el menú, para no salir sin querer -->
+@if (grabacion.estado() !== 'grabando') {
+  <nav class="menu-inferior">
+    <a routerLink="/app">← Volver a Rutas</a>
+  </nav>
+}

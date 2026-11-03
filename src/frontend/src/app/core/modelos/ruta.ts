@@ -21,3 +21,11 @@ export interface Ruta {
   fecha: string;
   puntos: PuntoGps[];
 }
+
+/** Datos para guardar una ruta nueva → POST /api/rutas (RutaRequest del backend) */
+export interface NuevaRuta {
+  /** Nombre de la ruta (obligatorio, máximo 60 caracteres) */
+  nombre: string;
+  /** Al menos 2 puntos, con tiempos que nunca van hacia atrás */
+  puntos: PuntoGps[];
+}

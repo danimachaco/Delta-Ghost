@@ -1,11 +1,11 @@
 import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Ruta } from '../modelos/ruta';
+import { NuevaRuta, Ruta } from '../modelos/ruta';
 import { Api } from './api';
 
 /**
  * Servicio de rutas: habla con /api/rutas del backend a través del servicio Api.
- * De momento solo lee; crear, editar y borrar se añadirán cuando haya pantallas para ello.
+ * Lee rutas y guarda las nuevas; editar y borrar se añadirán cuando haya pantallas para ello.
  */
 @Service()
 export class Rutas {
@@ -19,5 +19,10 @@ export class Rutas {
   /** Una ruta concreta → GET /api/rutas/{id} */
   obtener(id: string): Observable<Ruta> {
     return this.api.get<Ruta>(`rutas/${encodeURIComponent(id)}`);
+  }
+
+  /** Guarda una ruta nueva con sus puntos → POST /api/rutas (necesita sesión iniciada) */
+  crear(ruta: NuevaRuta): Observable<Ruta> {
+    return this.api.post<Ruta>('rutas', ruta);
   }
 }

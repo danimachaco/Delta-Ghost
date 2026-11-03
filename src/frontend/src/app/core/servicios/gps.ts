@@ -1,4 +1,5 @@
 import { Injectable, OnDestroy, inject, signal } from '@angular/core';
+import { Subject } from 'rxjs';
 import { PosicionGps } from '../modelos/punto-gps';
 import { FiltroGps, MotivoDescarte } from './filtro-gps';
 
@@ -27,6 +28,13 @@ export class Gps implements OnDestroy {
   readonly descartadas = signal(0);
   /** Motivo del último descarte, o null si la última lectura fue buena */
   readonly ultimoDescarte = signal<MotivoDescarte | null>(null);
+
+  private readonly validas = new Subject<PosicionGps>();
+  /**
+   * Avisa de CADA lectura que pasa el filtro, una a una (PS-34). La grabación se suscribe aquí:
+   * una signal solo guarda el último valor y, si llegan dos lecturas seguidas, la primera se perdería.
+   */
+  readonly lecturasValidas = this.validas.asObservable();
 
   private readonly filtro = inject(FiltroGps);
   private idWatch: number | null = null;
@@ -87,6 +95,7 @@ export class Gps implements OnDestroy {
     this.ultimoDescarte.set(resultado.motivo);
     if (resultado.aceptada) {
       this.posicionValida.set(posicion);
+      this.validas.next(posicion);
     } else {
       this.descartadas.update((n) => n + 1);
     }

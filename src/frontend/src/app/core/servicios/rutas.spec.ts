@@ -28,4 +28,18 @@ describe('Rutas', () => {
     rutas.obtener('abc').subscribe();
     servidor.expectOne({ method: 'GET', url: `${base}/rutas/abc` }).flush({});
   });
+
+  it('crear() envía POST /api/rutas con el nombre y los puntos', () => {
+    const nueva = {
+      nombre: 'Parque',
+      puntos: [
+        { latitud: 40.41, longitud: -3.7, tiempoSegundos: 0 },
+        { latitud: 40.42, longitud: -3.7, tiempoSegundos: 60 },
+      ],
+    };
+    rutas.crear(nueva).subscribe();
+    const peticion = servidor.expectOne({ method: 'POST', url: `${base}/rutas` });
+    expect(peticion.request.body).toEqual(nueva);
+    peticion.flush({ id: '1', ...nueva, fecha: '2026-11-03T10:00:00' });
+  });
 });

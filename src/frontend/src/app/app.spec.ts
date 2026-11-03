@@ -49,6 +49,13 @@ describe('App', () => {
     expect(await harness.navigateByUrl('/app/registro', Registro)).toBeInstanceOf(Registro);
   });
 
+  it('grabar una ruta pide iniciar sesión antes', async () => {
+    localStorage.clear();
+    const harness = await RouterTestingHarness.create();
+    await harness.navigateByUrl('/app/grabar', Login);
+    expect(TestBed.inject(Location).path()).toBe('/app/login?volver=%2Fapp%2Fgrabar');
+  });
+
   it('una ruta desconocida redirige a /web', async () => {
     const harness = await RouterTestingHarness.create();
     await harness.navigateByUrl('/no-existe', WebInicio);
