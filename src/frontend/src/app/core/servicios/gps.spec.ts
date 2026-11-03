@@ -102,5 +102,17 @@ describe('Gps', () => {
       expect(gps.descartadas()).toBe(0);
       expect(gps.posicionValida()).toBeNull();
     });
+
+    // PS-34: la grabación necesita recibir cada lectura válida, sin perder ninguna
+    it('lecturasValidas avisa de cada lectura buena y no de las descartadas', () => {
+      const gps = TestBed.inject(Gps);
+      const recibidas: number[] = [];
+      gps.lecturasValidas.subscribe((p) => recibidas.push(p.latitud));
+      gps.iniciar();
+      exito(lectura(40.4, 5, 1000));
+      exito(lectura(40.4001, 5, 2000));
+      exito(lectura(40.4002, 50, 3000)); // mala precisión
+      expect(recibidas).toEqual([40.4, 40.4001]);
+    });
   });
 });
