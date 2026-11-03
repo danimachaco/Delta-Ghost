@@ -22,6 +22,24 @@ mvn test
 
 También se puede abrir esta carpeta con IntelliJ IDEA (Open → carpeta → se detecta como proyecto Maven).
 
+## Probar la app completa en local (registro e inicio de sesión)
+
+1. Arranca **MySQL** y después este backend (`mvn spring-boot:run`). Espera a ver `Started RutaFantasmaApplication`.
+2. En otra terminal, en `src/frontend`: `npm start`.
+3. Abre **http://localhost:4200**. El frontend llama a `/api/...` en su propia dirección y `ng serve`
+   la reenvía al backend (`src/frontend/proxy.conf.json`), así que no hay problemas de CORS.
+
+## Problemas frecuentes
+
+| Lo que pasa | Causa | Solución |
+|---|---|---|
+| Al registrarse o entrar sale **"No se puede conectar con el servidor"** | El backend no está arrancado, o no arrancó por un error | Mira la consola del backend: tiene que poner `Started RutaFantasmaApplication` |
+| El backend no arranca: `Communications link failure` / `Connection refused` | MySQL no está encendido | Arranca el servicio de MySQL (Windows: Servicios → MySQL80 → Iniciar) |
+| El backend no arranca: `Access denied for user 'root'` | La contraseña de MySQL no coincide | Define `MYSQL_PASSWORD` antes de arrancar (ver Requisitos) |
+| El backend no arranca: `Unable to establish loopback connection` | Fallo de Java 25 en Windows cuando la carpeta temporal tiene una ruta corta (`C:\Users\USUARI~1\...`) | Usa **Java 17 o 21** en IntelliJ (File → Project Structure → SDK), o añade en *VM options*: `-Djdk.net.unixdomain.tmpdir=C:\tmp` (crea antes la carpeta) |
+| En el navegador sale un error de **CORS** | La web se abrió desde una dirección no permitida | Por defecto se permite `localhost` en cualquier puerto. Para otras direcciones, define `CORS_ORIGENES` (ver `.env.example`) |
+| La web publicada en Vercel no deja registrarse | El backend no está publicado en Internet: la web de Vercel intenta llamar a `localhost:8080` del ordenador de quien la abre | Para la demo, usad la app en local. Para que funcione en Vercel hay que publicar antes el backend y MySQL, y poner su dirección en `src/frontend/src/environments/environment.ts` y en `CORS_ORIGENES` |
+
 ## Estructura
 
 ```
