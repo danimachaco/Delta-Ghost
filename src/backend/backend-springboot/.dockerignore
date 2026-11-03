@@ -1,0 +1,5 @@
+# Lo que no hace falta enviar a Docker al construir la imagen
+target/
+.idea/
+*.iml
+.vscode/
