@@ -11,6 +11,7 @@ import { Sombra } from '../modelos/sombra';
 import { Calculo } from './calculo';
 import { Cronometro } from './cronometro';
 import { Gps } from './gps';
+import { PantallaEncendida } from './pantalla-encendida';
 
 /** Fases de la carrera: sin empezar, corriendo contra la sombra o ya terminada */
 export type EstadoCarrera = 'sin-carrera' | 'en-curso' | 'terminada';
@@ -22,6 +23,7 @@ export type EstadoCarrera = 'sin-carrera' | 'en-curso' | 'terminada';
  * - Calcula en vivo dónde vas tú, dónde va tu sombra y la diferencia de tiempo (PS-45):
  *   tu distancia sale de tus puntos GPS filtrados (PS-32) y el servicio Calculo (PS-31);
  *   la de la sombra, de sus puntos y el tiempo del cronómetro (PS-38).
+ * - Mantiene la pantalla encendida mientras se corre (PS-46).
  *
  * Es un servicio de toda la app porque la carrera se empieza en la pantalla
  * "Elige ruta" y sigue viva en la pantalla del reloj, que solo lee sus datos.
@@ -31,6 +33,7 @@ export class Carrera {
   private readonly cronometro = inject(Cronometro);
   private readonly gps = inject(Gps);
   private readonly calculo = inject(Calculo);
+  private readonly pantalla = inject(PantallaEncendida);
 
   readonly estado = signal<EstadoCarrera>('sin-carrera');
   /** Ruta que se está corriendo */
@@ -109,6 +112,8 @@ export class Carrera {
     this.gps.iniciar();
     this.cronometro.reiniciar();
     this.cronometro.iniciar();
+    // Si la pantalla se apagara, el navegador frenaría la página y el reloj dejaría de verse
+    void this.pantalla.activar();
     this.estado.set('en-curso');
     return true;
   }
@@ -137,6 +142,7 @@ export class Carrera {
     }
     this.cronometro.pausar();
     this.gps.detener();
+    void this.pantalla.desactivar();
     this.estado.set('terminada');
   }
 
@@ -144,6 +150,7 @@ export class Carrera {
   descartar(): void {
     this.cronometro.reiniciar();
     this.gps.detener();
+    void this.pantalla.desactivar();
     this.ruta.set(null);
     this.sombra.set(null);
     this.puntos.set([]);
