@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
+import { CarreraService } from '../../../core/servicios/carrera';
 import { AvisoSector } from '../../../core/servicios/aviso-sector';
 import { RelojInicio } from './reloj-inicio';
 
@@ -54,5 +55,15 @@ describe('RelojInicio', () => {
     (el.querySelector('.prueba .verde') as HTMLButtonElement).click();
     await fixture.whenStable();
     expect(el.querySelector('.destello-mejor')).not.toBeNull();
+  });
+
+  it('al pulsar Finalizar guarda la carrera y abre el resumen', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const navegar = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+
+    (el.querySelector('.finalizar') as HTMLButtonElement).click();
+
+    expect(TestBed.inject(CarreraService).ultimaCarrera()).not.toBeNull();
+    expect(navegar).toHaveBeenCalledWith('/app/resumen');
   });
 });

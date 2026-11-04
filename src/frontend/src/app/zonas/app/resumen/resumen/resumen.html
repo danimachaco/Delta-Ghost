@@ -1,0 +1,36 @@
+<header class="barra">
+  <a class="volver" routerLink="/app" aria-label="Volver a mis rutas">←</a>
+  <h1>Resumen</h1>
+</header>
+
+<main class="contenido">
+  <section class="total" [class.mejor]="mejoro()" [class.peor]="!mejoro()">
+    <span class="etiqueta">{{ carrera().rutaNombre }} · {{ distanciaKm() }} km</span>
+    <span class="tiempo">{{ tiempo() }}</span>
+    <span class="diferencia">{{ diferencia() }}</span>
+    <span class="etiqueta">frente a tu sombra</span>
+  </section>
+
+  @if (mejoro()) {
+    <p class="mensaje mensaje-mejor">¡Has batido a tu sombra! Esta carrera será tu nueva sombra.</p>
+  } @else {
+    <p class="mensaje suave">No has batido a tu sombra esta vez. ¡A por la próxima!</p>
+  }
+
+  <h2>Sectores</h2>
+  <ol class="sectores">
+    @for (fila of filas(); track fila.indice) {
+      <li [class.mejor]="fila.mejor" [class.peor]="!fila.mejor">
+        <span class="nombre">Sector {{ fila.indice }}</span>
+        <span class="tiempo-sector">{{ fila.tiempo }}</span>
+        <span class="dif-sector">
+          <!-- Flecha además del color: no dependemos solo del color (HU-58) -->
+          <span aria-hidden="true">{{ fila.mejor ? '↑' : '↓' }}</span>
+          <span class="solo-lector">{{ fila.mejor ? 'Mejor' : 'Peor' }}:</span>
+          {{ fila.diferencia }}
+        </span>
+      </li>
+    }
+  </ol>
+</main>
+
