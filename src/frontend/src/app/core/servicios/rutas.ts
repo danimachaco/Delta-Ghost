@@ -1,6 +1,7 @@
 import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
 import { NuevaRuta, Ruta } from '../modelos/ruta';
+import { Sombra } from '../modelos/sombra';
 import { Api } from './api';
 
 /**
@@ -19,6 +20,11 @@ export class Rutas {
   /** Una ruta concreta → GET /api/rutas/{id} */
   obtener(id: string): Observable<Ruta> {
     return this.api.get<Ruta>(`rutas/${encodeURIComponent(id)}`);
+  }
+
+  /** Sombra de una ruta (mejor marca con el tiempo de cada sector) → GET /api/rutas/{id}/sombra */
+  sombra(id: string): Observable<Sombra> {
+    return this.api.get<Sombra>(`rutas/${encodeURIComponent(id)}/sombra`);
   }
 
   /** Guarda una ruta nueva con sus puntos → POST /api/rutas (necesita sesión iniciada) */
