@@ -74,7 +74,11 @@ export class Carrera {
   readonly diferencia = computed<number | null>(() => {
     const sombra = this.sombra();
     if (!sombra || this.estado() === 'sin-carrera') return null;
-    const tiempoSombra = tiempoSombraEn(sombra.puntos, this.acumuladasSombra(), this.distanciaMetros());
+    const tiempoSombra = tiempoSombraEn(
+      sombra.puntos,
+      this.acumuladasSombra(),
+      this.distanciaMetros(),
+    );
     return this.tiempoActual() - tiempoSombra;
   });
 
