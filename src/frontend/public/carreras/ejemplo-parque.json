@@ -1,0 +1,190 @@
+{
+  "nombre": "Vuelta al estanque del Retiro (ejemplo)",
+  "puntos": [
+    {
+      "latitud": 40.417995,
+      "longitud": -3.6845,
+      "tiempoSegundos": 0
+    },
+    {
+      "latitud": 40.417954,
+      "longitud": -3.683885,
+      "tiempoSegundos": 16
+    },
+    {
+      "latitud": 40.417832,
+      "longitud": -3.683289,
+      "tiempoSegundos": 32
+    },
+    {
+      "latitud": 40.417634,
+      "longitud": -3.68273,
+      "tiempoSegundos": 48
+    },
+    {
+      "latitud": 40.417364,
+      "longitud": -3.682225,
+      "tiempoSegundos": 63
+    },
+    {
+      "latitud": 40.417032,
+      "longitud": -3.681789,
+      "tiempoSegundos": 79
+    },
+    {
+      "latitud": 40.416647,
+      "longitud": -3.681435,
+      "tiempoSegundos": 95
+    },
+    {
+      "latitud": 40.416222,
+      "longitud": -3.681174,
+      "tiempoSegundos": 111
+    },
+    {
+      "latitud": 40.415768,
+      "longitud": -3.681014,
+      "tiempoSegundos": 127
+    },
+    {
+      "latitud": 40.4153,
+      "longitud": -3.68096,
+      "tiempoSegundos": 143
+    },
+    {
+      "latitud": 40.414832,
+      "longitud": -3.681014,
+      "tiempoSegundos": 159
+    },
+    {
+      "latitud": 40.414378,
+      "longitud": -3.681174,
+      "tiempoSegundos": 175
+    },
+    {
+      "latitud": 40.413953,
+      "longitud": -3.681435,
+      "tiempoSegundos": 190
+    },
+    {
+      "latitud": 40.413568,
+      "longitud": -3.681789,
+      "tiempoSegundos": 206
+    },
+    {
+      "latitud": 40.413236,
+      "longitud": -3.682225,
+      "tiempoSegundos": 222
+    },
+    {
+      "latitud": 40.412966,
+      "longitud": -3.68273,
+      "tiempoSegundos": 238
+    },
+    {
+      "latitud": 40.412768,
+      "longitud": -3.683289,
+      "tiempoSegundos": 254
+    },
+    {
+      "latitud": 40.412646,
+      "longitud": -3.683885,
+      "tiempoSegundos": 270
+    },
+    {
+      "latitud": 40.412605,
+      "longitud": -3.6845,
+      "tiempoSegundos": 286
+    },
+    {
+      "latitud": 40.412646,
+      "longitud": -3.685115,
+      "tiempoSegundos": 301
+    },
+    {
+      "latitud": 40.412768,
+      "longitud": -3.685711,
+      "tiempoSegundos": 317
+    },
+    {
+      "latitud": 40.412966,
+      "longitud": -3.68627,
+      "tiempoSegundos": 333
+    },
+    {
+      "latitud": 40.413236,
+      "longitud": -3.686775,
+      "tiempoSegundos": 349
+    },
+    {
+      "latitud": 40.413568,
+      "longitud": -3.687211,
+      "tiempoSegundos": 365
+    },
+    {
+      "latitud": 40.413953,
+      "longitud": -3.687565,
+      "tiempoSegundos": 381
+    },
+    {
+      "latitud": 40.414378,
+      "longitud": -3.687826,
+      "tiempoSegundos": 397
+    },
+    {
+      "latitud": 40.414832,
+      "longitud": -3.687986,
+      "tiempoSegundos": 413
+    },
+    {
+      "latitud": 40.4153,
+      "longitud": -3.68804,
+      "tiempoSegundos": 428
+    },
+    {
+      "latitud": 40.415768,
+      "longitud": -3.687986,
+      "tiempoSegundos": 444
+    },
+    {
+      "latitud": 40.416222,
+      "longitud": -3.687826,
+      "tiempoSegundos": 460
+    },
+    {
+      "latitud": 40.416647,
+      "longitud": -3.687565,
+      "tiempoSegundos": 476
+    },
+    {
+      "latitud": 40.417032,
+      "longitud": -3.687211,
+      "tiempoSegundos": 492
+    },
+    {
+      "latitud": 40.417364,
+      "longitud": -3.686775,
+      "tiempoSegundos": 508
+    },
+    {
+      "latitud": 40.417634,
+      "longitud": -3.68627,
+      "tiempoSegundos": 524
+    },
+    {
+      "latitud": 40.417832,
+      "longitud": -3.685711,
+      "tiempoSegundos": 539
+    },
+    {
+      "latitud": 40.417954,
+      "longitud": -3.685115,
+      "tiempoSegundos": 555
+    },
+    {
+      "latitud": 40.417995,
+      "longitud": -3.6845,
+      "tiempoSegundos": 571
+    }
+  ]
+}
