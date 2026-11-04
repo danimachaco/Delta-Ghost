@@ -1,0 +1,66 @@
+<div class="esfera">
+  <h1 class="titulo">
+    <svg class="fantasma" viewBox="0 0 16 16" aria-hidden="true">
+      <path
+        d="M8 1a6 6 0 0 0-6 6v8l2-1.5L6 15l2-1.5 2 1.5 2-1.5 2 1.5V7a6 6 0 0 0-6-6Zm-2 5.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Zm4 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"
+      />
+    </svg>
+    Elige ruta
+  </h1>
+
+  @switch (estado()) {
+    @case ('cargando') {
+      <p class="mensaje" aria-busy="true">Cargando rutas…</p>
+    }
+
+    @case ('error') {
+      <div class="mensaje" role="alert">
+        <p>{{ mensajeError() }}</p>
+        <button type="button" class="boton" (click)="cargar()">Reintentar</button>
+      </div>
+    }
+
+    @case ('listo') {
+      @if (filas().length === 0) {
+        <div class="mensaje">
+          <p>Todavía no tienes rutas.</p>
+          <a class="boton" routerLink="/app/grabar">Grabar una ruta</a>
+        </div>
+      } @else {
+        <ul class="lista" aria-label="Tus rutas">
+          @for (fila of filas(); track fila.id) {
+            <li>
+              <button
+                type="button"
+                class="tarjeta"
+                [class.elegida]="elegida() === fila.id"
+                [attr.aria-pressed]="elegida() === fila.id"
+                (click)="elegir(fila.id)"
+              >
+                <span class="info">
+                  <span class="nombre">{{ fila.nombre }}</span>
+                  <span class="detalle">sombra {{ fila.sombra }}</span>
+                </span>
+                <span class="distancia">{{ fila.distancia }}</span>
+              </button>
+            </li>
+          }
+        </ul>
+
+        <p class="aviso" [class.error]="avisoEsError()" [attr.role]="avisoEsError() ? 'alert' : 'status'">
+          {{ aviso() }}
+        </p>
+
+        <button type="button" class="boton empezar" (click)="empezar()" [disabled]="!puedeEmpezar()">
+          Empezar
+        </button>
+      }
+    }
+  }
+</div>
+
+@if (carrera.estado() === 'en-curso') {
+  <a class="volver" routerLink="/reloj">Tienes una carrera en curso · Volver al reloj</a>
+}
+
+<a class="salir" routerLink="/app">← Salir</a>

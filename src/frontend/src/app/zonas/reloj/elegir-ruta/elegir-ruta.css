@@ -1,0 +1,160 @@
+/* Misma esfera redonda que la pantalla del reloj (mockup "1 · Elegir ruta") */
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 16px;
+  background: #000;
+}
+
+.esfera {
+  width: min(340px, 90vw);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 6px solid var(--color-borde);
+  background: #050505;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  /* El relleno mantiene el contenido dentro del círculo */
+  padding: 13% 12%;
+}
+
+.titulo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.fantasma {
+  width: 16px;
+  height: 16px;
+  fill: var(--color-primario);
+}
+
+/* Si hay muchas rutas, la lista se desplaza dentro de la esfera */
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  max-height: 46%;
+  margin: 0;
+  padding: 2px;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.tarjeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid transparent;
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tarjeta.elegida {
+  border-color: var(--color-primario);
+}
+
+.tarjeta:focus-visible {
+  outline: 2px solid var(--color-texto);
+  outline-offset: 1px;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.nombre {
+  overflow: hidden;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detalle {
+  color: var(--color-texto-suave);
+  font-size: 0.7rem;
+}
+
+.distancia {
+  flex-shrink: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.mensaje {
+  margin: 0;
+  text-align: center;
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+.mensaje p {
+  margin: 0 0 10px;
+}
+
+.aviso {
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.aviso.error {
+  color: var(--color-peor);
+}
+
+.boton {
+  display: inline-block;
+  padding: 10px 26px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-primario);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.boton:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.boton:focus-visible {
+  outline: 2px solid var(--color-texto);
+  outline-offset: 2px;
+}
+
+.volver {
+  margin-top: 16px;
+  color: var(--color-primario);
+}
+
+.salir {
+  margin-top: 12px;
+  color: var(--color-texto-suave);
+  text-decoration: none;
+}
