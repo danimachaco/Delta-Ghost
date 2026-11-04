@@ -1,22 +1,34 @@
 <div class="esfera" [class.mejor]="vasMejor()" [class.peor]="!vasMejor()">
+  <!-- Pista circular con los dos puntos: tú y tu sombra -->
+  <svg class="pista" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="44" class="recorrido" />
+    <circle cx="50" cy="6" r="4" class="punto-sombra" />
+    <circle cx="81" cy="19" r="4" class="punto-tu" />
+  </svg>
+
+  <!-- Destello de fin de sector (3 s): verde si mejoras a la sombra, rojo si no -->
+  @if (aviso(); as resultado) {
+    <div
+      class="destello"
+      [class.destello-mejor]="resultado === 'mejor'"
+      [class.destello-peor]="resultado === 'peor'"
+      aria-hidden="true"
+    ></div>
+  }
+
   <div class="datos">
+    <span class="etiqueta">Sector 2</span>
     <span class="tiempo">{{ tiempo() }}</span>
     <span class="diferencia">{{ textoDiferencia() }}</span>
-
-    <!-- Barra de progreso: cada punto está en su posición dentro de la ruta -->
-    <div class="barra" role="img" [attr.aria-label]="descripcionBarra()">
-      <div class="pista">
-        <span class="punto punto-sombra" [style.left.%]="posicionSombra()"></span>
-        <span class="punto punto-tu" [style.left.%]="posicionTu()"></span>
-      </div>
-    </div>
   </div>
 </div>
 
-<!-- La leyenda usa la misma forma que los puntos, así no depende solo del color -->
 <p class="leyenda">
-  <span class="tu"><i class="marca marca-tu" aria-hidden="true"></i> Tú</span>
-  <span class="sombra"><i class="marca marca-sombra" aria-hidden="true"></i> Sombra</span>
+  <span class="tu">● Tú</span>
+  <span class="sombra">● Sombra</span>
 </p>
+
+<!-- TEMPORAL: botones de prueba de los avisos (ver prueba-avisos.ts para quitarlos) -->
+<app-prueba-avisos />
 
 <a class="salir" routerLink="/app">← Salir</a>
