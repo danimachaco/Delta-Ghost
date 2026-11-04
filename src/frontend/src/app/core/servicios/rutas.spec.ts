@@ -29,6 +29,11 @@ describe('Rutas', () => {
     servidor.expectOne({ method: 'GET', url: `${base}/rutas/abc` }).flush({});
   });
 
+  it('sombra() pide GET /api/rutas/{id}/sombra', () => {
+    rutas.sombra('abc').subscribe();
+    servidor.expectOne({ method: 'GET', url: `${base}/rutas/abc/sombra` }).flush({});
+  });
+
   it('crear() envía POST /api/rutas con el nombre y los puntos', () => {
     const nueva = {
       nombre: 'Parque',

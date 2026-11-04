@@ -22,6 +22,11 @@ export class Rutas {
     return this.api.get<Ruta>(`rutas/${encodeURIComponent(id)}`);
   }
 
+  /** Sombra de una ruta (mejor marca con el tiempo de cada sector) → GET /api/rutas/{id}/sombra */
+  sombra(id: string): Observable<Sombra> {
+    return this.api.get<Sombra>(`rutas/${encodeURIComponent(id)}/sombra`);
+  }
+
   /** Guarda una ruta nueva con sus puntos → POST /api/rutas (necesita sesión iniciada) */
   crear(ruta: NuevaRuta): Observable<Ruta> {
     return this.api.post<Ruta>('rutas', ruta);

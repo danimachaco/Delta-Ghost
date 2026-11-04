@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from '../../core/guardias/auth-guard';
 import { ElegirRuta } from './elegir-ruta/elegir-ruta';
 import { RelojInicio } from './reloj-inicio/reloj-inicio';
+import { SimuladorPanel } from './simulador/simulador-panel';
 
 /** Rutas de la zona /reloj. Las nuevas pantallas del reloj se añaden aquí. */
 export const RELOJ_ROUTES: Routes = [
@@ -13,4 +14,5 @@ export const RELOJ_ROUTES: Routes = [
     canActivate: [authGuard],
     title: 'Ruta Fantasma · Elige ruta',
   },
+  { path: 'simulador', component: SimuladorPanel, title: 'Ruta Fantasma · Simulador' },
 ];
