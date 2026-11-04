@@ -6,29 +6,44 @@ La aplicación tiene tres piezas y cada una se publica en un servicio gratuito d
 |---|---|---|
 | **Web** (Angular, `src/frontend`) | Vercel | `https://<proyecto>.vercel.app` |
 | **API** (Spring Boot, `src/backend/backend-springboot`) | Render | `https://ruta-fantasma-api.onrender.com` |
-| **Base de datos** (MySQL) | Aiven | la da Aiven al crearla |
+| **Base de datos** (compatible con MySQL) | TiDB Cloud Starter | `gateway01.eu-central-1.prod.aws.tidbcloud.com:4000` |
 
 ```
-Navegador ──▶ Vercel (web) ──llama a──▶ Render (API) ──▶ Aiven (MySQL)
+Navegador ──▶ Vercel (web) ──llama a──▶ Render (API) ──▶ TiDB Cloud (MySQL)
 ```
 
 Hasta que la API y la base de datos no están publicadas, la web de Vercel **no puede registrar ni iniciar sesión**:
 intentaría llamar a `localhost:8080` del ordenador de quien la abre.
 
-## 1. Base de datos MySQL en Aiven (gratis, sin tarjeta)
+## 1. Base de datos en TiDB Cloud (gratis, sin tarjeta) ✅ ya creada
 
-1. Entra en <https://console.aiven.io/signup> y crea una cuenta (se puede con GitHub o Google).
-2. **Create service** → **MySQL** → plan **Free** → región de Europa → **Create service**.
-3. Espera a que el estado sea **Running** (unos minutos).
-4. En la pestaña **Overview** → **Connection information** copia: **Host**, **Port**, **User** (`avnadmin`) y **Password**.
+TiDB Cloud es compatible con MySQL: el backend se conecta con el mismo driver y las mismas tablas.
+**Ya está creada** la instancia `ruta-fantasma` (plan **Starter**, AWS Fráncfort, límite de gasto 0 $):
 
-Con esos datos, la URL para Render es (cambia `HOST` y `PUERTO`):
+| Dato | Valor |
+|---|---|
+| Host | `gateway01.eu-central-1.prod.aws.tidbcloud.com` |
+| Puerto | `4000` |
+| Usuario | `24NEj247Vt93Mwa.root` |
+| Contraseña | la genera quien administra la cuenta: TiDB Cloud → `ruta-fantasma` → **Connect** → **Generate Password** (se muestra una sola vez: cópiala directamente en Render) |
+
+URL para Render (`MYSQL_URL`). TiDB exige conexión cifrada, por eso lleva `sslMode=VERIFY_IDENTITY`:
 
 ```
-jdbc:mysql://HOST:PUERTO/ruta_fantasma?createDatabaseIfNotExist=true&sslMode=REQUIRED&serverTimezone=Europe/Madrid
+jdbc:mysql://gateway01.eu-central-1.prod.aws.tidbcloud.com:4000/ruta_fantasma?createDatabaseIfNotExist=true&sslMode=VERIFY_IDENTITY&enabledTLSProtocols=TLSv1.2,TLSv1.3&serverTimezone=Europe/Madrid
 ```
+
+En **Networking** la regla `Allow_all_public_connections` deja conectar desde cualquier IP (Render cambia de IP);
+la base de datos queda protegida por el usuario y la contraseña.
 
 > La contraseña **nunca** se sube al repositorio: solo se pega en Render.
+
+<details><summary>Alternativa: MySQL en Aiven</summary>
+
+Aiven también tiene MySQL gratis (<https://console.aiven.io/signup>). Su URL sería
+`jdbc:mysql://HOST:PUERTO/ruta_fantasma?createDatabaseIfNotExist=true&sslMode=REQUIRED&serverTimezone=Europe/Madrid`
+con el usuario `avnadmin`.
+</details>
 
 ## 2. API en Render (gratis, sin tarjeta)
 
@@ -38,8 +53,8 @@ jdbc:mysql://HOST:PUERTO/ruta_fantasma?createDatabaseIfNotExist=true&sslMode=REQ
    prepara el servicio `ruta-fantasma-api` con Docker.
 3. Te pedirá tres valores (los del paso 1):
    - `MYSQL_URL` → la URL de arriba
-   - `MYSQL_USER` → `avnadmin`
-   - `MYSQL_PASSWORD` → la contraseña de Aiven
+   - `MYSQL_USER` → `24NEj247Vt93Mwa.root`
+   - `MYSQL_PASSWORD` → la contraseña generada en TiDB Cloud
 4. **Apply**. La primera vez tarda unos 5–10 minutos (descarga Maven y compila).
 5. Comprueba que funciona abriendo <https://ruta-fantasma-api.onrender.com/api/salud> → debe salir `{"estado":"ok"}`.
 

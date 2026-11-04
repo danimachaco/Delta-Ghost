@@ -25,7 +25,7 @@ También se puede abrir esta carpeta con IntelliJ IDEA (Open → carpeta → se 
 ## Publicar en Internet
 
 El backend se publica en **Render** con Docker (`Dockerfile` de esta carpeta y `render.yaml` en la raíz del repo) y
-la base de datos en **Aiven** (MySQL gratis). Paso a paso en [docs/despliegue.md](../../../docs/despliegue.md).
+la base de datos en **TiDB Cloud** (compatible con MySQL, gratis). Paso a paso en [docs/despliegue.md](../../../docs/despliegue.md).
 `GET /api/salud` responde `{"estado":"ok"}` para comprobar que está vivo.
 
 ## Probar la app completa en local (registro e inicio de sesión)
