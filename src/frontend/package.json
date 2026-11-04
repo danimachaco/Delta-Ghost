@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:nube": "ng serve --proxy-config proxy.nube.json",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
