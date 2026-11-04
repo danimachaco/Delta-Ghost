@@ -1,0 +1,70 @@
+<main class="panel">
+  <h1>Simulador de carrera</h1>
+  <p class="suave">
+    Herramienta de pruebas y demos: reproduce una carrera grabada como si los puntos vinieran del GPS.
+  </p>
+
+  <section class="acciones">
+    <label class="boton">
+      Cargar archivo JSON
+      <input type="file" accept="application/json,.json" hidden (change)="alElegirArchivo($event)" />
+    </label>
+    <button type="button" class="boton secundario" (click)="cargarEjemplo()">
+      Usar carrera de ejemplo
+    </button>
+  </section>
+
+  @if (errores().length > 0) {
+    <ul class="errores" role="alert">
+      @for (error of errores(); track error) {
+        <li>{{ error }}</li>
+      }
+    </ul>
+  }
+
+  @if (simulador.carrera(); as carrera) {
+    <section class="carrera">
+      <h2>{{ carrera.nombre }}</h2>
+      <p class="suave">{{ carrera.puntos.length }} puntos · {{ etiquetaEstado() }}</p>
+
+      <progress [value]="simulador.progreso()" max="1"></progress>
+
+      <div class="acciones">
+        @if (simulador.estado() === 'reproduciendo') {
+          <button type="button" class="boton" (click)="simulador.pausar()">Pausa</button>
+        } @else {
+          <button type="button" class="boton" (click)="simulador.reproducir()">
+            {{ simulador.estado() === 'pausada' ? 'Reanudar' : 'Reproducir' }}
+          </button>
+        }
+        <button type="button" class="boton secundario" (click)="simulador.detener()">Detener</button>
+      </div>
+
+      <div class="velocidades" role="group" aria-label="Velocidad de reproducción">
+        @for (v of velocidades; track v) {
+          <button
+            type="button"
+            class="boton secundario"
+            [attr.aria-pressed]="simulador.factor() === v"
+            (click)="simulador.cambiarVelocidad(v)"
+          >
+            x{{ v }}
+          </button>
+        }
+      </div>
+
+      @if (simulador.posicion(); as p) {
+        <dl class="posicion">
+          <dt>Tiempo</dt>
+          <dd>{{ p.tiempoSegundos }} s</dd>
+          <dt>Latitud</dt>
+          <dd>{{ p.latitud | number: '1.5-5' }}</dd>
+          <dt>Longitud</dt>
+          <dd>{{ p.longitud | number: '1.5-5' }}</dd>
+        </dl>
+      }
+    </section>
+  }
+
+  <a class="volver" routerLink="/reloj">← Volver al reloj</a>
+</main>
