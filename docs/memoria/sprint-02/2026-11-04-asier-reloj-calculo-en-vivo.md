@@ -33,6 +33,10 @@ La carrera termina sola al llegar a la meta, o antes con el botón **Terminar**.
   - 6 de las funciones de la sombra (interpolación, paradas, límites y que las dos funciones son inversas);
   - 8 del cálculo en vivo (ir por delante, ir por detrás, quedarse parado, llegar a la meta y lecturas repetidas);
   - 7 del reloj. Para estas se usa una carrera falsa con *signals*, así cada prueba pone los datos que necesita.
+- **Prueba en el navegador.** Se usó el backend en local con una ruta de 300 m que la sombra recorre en 2:00, y un GPS simulado que envía una lectura por segundo:
+  - corriendo a 5 m/s durante 6 s, la diferencia fue −6 s y la esfera se puso verde;
+  - al quedarse parado, la sombra adelantó al corredor y la esfera pasó a rojo (+14 s);
+  - al llegar a la meta en 1:10, la carrera terminó sola con −49,7 s frente a la sombra.
 
 ### Por qué
 
