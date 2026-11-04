@@ -34,6 +34,13 @@
   </p>
 }
 
+@if (pantallaPuedeApagarse()) {
+  <!-- PS-46: si el navegador no deja bloquear la pantalla, se avisa para que el corredor lo sepa -->
+  <p class="aviso-pantalla" role="status">
+    Este navegador no puede mantener la pantalla encendida. Si se apaga, el tiempo sigue contando.
+  </p>
+}
+
 @if (enCurso()) {
   <!-- Mientras se corre no hay enlace de salir, para no abandonar la carrera sin querer -->
   <button type="button" class="terminar" (click)="terminar()">Terminar</button>

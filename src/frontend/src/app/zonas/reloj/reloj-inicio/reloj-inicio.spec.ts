@@ -2,6 +2,7 @@ import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { Carrera, EstadoCarrera } from '../../../core/servicios/carrera';
+import { EstadoPantalla, PantallaEncendida } from '../../../core/servicios/pantalla-encendida';
 import { RelojInicio } from './reloj-inicio';
 
 describe('RelojInicio', () => {
@@ -19,6 +20,9 @@ describe('RelojInicio', () => {
     diferencia: signal<number | null>(-2.4),
     terminar: vi.fn(),
   };
+
+  /** Bloqueo de pantalla falso (PS-46) */
+  const pantalla = { estado: signal<EstadoPantalla>('activo') };
 
   /** Cambia un input del componente y espera a que se pinte */
   async function poner(nombre: 'progresoTu' | 'progresoSombra', valor: number) {
@@ -39,10 +43,15 @@ describe('RelojInicio', () => {
     carrera.progresoSombra.set(0.4);
     carrera.diferencia.set(-2.4);
     carrera.terminar.mockClear();
+    pantalla.estado.set('activo');
 
     await TestBed.configureTestingModule({
       imports: [RelojInicio],
-      providers: [provideRouter([]), { provide: Carrera, useValue: carrera }],
+      providers: [
+        provideRouter([]),
+        { provide: Carrera, useValue: carrera },
+        { provide: PantallaEncendida, useValue: pantalla },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(RelojInicio);
@@ -151,5 +160,22 @@ describe('RelojInicio', () => {
     expect(el.querySelector('.barra')).toBeNull();
     expect(el.querySelector('.esfera')?.classList).not.toContain('mejor');
     expect(el.querySelector('.esfera')?.classList).not.toContain('peor');
+  });
+
+  it('si la pantalla se mantiene encendida no muestra ningún aviso', () => {
+    expect(el.querySelector('.aviso-pantalla')).toBeNull();
+  });
+
+  it('avisa si el navegador no puede mantener la pantalla encendida', async () => {
+    pantalla.estado.set('no-disponible');
+    await actualizar();
+    expect(el.querySelector('.aviso-pantalla')?.textContent).toContain(
+      'no puede mantener la pantalla encendida',
+    );
+
+    // Al terminar la carrera ya no importa que la pantalla se apague
+    carrera.estado.set('terminada');
+    await actualizar();
+    expect(el.querySelector('.aviso-pantalla')).toBeNull();
   });
 });

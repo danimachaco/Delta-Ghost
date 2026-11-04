@@ -7,6 +7,7 @@ import { Sombra } from '../modelos/sombra';
 import { Carrera } from './carrera';
 import { Cronometro } from './cronometro';
 import { Gps } from './gps';
+import { PantallaEncendida } from './pantalla-encendida';
 
 /** Grados de latitud que equivalen a `metros` hacia el norte (1° ≈ 111 195 m) */
 const norte = (metros: number) => 40 + metros / 111_195;
@@ -21,6 +22,10 @@ describe('Carrera', () => {
   let carrera: Carrera;
   let cronometro: Cronometro;
   let lecturas: Subject<PosicionGps>;
+  const pantalla = {
+    activar: vi.fn(async () => undefined),
+    desactivar: vi.fn(async () => undefined),
+  };
   let gps: {
     iniciar: ReturnType<typeof vi.fn>;
     detener: ReturnType<typeof vi.fn>;
@@ -58,7 +63,14 @@ describe('Carrera', () => {
       posicionValida: signal<PosicionGps | null>(posicion(0)),
       lecturasValidas: lecturas,
     };
-    TestBed.configureTestingModule({ providers: [{ provide: Gps, useValue: gps }] });
+    pantalla.activar.mockClear();
+    pantalla.desactivar.mockClear();
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: Gps, useValue: gps },
+        { provide: PantallaEncendida, useValue: pantalla },
+      ],
+    });
     carrera = TestBed.inject(Carrera);
     cronometro = TestBed.inject(Cronometro);
   });
@@ -196,6 +208,36 @@ describe('Carrera', () => {
       lecturas.next(misma);
       lecturas.next(misma);
       expect(carrera.puntos().length).toBe(2);
+    });
+  });
+
+  describe('pantalla encendida (PS-46)', () => {
+    it('al empezar la carrera pide mantener la pantalla encendida', () => {
+      carrera.iniciar(ruta, sombra);
+      expect(pantalla.activar).toHaveBeenCalled();
+    });
+
+    it('al terminar deja que la pantalla se apague', () => {
+      carrera.iniciar(ruta, sombra);
+      carrera.terminar();
+      expect(pantalla.desactivar).toHaveBeenCalled();
+    });
+
+    it('al llegar a la meta también la deja apagarse', () => {
+      carrera.iniciar(ruta, sombra);
+      correr(60, 210);
+      expect(pantalla.desactivar).toHaveBeenCalled();
+    });
+
+    it('al descartar la carrera también la deja apagarse', () => {
+      carrera.iniciar(ruta, sombra);
+      carrera.descartar();
+      expect(pantalla.desactivar).toHaveBeenCalled();
+    });
+
+    it('si no se puede empezar la carrera no la pide', () => {
+      carrera.iniciar(ruta, { ...sombra, puntos: [] });
+      expect(pantalla.activar).not.toHaveBeenCalled();
     });
   });
 });
