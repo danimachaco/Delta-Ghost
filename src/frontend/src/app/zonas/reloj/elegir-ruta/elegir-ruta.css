@@ -20,8 +20,10 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  /* El relleno mantiene el contenido dentro del círculo */
-  padding: 13% 12%;
+  /* El relleno mantiene el contenido dentro del círculo (en px: un % se calcularía
+     sobre el ancho de la página y no sobre el de la esfera) */
+  padding: 40px 34px;
+  overflow: hidden;
 }
 
 .titulo {
@@ -45,7 +47,7 @@
   flex-direction: column;
   gap: 6px;
   width: 100%;
-  max-height: 46%;
+  max-height: 132px;
   margin: 0;
   padding: 2px;
   overflow-y: auto;

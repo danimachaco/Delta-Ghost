@@ -36,4 +36,6 @@ Se ha creado la pantalla **Elige ruta** del reloj (`/reloj/elegir`), siguiendo e
 
 ### Problemas encontrados
 
-Ninguno importante. Al principio la lista enseñaba siempre la duración de la grabación original, que no coincide con la sombra cuando el corredor ya ha mejorado su marca. Ahora, al descargar la sombra, la tarjeta pasa a mostrar su tiempo.
+- Al principio la lista enseñaba siempre la duración de la grabación original, que no coincide con la sombra cuando el corredor ya ha mejorado su marca. Ahora, al descargar la sombra, la tarjeta pasa a mostrar su tiempo.
+- En la prueba en el navegador, la esfera salía ovalada y las tarjetas eran tan estrechas que no se leía el nombre. El relleno de la esfera estaba en porcentaje, y en CSS un `padding` en % se calcula sobre el ancho del elemento padre (toda la página), no sobre el de la propia esfera. Con una ventana ancha el relleno era enorme. Se cambió por valores fijos en píxeles y una altura máxima fija para la lista.
+- **Prueba en el navegador:** con el backend en local (base de datos H2) y el GPS simulado, se eligió "Circuito del parque", se esperó a la señal y se pulsó Empezar. El reloj se abrió con la carrera en marcha y sin errores en la consola.
