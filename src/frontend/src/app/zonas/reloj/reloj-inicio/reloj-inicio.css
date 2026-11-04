@@ -185,3 +185,12 @@
   margin-top: 16px;
   color: var(--color-primario);
 }
+
+/* Aviso de la PS-46 cuando no se puede mantener la pantalla encendida */
+.aviso-pantalla {
+  max-width: 320px;
+  margin: 12px 0 0;
+  text-align: center;
+  color: var(--color-texto-suave);
+  font-size: 0.8rem;
+}

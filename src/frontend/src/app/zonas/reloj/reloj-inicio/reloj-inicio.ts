@@ -2,6 +2,7 @@ import { Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { aPorcentaje } from '../../../compartido/utilidades/progreso';
 import { Carrera } from '../../../core/servicios/carrera';
+import { PantallaEncendida } from '../../../core/servicios/pantalla-encendida';
 
 /**
  * Pantalla del reloj durante la carrera (mockup "2 · Reloj").
@@ -21,6 +22,7 @@ import { Carrera } from '../../../core/servicios/carrera';
 })
 export class RelojInicio {
   protected readonly carrera = inject(Carrera);
+  private readonly pantalla = inject(PantallaEncendida);
 
   /** Progreso del corredor, de 0 a 1. Si es null se usa el de la carrera en curso. */
   readonly progresoTu = input<number | null>(null);
@@ -30,6 +32,11 @@ export class RelojInicio {
 
   /** true mientras se corre; false si no hay carrera o ya ha terminado */
   protected readonly enCurso = computed(() => this.carrera.estado() === 'en-curso');
+
+  /** true si se corre y el navegador no puede mantener la pantalla encendida (PS-46) */
+  protected readonly pantallaPuedeApagarse = computed(
+    () => this.enCurso() && this.pantalla.estado() === 'no-disponible',
+  );
 
   /** Posición del punto del corredor en la barra, en % (siempre entre 0 y 100) */
   protected readonly posicionTu = computed(() =>
