@@ -22,6 +22,12 @@ mvn test
 
 También se puede abrir esta carpeta con IntelliJ IDEA (Open → carpeta → se detecta como proyecto Maven).
 
+## Publicar en Internet
+
+El backend se publica en **Render** con Docker (`Dockerfile` de esta carpeta y `render.yaml` en la raíz del repo) y
+la base de datos en **TiDB Cloud** (compatible con MySQL, gratis). Paso a paso en [docs/despliegue.md](../../../docs/despliegue.md).
+`GET /api/salud` responde `{"estado":"ok"}` para comprobar que está vivo.
+
 ## Probar la app completa en local (registro e inicio de sesión)
 
 1. Arranca **MySQL** y después este backend (`mvn spring-boot:run`). Espera a ver `Started RutaFantasmaApplication`.
@@ -38,7 +44,7 @@ También se puede abrir esta carpeta con IntelliJ IDEA (Open → carpeta → se 
 | El backend no arranca: `Access denied for user 'root'` | La contraseña de MySQL no coincide | Define `MYSQL_PASSWORD` antes de arrancar (ver Requisitos) |
 | El backend no arranca: `Unable to establish loopback connection` | Fallo de Java 25 en Windows cuando la carpeta temporal tiene una ruta corta (`C:\Users\USUARI~1\...`) | Usa **Java 17 o 21** en IntelliJ (File → Project Structure → SDK), o añade en *VM options*: `-Djdk.net.unixdomain.tmpdir=C:\tmp` (crea antes la carpeta) |
 | En el navegador sale un error de **CORS** | La web se abrió desde una dirección no permitida | Por defecto se permite `localhost` en cualquier puerto. Para otras direcciones, define `CORS_ORIGENES` (ver `.env.example`) |
-| La web publicada en Vercel no deja registrarse | El backend no está publicado en Internet: la web de Vercel intenta llamar a `localhost:8080` del ordenador de quien la abre | Para la demo, usad la app en local. Para que funcione en Vercel hay que publicar antes el backend y MySQL, y poner su dirección en `src/frontend/src/environments/environment.ts` y en `CORS_ORIGENES` |
+| La web publicada en Vercel no deja registrarse | La API y MySQL no están publicados, o la API de Render está "dormida" | Sigue [docs/despliegue.md](../../../docs/despliegue.md). Si ya está publicada, abre `https://ruta-fantasma-api.onrender.com/api/salud` y espera a que responda (hasta 1 minuto) |
 
 ## Estructura
 
