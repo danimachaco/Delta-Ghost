@@ -35,6 +35,9 @@ la base de datos en **TiDB Cloud** (compatible con MySQL, gratis). Paso a paso e
 3. Abre **http://localhost:4200**. El frontend llama a `/api/...` en su propia dirección y `ng serve`
    la reenvía al backend (`src/frontend/proxy.conf.json`), así que no hay problemas de CORS.
 
+Si solo vas a tocar el frontend, no hace falta nada de esto: `npm run start:nube` (en `src/frontend`) usa la API
+publicada en Render en lugar de un backend local.
+
 ## Problemas frecuentes
 
 | Lo que pasa | Causa | Solución |
