@@ -1,0 +1,8 @@
+{
+  "/api": {
+    "target": "https://ruta-fantasma-api.onrender.com",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "warn"
+  }
+}
