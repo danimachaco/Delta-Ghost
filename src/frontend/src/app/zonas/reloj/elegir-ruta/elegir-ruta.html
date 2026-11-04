@@ -47,11 +47,20 @@
           }
         </ul>
 
-        <p class="aviso" [class.error]="avisoEsError()" [attr.role]="avisoEsError() ? 'alert' : 'status'">
+        <p
+          class="aviso"
+          [class.error]="avisoEsError()"
+          [attr.role]="avisoEsError() ? 'alert' : 'status'"
+        >
           {{ aviso() }}
         </p>
 
-        <button type="button" class="boton empezar" (click)="empezar()" [disabled]="!puedeEmpezar()">
+        <button
+          type="button"
+          class="boton empezar"
+          (click)="empezar()"
+          [disabled]="!puedeEmpezar()"
+        >
           Empezar
         </button>
       }
