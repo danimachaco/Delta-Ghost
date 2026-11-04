@@ -1,22 +1,45 @@
-<div class="esfera" [class.mejor]="vasMejor()" [class.peor]="!vasMejor()">
-  <div class="datos">
-    <span class="tiempo">{{ tiempo() }}</span>
-    <span class="diferencia">{{ textoDiferencia() }}</span>
+<div class="esfera" [class.mejor]="vasMejor()" [class.peor]="vasPeor()">
+  @if (carrera.estado() === 'sin-carrera') {
+    <!-- Sin carrera: se invita a elegir una ruta -->
+    <div class="datos">
+      <span class="tiempo">00:00</span>
+      <p class="sin-carrera">Elige una ruta para correr contra tu sombra</p>
+      <a class="boton" routerLink="/reloj/elegir">Elegir ruta</a>
+    </div>
+  } @else {
+    <div class="datos">
+      @if (carrera.estado() === 'terminada') {
+        <span class="etiqueta">Carrera terminada</span>
+      }
+      <span class="tiempo">{{ tiempo() }}</span>
+      <span class="km">{{ kilometros() }}</span>
+      <span class="diferencia">{{ textoDiferencia() }}</span>
 
-    <!-- Barra de progreso: cada punto está en su posición dentro de la ruta -->
-    <div class="barra" role="img" [attr.aria-label]="descripcionBarra()">
-      <div class="pista">
-        <span class="punto punto-sombra" [style.left.%]="posicionSombra()"></span>
-        <span class="punto punto-tu" [style.left.%]="posicionTu()"></span>
+      <!-- Barra de progreso: cada punto está en su posición dentro de la ruta -->
+      <div class="barra" role="img" [attr.aria-label]="descripcionBarra()">
+        <div class="pista">
+          <span class="punto punto-sombra" [style.left.%]="posicionSombra()"></span>
+          <span class="punto punto-tu" [style.left.%]="posicionTu()"></span>
+        </div>
       </div>
     </div>
-  </div>
+  }
 </div>
 
-<!-- La leyenda usa la misma forma que los puntos, así no depende solo del color -->
-<p class="leyenda">
-  <span class="tu"><i class="marca marca-tu" aria-hidden="true"></i> Tú</span>
-  <span class="sombra"><i class="marca marca-sombra" aria-hidden="true"></i> Sombra</span>
-</p>
+@if (carrera.estado() !== 'sin-carrera') {
+  <!-- La leyenda usa la misma forma que los puntos, así no depende solo del color -->
+  <p class="leyenda">
+    <span class="tu"><i class="marca marca-tu" aria-hidden="true"></i> Tú</span>
+    <span class="sombra"><i class="marca marca-sombra" aria-hidden="true"></i> Sombra</span>
+  </p>
+}
 
-<a class="salir" routerLink="/app">← Salir</a>
+@if (enCurso()) {
+  <!-- Mientras se corre no hay enlace de salir, para no abandonar la carrera sin querer -->
+  <button type="button" class="terminar" (click)="terminar()">Terminar</button>
+} @else {
+  @if (carrera.estado() === 'terminada') {
+    <a class="otra" routerLink="/reloj/elegir">Correr otra vez</a>
+  }
+  <a class="salir" routerLink="/app">← Salir</a>
+}

@@ -47,4 +47,9 @@ describe('Rutas', () => {
     expect(peticion.request.body).toEqual(nueva);
     peticion.flush({ id: '1', ...nueva, fecha: '2026-11-03T10:00:00' });
   });
+
+  it('sombra() pide GET /api/rutas/{id}/sombra', () => {
+    rutas.sombra('7').subscribe();
+    servidor.expectOne({ method: 'GET', url: `${base}/rutas/7/sombra` }).flush({});
+  });
 });
