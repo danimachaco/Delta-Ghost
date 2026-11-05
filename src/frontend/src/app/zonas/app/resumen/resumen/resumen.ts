@@ -10,7 +10,7 @@ import {
 import { formatearDiferencia, formatearTiempo } from '../../../../compartido/utilidades/formato-tiempo';
 import { DISTANCIA_SECTOR_METROS } from '../../../../core/modelos/carrera';
 import { CARRERA_EJEMPLO } from '../../../../core/servicios/carrera-ejemplo';
-import { CarreraService } from '../../../../core/servicios/carrera';
+import { CarreraService } from '../../../../core/servicios/carreras';
 
 /** Pantalla de resumen que aparece al terminar una carrera (HU-50). */
 @Component({
