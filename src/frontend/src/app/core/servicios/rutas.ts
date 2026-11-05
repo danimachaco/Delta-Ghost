@@ -6,7 +6,7 @@ import { Api } from './api';
 
 /**
  * Servicio de rutas: habla con /api/rutas del backend a través del servicio Api.
- * Lee rutas, guarda las nuevas y descarga su sombra; editar y borrar se añadirán cuando haya pantallas para ello.
+ * Lee rutas y guarda las nuevas; editar y borrar se añadirán cuando haya pantallas para ello.
  */
 @Service()
 export class Rutas {
@@ -30,10 +30,5 @@ export class Rutas {
   /** Guarda una ruta nueva con sus puntos → POST /api/rutas (necesita sesión iniciada) */
   crear(ruta: NuevaRuta): Observable<Ruta> {
     return this.api.post<Ruta>('rutas', ruta);
-  }
-
-  /** Sombra (mejor marca) de una ruta para correr contra ella → GET /api/rutas/{id}/sombra */
-  sombra(id: string): Observable<Sombra> {
-    return this.api.get<Sombra>(`rutas/${encodeURIComponent(id)}/sombra`);
   }
 }
