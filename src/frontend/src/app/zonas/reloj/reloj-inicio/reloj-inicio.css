@@ -140,6 +140,9 @@
   text-decoration: none;
 }
 
+.finalizar {
+  margin-top: 16px;
+  padding: 10px 28px;
 /* Kilómetros recorridos bajo el tiempo, como en el mockup */
 .km {
   color: var(--color-texto-suave);
@@ -167,6 +170,10 @@
   border-radius: 999px;
   background: var(--color-primario);
   color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+}
   font: inherit;
   font-weight: 600;
   text-decoration: none;

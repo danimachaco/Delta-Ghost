@@ -1,0 +1,135 @@
+/* Diseño de móvil, igual que la pantalla principal de la app */
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--color-superficie);
+}
+
+.barra {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.barra h1 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.volver {
+  text-decoration: none;
+  color: var(--color-texto-suave);
+  font-size: 1.3rem;
+}
+
+.contenido {
+  flex: 1;
+  padding: 16px;
+}
+
+.total {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 20px;
+  border: 3px solid var(--color-borde);
+  border-radius: var(--radio);
+}
+
+.total.mejor {
+  border-color: var(--color-mejor);
+}
+
+.total.peor {
+  border-color: var(--color-peor);
+}
+
+.etiqueta {
+  color: var(--color-texto-suave);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.tiempo {
+  font-size: 3rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.diferencia {
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.mejor .diferencia {
+  color: var(--color-mejor);
+}
+
+.peor .diferencia {
+  color: var(--color-peor);
+}
+
+.mensaje {
+  margin: 16px 0;
+  text-align: center;
+}
+
+.mensaje-mejor {
+  color: var(--color-mejor);
+  font-weight: 600;
+}
+
+.suave {
+  color: var(--color-texto-suave);
+}
+
+h2 {
+  font-size: 1.1rem;
+  margin: 24px 0 8px;
+}
+
+.sectores {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sectores li {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-borde);
+  font-variant-numeric: tabular-nums;
+}
+
+.dif-sector {
+  min-width: 90px;
+  text-align: right;
+  font-weight: 600;
+}
+
+.sectores .mejor .dif-sector {
+  color: var(--color-mejor);
+}
+
+.sectores .peor .dif-sector {
+  color: var(--color-peor);
+}
+
+/* Texto solo para lectores de pantalla */
+.solo-lector {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

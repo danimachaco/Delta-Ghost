@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
+import { CarreraService } from '../../../core/servicios/carrera';
 import { AvisoSector } from '../../../core/servicios/aviso-sector';
 import { Carrera, EstadoCarrera } from '../../../core/servicios/carrera';
 import { EstadoPantalla, PantallaEncendida } from '../../../core/servicios/pantalla-encendida';
@@ -140,6 +141,14 @@ describe('RelojInicio', () => {
     expect(el.querySelector('.destello-mejor')).not.toBeNull();
   });
 
+  it('al pulsar Finalizar guarda la carrera y abre el resumen', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const navegar = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+
+    (el.querySelector('.finalizar') as HTMLButtonElement).click();
+
+    expect(TestBed.inject(CarreraService).ultimaCarrera()).not.toBeNull();
+    expect(navegar).toHaveBeenCalledWith('/app/resumen');
   it('mientras se corre hay botón Terminar y no enlace de salir', () => {
     expect(el.querySelector('.salir')).toBeNull();
     el.querySelector<HTMLButtonElement>('.terminar')!.click();

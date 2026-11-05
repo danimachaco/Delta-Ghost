@@ -6,6 +6,7 @@ import { ListaRutas } from './lista-rutas/lista-rutas';
 import { Login } from './login/login';
 import { Registro } from './registro/registro';
 import { GpsPantalla } from './gps/gps-pantalla';
+import { Resumen } from './resumen/resumen/resumen';
 
 /** Rutas de la zona /app. Las nuevas pantallas de la app móvil se añaden aquí. */
 export const APP_ROUTES: Routes = [
@@ -25,4 +26,5 @@ export const APP_ROUTES: Routes = [
     canActivate: [authGuard],
     title: 'Ruta Fantasma · Grabar ruta',
   },
+  { path: 'resumen', component: Resumen, title: 'Ruta Fantasma · Resumen' },
 ];

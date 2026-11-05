@@ -1,7 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { PruebaAvisos } from '../../../compartido/componentes/prueba-avisos/prueba-avisos';
+import { formatearDiferencia, formatearTiempo } from '../../../compartido/utilidades/formato-tiempo';
 import { AvisoSector } from '../../../core/servicios/aviso-sector';
+import { CarreraService } from '../../../core/servicios/carrera';
+import { CARRERA_EJEMPLO } from '../../../core/servicios/carrera-ejemplo';
 
 /**
  * Pantalla del reloj. De momento muestra datos de ejemplo:
@@ -37,6 +40,11 @@ export class RelojInicio {
   /** Progreso del corredor, de 0 a 1. Si es null se usa el de la carrera en curso. */
   readonly progresoTu = input<number | null>(null);
 
+  private readonly carreras = inject(CarreraService);
+  private readonly router = inject(Router);
+
+  /** Tiempo de carrera en segundos (dato de ejemplo) */
+  protected readonly segundos = signal(754);
   /** Progreso de la sombra, de 0 a 1. Si es null se usa el de la carrera en curso. */
   readonly progresoSombra = input<number | null>(null);
 
@@ -49,6 +57,7 @@ export class RelojInicio {
   );
 
   /** Tiempo formateado como mm:ss */
+  protected readonly tiempo = computed(() => formatearTiempo(this.segundos()));
   /** Posición del punto del corredor en la barra, en % (siempre entre 0 y 100) */
   protected readonly posicionTu = computed(() =>
     aPorcentaje(this.progresoTu() ?? this.carrera.progresoTu()),
@@ -96,6 +105,21 @@ export class RelojInicio {
   });
 
   /** Diferencia formateada, por ejemplo "-2,4 s" o "+1,0 s" */
+  protected readonly textoDiferencia = computed(() => formatearDiferencia(this.diferencia()));
+
+  /**
+   * Termina la carrera y abre el resumen.
+   * TODO: cuando exista el GPS y la lógica de sectores (sub-tarea 48), aquí se
+   * enviará la carrera real en lugar de la de ejemplo.
+   */
+  protected finalizar(): void {
+    this.carreras.finalizar(CARRERA_EJEMPLO);
+    void this.router.navigateByUrl('/app/resumen');
+  }
+}
+
+
+
   protected readonly textoDiferencia = computed(() => {
     const d = this.diferencia();
     if (d === null) return '';

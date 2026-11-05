@@ -31,6 +31,8 @@
 <!-- TEMPORAL: botones de prueba de los avisos (ver prueba-avisos.ts para quitarlos) -->
 <app-prueba-avisos />
 
+<button type="button" class="finalizar" (click)="finalizar()">Finalizar</button>
+
 <a class="salir" routerLink="/app">← Salir</a>
 <div class="esfera" [class.mejor]="vasMejor()" [class.peor]="vasPeor()">
   @if (carrera.estado() === 'sin-carrera') {
