@@ -143,6 +143,29 @@
 .finalizar {
   margin-top: 16px;
   padding: 10px 28px;
+/* Kilómetros recorridos bajo el tiempo, como en el mockup */
+.km {
+  color: var(--color-texto-suave);
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.etiqueta {
+  color: var(--color-texto-suave);
+  font-size: 0.85rem;
+}
+
+.sin-carrera {
+  max-width: 70%;
+  margin: 4px 0 10px;
+  text-align: center;
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+.boton,
+.terminar {
+  padding: 10px 26px;
   border: 0;
   border-radius: 999px;
   background: var(--color-primario);
@@ -150,4 +173,34 @@
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
+}
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.terminar {
+  margin-top: 16px;
+  background: var(--color-peor);
+}
+
+.boton:focus-visible,
+.terminar:focus-visible {
+  outline: 2px solid var(--color-texto);
+  outline-offset: 2px;
+}
+
+.otra {
+  margin-top: 16px;
+  color: var(--color-primario);
+}
+
+/* Aviso de la PS-46 cuando no se puede mantener la pantalla encendida */
+.aviso-pantalla {
+  max-width: 320px;
+  margin: 12px 0 0;
+  text-align: center;
+  color: var(--color-texto-suave);
+  font-size: 0.8rem;
 }
