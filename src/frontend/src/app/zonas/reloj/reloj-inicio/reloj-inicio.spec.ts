@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { AvisoSector } from '../../../core/servicios/aviso-sector';
 import { Carrera, EstadoCarrera } from '../../../core/servicios/carrera';
 import { EstadoPantalla, PantallaEncendida } from '../../../core/servicios/pantalla-encendida';
 import { RelojInicio } from './reloj-inicio';
@@ -56,7 +57,6 @@ describe('RelojInicio', () => {
 
     fixture = TestBed.createComponent(RelojInicio);
     component = fixture.componentInstance;
-    el = fixture.nativeElement as HTMLElement;
     await fixture.whenStable();
   });
 
@@ -64,6 +64,8 @@ describe('RelojInicio', () => {
     expect(component).toBeTruthy();
   });
 
+  it('muestra el tiempo como mm:ss y la diferencia con la sombra', () => {
+    const el = fixture.nativeElement as HTMLElement;
   it('muestra el tiempo de la carrera como mm:ss, los km y la diferencia con la sombra', () => {
     expect(el.querySelector('.tiempo')?.textContent).toBe('12:34');
     expect(el.querySelector('.km')?.textContent).toBe('km 2,3');
@@ -71,6 +73,14 @@ describe('RelojInicio', () => {
     expect(el.querySelector('.esfera')?.classList).toContain('mejor');
   });
 
+  it('no muestra destello si no hay aviso', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('.destello')).toBeNull();
+  });
+
+  it('muestra el destello verde y el rojo según el aviso', async () => {
+    const el = fixture.nativeElement as HTMLElement;
+    const avisos = TestBed.inject(AvisoSector);
   it('el tiempo se actualiza en vivo con la carrera', async () => {
     carrera.segundos.set(755);
     await actualizar();
@@ -112,27 +122,22 @@ describe('RelojInicio', () => {
     expect((el.querySelector('.punto-sombra') as HTMLElement).style.left).toBe('25%');
   });
 
-  it('el punto de la sombra puede ir por delante del tuyo', async () => {
-    await poner('progresoTu', 0.3);
-    await poner('progresoSombra', 0.8);
-    const tu = parseFloat((el.querySelector('.punto-tu') as HTMLElement).style.left);
-    const sombra = parseFloat((el.querySelector('.punto-sombra') as HTMLElement).style.left);
-    expect(sombra).toBeGreaterThan(tu);
+    avisos.avisar('mejor');
+    await fixture.whenStable();
+    expect(el.querySelector('.destello-mejor')).not.toBeNull();
+    expect(el.querySelector('.destello-peor')).toBeNull();
+
+    avisos.avisar('peor');
+    await fixture.whenStable();
+    expect(el.querySelector('.destello-peor')).not.toBeNull();
+    expect(el.querySelector('.destello-mejor')).toBeNull();
   });
 
-  it('no deja que un punto se salga de la barra', async () => {
-    await poner('progresoTu', 1.7);
-    await poner('progresoSombra', -0.5);
-    expect((el.querySelector('.punto-tu') as HTMLElement).style.left).toBe('100%');
-    expect((el.querySelector('.punto-sombra') as HTMLElement).style.left).toBe('0%');
-  });
-
-  it('describe la barra para lectores de pantalla', async () => {
-    await poner('progresoTu', 0.5);
-    await poner('progresoSombra', 0.4);
-    const etiqueta = el.querySelector('.barra')?.getAttribute('aria-label') ?? '';
-    expect(etiqueta).toContain('50 %');
-    expect(etiqueta).toContain('40 %');
+  it('los botones de prueba lanzan los avisos', async () => {
+    const el = fixture.nativeElement as HTMLElement;
+    (el.querySelector('.prueba .verde') as HTMLButtonElement).click();
+    await fixture.whenStable();
+    expect(el.querySelector('.destello-mejor')).not.toBeNull();
   });
 
   it('mientras se corre hay botón Terminar y no enlace de salir', () => {

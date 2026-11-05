@@ -1,3 +1,37 @@
+<div class="esfera" [class.mejor]="vasMejor()" [class.peor]="!vasMejor()">
+  <!-- Pista circular con los dos puntos: tú y tu sombra -->
+  <svg class="pista" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="44" class="recorrido" />
+    <circle cx="50" cy="6" r="4" class="punto-sombra" />
+    <circle cx="81" cy="19" r="4" class="punto-tu" />
+  </svg>
+
+  <!-- Destello de fin de sector (3 s): verde si mejoras a la sombra, rojo si no -->
+  @if (aviso(); as resultado) {
+    <div
+      class="destello"
+      [class.destello-mejor]="resultado === 'mejor'"
+      [class.destello-peor]="resultado === 'peor'"
+      aria-hidden="true"
+    ></div>
+  }
+
+  <div class="datos">
+    <span class="etiqueta">Sector 2</span>
+    <span class="tiempo">{{ tiempo() }}</span>
+    <span class="diferencia">{{ textoDiferencia() }}</span>
+  </div>
+</div>
+
+<p class="leyenda">
+  <span class="tu">● Tú</span>
+  <span class="sombra">● Sombra</span>
+</p>
+
+<!-- TEMPORAL: botones de prueba de los avisos (ver prueba-avisos.ts para quitarlos) -->
+<app-prueba-avisos />
+
+<a class="salir" routerLink="/app">← Salir</a>
 <div class="esfera" [class.mejor]="vasMejor()" [class.peor]="vasPeor()">
   @if (carrera.estado() === 'sin-carrera') {
     <!-- Sin carrera: se invita a elegir una ruta -->

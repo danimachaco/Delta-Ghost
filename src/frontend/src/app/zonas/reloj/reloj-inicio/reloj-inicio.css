@@ -29,12 +29,75 @@
   border-color: var(--color-peor);
 }
 
+.pista {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.recorrido {
+  fill: none;
+  stroke: var(--color-borde);
+  stroke-width: 2;
+}
+
+.punto-tu {
+  fill: #fff;
+}
+
+.punto-sombra {
+  fill: var(--color-primario);
+  opacity: 0.7;
+}
+
+/* Destello de fin de sector: cubre la esfera 3 s y se desvanece */
+.destello {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  animation: destello 3s ease-out forwards;
+}
+
+.destello-mejor {
+  background: var(--color-mejor);
+}
+
+.destello-peor {
+  background: var(--color-peor);
+}
+
+@keyframes destello {
+  0% { opacity: 0; }
+  10% { opacity: 0.55; }
+  75% { opacity: 0.55; }
+  100% { opacity: 0; }
+}
+
+/* Quien prefiere menos movimiento ve el color fijo, sin animación */
+@media (prefers-reduced-motion: reduce) {
+  .destello {
+    animation: none;
+    opacity: 0.4;
+  }
+}
+
 .datos {
+  position: relative;
+  z-index: 1; /* el texto queda por encima del destello */
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  width: 100%;
+}
+
+.etiqueta {
+  color: var(--color-texto-suave);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
 
 .tiempo {
@@ -56,50 +119,6 @@
   color: var(--color-peor);
 }
 
-/* Barra de progreso con los dos puntos. El padding lateral deja sitio para que
-   un punto en 0 % o en 100 % no se salga de la barra. */
-.barra {
-  width: 68%;
-  margin-top: 14px;
-  padding: 0 9px;
-}
-
-.pista {
-  position: relative;
-  height: 20px;
-}
-
-.pista::before {
-  content: '';
-  position: absolute;
-  inset: 50% 0 auto;
-  height: 4px;
-  transform: translateY(-50%);
-  border-radius: 2px;
-  background: var(--color-borde);
-}
-
-/* El punto se centra en su posición: left (en %) sobre el ancho de la pista */
-.punto {
-  position: absolute;
-  top: 50%;
-  width: 18px;
-  height: 18px;
-  margin: -9px 0 0 -9px;
-  border-radius: 50%;
-  transition: left 0.4s linear;
-}
-
-/* Tú: círculo relleno. Sombra: círculo vacío y discontinuo (se distinguen por la forma) */
-.punto-tu {
-  background: var(--color-primario);
-  border: 2px solid #fff;
-}
-
-.punto-sombra {
-  border: 2px dashed var(--color-texto);
-}
-
 .leyenda {
   display: flex;
   gap: 20px;
@@ -107,28 +126,12 @@
   color: var(--color-texto-suave);
 }
 
-.marca {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  margin-right: 4px;
-  border-radius: 50%;
-  vertical-align: -1px;
+.tu {
+  color: #fff;
 }
 
-.marca-tu {
-  background: var(--color-primario);
-  border: 2px solid #fff;
-}
-
-.marca-sombra {
-  border: 2px dashed var(--color-texto);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .punto {
-    transition: none;
-  }
+.sombra {
+  color: var(--color-primario);
 }
 
 .salir {

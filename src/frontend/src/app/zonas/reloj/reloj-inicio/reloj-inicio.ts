@@ -1,3 +1,11 @@
+import { Component, computed, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { PruebaAvisos } from '../../../compartido/componentes/prueba-avisos/prueba-avisos';
+import { AvisoSector } from '../../../core/servicios/aviso-sector';
+
+/**
+ * Pantalla del reloj. De momento muestra datos de ejemplo:
+ * más adelante se conectará con el GPS y con la ruta guardada (la "sombra").
 import { Component, computed, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { aPorcentaje } from '../../../compartido/utilidades/progreso';
@@ -15,12 +23,14 @@ import { PantallaEncendida } from '../../../core/servicios/pantalla-encendida';
  * (HU-40) puede mover los puntos sin reescribir el componente.
  */
 @Component({
-  imports: [RouterLink],
+  imports: [RouterLink, PruebaAvisos],
   selector: 'app-reloj-inicio',
   styleUrl: './reloj-inicio.css',
   templateUrl: './reloj-inicio.html',
 })
 export class RelojInicio {
+  /** Destello de fin de sector: 'mejor' (verde), 'peor' (rojo) o null */
+  protected readonly aviso = inject(AvisoSector).aviso;
   protected readonly carrera = inject(Carrera);
   private readonly pantalla = inject(PantallaEncendida);
 
@@ -38,6 +48,7 @@ export class RelojInicio {
     () => this.enCurso() && this.pantalla.estado() === 'no-disponible',
   );
 
+  /** Tiempo formateado como mm:ss */
   /** Posición del punto del corredor en la barra, en % (siempre entre 0 y 100) */
   protected readonly posicionTu = computed(() =>
     aPorcentaje(this.progresoTu() ?? this.carrera.progresoTu()),
@@ -91,6 +102,7 @@ export class RelojInicio {
     const signo = d > 0 ? '+' : '';
     return `${signo}${d.toFixed(1).replace('.', ',')} s`;
   });
+
 
   /** Para la carrera antes de llegar a la meta (los datos se quedan para el resumen) */
   protected terminar(): void {
