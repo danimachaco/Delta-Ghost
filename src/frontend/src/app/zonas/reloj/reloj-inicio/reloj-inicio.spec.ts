@@ -1,9 +1,9 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
-import { CarreraService } from '../../../core/servicios/carrera';
 import { AvisoSector } from '../../../core/servicios/aviso-sector';
 import { Carrera, EstadoCarrera } from '../../../core/servicios/carrera';
+import { CarreraService } from '../../../core/servicios/carreras';
 import { EstadoPantalla, PantallaEncendida } from '../../../core/servicios/pantalla-encendida';
 import { RelojInicio } from './reloj-inicio';
 
@@ -58,6 +58,7 @@ describe('RelojInicio', () => {
 
     fixture = TestBed.createComponent(RelojInicio);
     component = fixture.componentInstance;
+    el = fixture.nativeElement as HTMLElement;
     await fixture.whenStable();
   });
 
@@ -65,8 +66,6 @@ describe('RelojInicio', () => {
     expect(component).toBeTruthy();
   });
 
-  it('muestra el tiempo como mm:ss y la diferencia con la sombra', () => {
-    const el = fixture.nativeElement as HTMLElement;
   it('muestra el tiempo de la carrera como mm:ss, los km y la diferencia con la sombra', () => {
     expect(el.querySelector('.tiempo')?.textContent).toBe('12:34');
     expect(el.querySelector('.km')?.textContent).toBe('km 2,3');
@@ -74,14 +73,6 @@ describe('RelojInicio', () => {
     expect(el.querySelector('.esfera')?.classList).toContain('mejor');
   });
 
-  it('no muestra destello si no hay aviso', () => {
-    const el = fixture.nativeElement as HTMLElement;
-    expect(el.querySelector('.destello')).toBeNull();
-  });
-
-  it('muestra el destello verde y el rojo según el aviso', async () => {
-    const el = fixture.nativeElement as HTMLElement;
-    const avisos = TestBed.inject(AvisoSector);
   it('el tiempo se actualiza en vivo con la carrera', async () => {
     carrera.segundos.set(755);
     await actualizar();
@@ -123,32 +114,29 @@ describe('RelojInicio', () => {
     expect((el.querySelector('.punto-sombra') as HTMLElement).style.left).toBe('25%');
   });
 
-    avisos.avisar('mejor');
-    await fixture.whenStable();
-    expect(el.querySelector('.destello-mejor')).not.toBeNull();
-    expect(el.querySelector('.destello-peor')).toBeNull();
-
-    avisos.avisar('peor');
-    await fixture.whenStable();
-    expect(el.querySelector('.destello-peor')).not.toBeNull();
-    expect(el.querySelector('.destello-mejor')).toBeNull();
+  it('el punto de la sombra puede ir por delante del tuyo', async () => {
+    await poner('progresoTu', 0.3);
+    await poner('progresoSombra', 0.8);
+    const tu = parseFloat((el.querySelector('.punto-tu') as HTMLElement).style.left);
+    const sombra = parseFloat((el.querySelector('.punto-sombra') as HTMLElement).style.left);
+    expect(sombra).toBeGreaterThan(tu);
   });
 
-  it('los botones de prueba lanzan los avisos', async () => {
-    const el = fixture.nativeElement as HTMLElement;
-    (el.querySelector('.prueba .verde') as HTMLButtonElement).click();
-    await fixture.whenStable();
-    expect(el.querySelector('.destello-mejor')).not.toBeNull();
+  it('no deja que un punto se salga de la barra', async () => {
+    await poner('progresoTu', 1.7);
+    await poner('progresoSombra', -0.5);
+    expect((el.querySelector('.punto-tu') as HTMLElement).style.left).toBe('100%');
+    expect((el.querySelector('.punto-sombra') as HTMLElement).style.left).toBe('0%');
   });
 
-  it('al pulsar Finalizar guarda la carrera y abre el resumen', () => {
-    const el = fixture.nativeElement as HTMLElement;
-    const navegar = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+  it('describe la barra para lectores de pantalla', async () => {
+    await poner('progresoTu', 0.5);
+    await poner('progresoSombra', 0.4);
+    const etiqueta = el.querySelector('.barra')?.getAttribute('aria-label') ?? '';
+    expect(etiqueta).toContain('50 %');
+    expect(etiqueta).toContain('40 %');
+  });
 
-    (el.querySelector('.finalizar') as HTMLButtonElement).click();
-
-    expect(TestBed.inject(CarreraService).ultimaCarrera()).not.toBeNull();
-    expect(navegar).toHaveBeenCalledWith('/app/resumen');
   it('mientras se corre hay botón Terminar y no enlace de salir', () => {
     expect(el.querySelector('.salir')).toBeNull();
     el.querySelector<HTMLButtonElement>('.terminar')!.click();
@@ -191,5 +179,48 @@ describe('RelojInicio', () => {
     carrera.estado.set('terminada');
     await actualizar();
     expect(el.querySelector('.aviso-pantalla')).toBeNull();
+  });
+
+  describe('destellos de sector (PS-49)', () => {
+    it('no muestra destello si no hay aviso', () => {
+      expect(el.querySelector('.destello')).toBeNull();
+    });
+
+    it('muestra el destello verde y el rojo según el aviso', async () => {
+      const avisos = TestBed.inject(AvisoSector);
+
+      avisos.avisar('mejor');
+      await actualizar();
+      expect(el.querySelector('.destello-mejor')).not.toBeNull();
+      expect(el.querySelector('.destello-peor')).toBeNull();
+
+      avisos.avisar('peor');
+      await actualizar();
+      expect(el.querySelector('.destello-peor')).not.toBeNull();
+      expect(el.querySelector('.destello-mejor')).toBeNull();
+    });
+
+    it('los botones de prueba lanzan los avisos', async () => {
+      (el.querySelector('.prueba .verde') as HTMLButtonElement).click();
+      await actualizar();
+      expect(el.querySelector('.destello-mejor')).not.toBeNull();
+    });
+  });
+
+  describe('resumen (PS-50)', () => {
+    it('mientras se corre no se puede abrir el resumen', () => {
+      expect(el.querySelector('.finalizar')).toBeNull();
+    });
+
+    it('al terminar, Ver resumen guarda la carrera y abre el resumen', async () => {
+      carrera.estado.set('terminada');
+      await actualizar();
+      const navegar = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+
+      (el.querySelector('.finalizar') as HTMLButtonElement).click();
+
+      expect(TestBed.inject(CarreraService).ultimaCarrera()).not.toBeNull();
+      expect(navegar).toHaveBeenCalledWith('/app/resumen');
+    });
   });
 });

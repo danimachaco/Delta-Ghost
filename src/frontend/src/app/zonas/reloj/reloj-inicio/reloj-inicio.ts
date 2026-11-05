@@ -1,29 +1,25 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { PruebaAvisos } from '../../../compartido/componentes/prueba-avisos/prueba-avisos';
-import { formatearDiferencia, formatearTiempo } from '../../../compartido/utilidades/formato-tiempo';
-import { AvisoSector } from '../../../core/servicios/aviso-sector';
-import { CarreraService } from '../../../core/servicios/carrera';
-import { CARRERA_EJEMPLO } from '../../../core/servicios/carrera-ejemplo';
-
-/**
- * Pantalla del reloj. De momento muestra datos de ejemplo:
- * más adelante se conectará con el GPS y con la ruta guardada (la "sombra").
-import { Component, computed, inject, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { formatearDiferencia } from '../../../compartido/utilidades/formato-tiempo';
 import { aPorcentaje } from '../../../compartido/utilidades/progreso';
+import { AvisoSector } from '../../../core/servicios/aviso-sector';
 import { Carrera } from '../../../core/servicios/carrera';
+import { CARRERA_EJEMPLO } from '../../../core/servicios/carrera-ejemplo';
+import { CarreraService } from '../../../core/servicios/carreras';
 import { PantallaEncendida } from '../../../core/servicios/pantalla-encendida';
 
 /**
  * Pantalla del reloj durante la carrera (mockup "2 · Reloj").
  *
- * Desde la PS-45 lee los datos en vivo del servicio Carrera: el tiempo del cronómetro,
- * tu progreso (según tu GPS), el de la sombra y la diferencia con ella.
+ * - Desde la PS-45 lee los datos en vivo del servicio Carrera: el tiempo del cronómetro,
+ *   tu progreso (según tu GPS), el de la sombra y la diferencia con ella.
+ * - Avisa si el navegador no puede mantener la pantalla encendida (PS-46).
+ * - Muestra el destello verde o rojo al terminar un sector (PS-49, servicio AvisoSector).
+ * - "Ver resumen" guarda la carrera y abre la pantalla de resumen (PS-50).
  *
- * Los inputs `progresoTu` y `progresoSombra` siguen existiendo (0 = salida, 1 = meta):
- * si se les da un valor, mandan sobre el dato de la carrera. Así una carrera simulada
- * (HU-40) puede mover los puntos sin reescribir el componente.
+ * Los inputs `progresoTu` y `progresoSombra` (0 = salida, 1 = meta), si se les da un valor,
+ * mandan sobre el dato de la carrera. Así una carrera simulada (HU-40) puede mover los puntos.
  */
 @Component({
   imports: [RouterLink, PruebaAvisos],
@@ -32,19 +28,17 @@ import { PantallaEncendida } from '../../../core/servicios/pantalla-encendida';
   templateUrl: './reloj-inicio.html',
 })
 export class RelojInicio {
-  /** Destello de fin de sector: 'mejor' (verde), 'peor' (rojo) o null */
-  protected readonly aviso = inject(AvisoSector).aviso;
   protected readonly carrera = inject(Carrera);
   private readonly pantalla = inject(PantallaEncendida);
+  private readonly carreras = inject(CarreraService);
+  private readonly router = inject(Router);
+
+  /** Destello de fin de sector: 'mejor' (verde), 'peor' (rojo) o null (PS-49) */
+  protected readonly aviso = inject(AvisoSector).aviso;
 
   /** Progreso del corredor, de 0 a 1. Si es null se usa el de la carrera en curso. */
   readonly progresoTu = input<number | null>(null);
 
-  private readonly carreras = inject(CarreraService);
-  private readonly router = inject(Router);
-
-  /** Tiempo de carrera en segundos (dato de ejemplo) */
-  protected readonly segundos = signal(754);
   /** Progreso de la sombra, de 0 a 1. Si es null se usa el de la carrera en curso. */
   readonly progresoSombra = input<number | null>(null);
 
@@ -56,8 +50,6 @@ export class RelojInicio {
     () => this.enCurso() && this.pantalla.estado() === 'no-disponible',
   );
 
-  /** Tiempo formateado como mm:ss */
-  protected readonly tiempo = computed(() => formatearTiempo(this.segundos()));
   /** Posición del punto del corredor en la barra, en % (siempre entre 0 y 100) */
   protected readonly posicionTu = computed(() =>
     aPorcentaje(this.progresoTu() ?? this.carrera.progresoTu()),
@@ -104,32 +96,24 @@ export class RelojInicio {
     return d !== null && d > 0;
   });
 
-  /** Diferencia formateada, por ejemplo "-2,4 s" o "+1,0 s" */
-  protected readonly textoDiferencia = computed(() => formatearDiferencia(this.diferencia()));
-
-  /**
-   * Termina la carrera y abre el resumen.
-   * TODO: cuando exista el GPS y la lógica de sectores (sub-tarea 48), aquí se
-   * enviará la carrera real en lugar de la de ejemplo.
-   */
-  protected finalizar(): void {
-    this.carreras.finalizar(CARRERA_EJEMPLO);
-    void this.router.navigateByUrl('/app/resumen');
-  }
-}
-
-
-
+  /** Diferencia formateada, por ejemplo "-2,4 s" o "+1,0 s" (vacía si no hay carrera) */
   protected readonly textoDiferencia = computed(() => {
     const d = this.diferencia();
-    if (d === null) return '';
-    const signo = d > 0 ? '+' : '';
-    return `${signo}${d.toFixed(1).replace('.', ',')} s`;
+    return d === null ? '' : formatearDiferencia(d);
   });
-
 
   /** Para la carrera antes de llegar a la meta (los datos se quedan para el resumen) */
   protected terminar(): void {
     this.carrera.terminar();
+  }
+
+  /**
+   * Guarda la carrera y abre el resumen (PS-50).
+   * TODO: el resumen todavía usa la carrera de ejemplo. Cuando se conecten los sectores
+   * (PS-48) con la carrera en vivo, aquí se enviará la carrera real.
+   */
+  protected finalizar(): void {
+    this.carreras.finalizar(CARRERA_EJEMPLO);
+    void this.router.navigateByUrl('/app/resumen');
   }
 }
