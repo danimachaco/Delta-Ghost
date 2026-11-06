@@ -1,0 +1,86 @@
+<div class="esfera">
+  @if (hayCarrera()) {
+    <!-- Anillo partido en sectores: verde si mejoraste a la sombra, rojo si no, gris si no llegaste -->
+    <svg class="anillo" viewBox="0 0 100 100" aria-hidden="true">
+      @for (arco of arcos(); track arco.numero) {
+        <circle
+          cx="50"
+          cy="50"
+          [attr.r]="radioAnillo"
+          [class]="'arco ' + arco.color"
+          [attr.stroke-dasharray]="arco.trazo"
+          [attr.stroke-dashoffset]="arco.desplazamiento"
+        />
+      }
+    </svg>
+
+    <div class="datos">
+      <h1 class="titulo">
+        <svg class="fantasma" viewBox="0 0 16 16" aria-hidden="true">
+          <path
+            d="M8 1a6 6 0 0 0-6 6v8l2-1.5L6 15l2-1.5 2 1.5 2-1.5 2 1.5V7a6 6 0 0 0-6-6Zm-2 5.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Zm4 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"
+          />
+        </svg>
+        {{ carrera.completada() ? 'Carrera terminada' : 'Carrera sin terminar' }}
+      </h1>
+
+      <span class="tiempo">{{ tiempo() }}</span>
+
+      <!-- Diferencia final: color + flecha (PS-59), así no depende solo del color -->
+      <span class="diferencia" [class.mejor]="ganaste()" [class.peor]="!ganaste()">
+        <app-flecha-sector [resultado]="ganaste() ? 'mejor' : 'peor'" />
+        {{ textoDiferencia() }}
+      </span>
+
+      <dl class="cifras">
+        <div>
+          <dt>distancia</dt>
+          <dd>{{ distancia() }}</dd>
+        </div>
+        <div>
+          <dt>ritmo</dt>
+          <dd>{{ ritmo() }}</dd>
+        </div>
+        <div>
+          <dt>sectores</dt>
+          <dd [attr.aria-label]="descripcionSectores()">{{ textoSectores() }}</dd>
+        </div>
+      </dl>
+
+      @if (puedeGuardar()) {
+        @switch (estadoGuardado()) {
+          @case ('guardada') {
+            <p class="estado-guardado" role="status">
+              {{ nuevaSombra() ? '¡Guardada! Es tu nueva sombra' : 'Carrera guardada' }}
+            </p>
+          }
+          @default {
+            <button
+              type="button"
+              class="boton"
+              (click)="guardar()"
+              [disabled]="estadoGuardado() === 'guardando'"
+            >
+              {{ estadoGuardado() === 'guardando' ? 'Guardando…' : 'Guardar' }}
+            </button>
+          }
+        }
+        @if (errorGuardado(); as error) {
+          <p class="error" role="alert">{{ error }}</p>
+        }
+      } @else {
+        <p class="nota">No llegaste a la meta: esta carrera no se guarda.</p>
+      }
+    </div>
+  } @else {
+    <div class="datos">
+      <p class="nota">No hay ninguna carrera terminada.</p>
+      <a class="boton" routerLink="/reloj/elegir">Elegir ruta</a>
+    </div>
+  }
+</div>
+
+@if (hayCarrera()) {
+  <a class="otra" routerLink="/reloj/elegir">Correr otra vez</a>
+}
+<a class="salir" routerLink="/app">← Salir</a>

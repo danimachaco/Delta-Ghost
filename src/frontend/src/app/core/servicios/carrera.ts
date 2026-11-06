@@ -13,6 +13,13 @@ import { Cronometro } from './cronometro';
 import { Gps } from './gps';
 import { PantallaEncendida } from './pantalla-encendida';
 
+/**
+ * Metros que pueden faltar para dar la meta por alcanzada. El GPS casi nunca da una lectura
+ * justo en la línea de meta, y sumar muchos tramos cortos deja siempre unos milímetros por debajo
+ * de la longitud de la ruta; sin este margen la carrera no terminaría sola (PS-62).
+ */
+export const MARGEN_META_M = 10;
+
 /** Fases de la carrera: sin empezar, corriendo contra la sombra o ya terminada */
 export type EstadoCarrera = 'sin-carrera' | 'en-curso' | 'terminada';
 
@@ -57,6 +64,15 @@ export class Carrera {
   readonly distanciaMetros = computed(() =>
     Math.min(this.calculo.distanciaTotal(this.puntos()), this.distanciaRutaMetros()),
   );
+
+  /**
+   * true si has llegado a la meta (con un margen de MARGEN_META_M metros, y nunca más de un
+   * 10 % de la ruta). Solo entonces termina sola y se puede guardar (PS-62).
+   */
+  readonly completada = computed(() => {
+    const meta = this.distanciaRutaMetros();
+    return meta > 0 && this.distanciaMetros() >= meta - Math.min(MARGEN_META_M, meta / 10);
+  });
 
   /** Tu progreso en la ruta: 0 = salida, 1 = meta */
   readonly progresoTu = computed(() => this.fraccion(this.distanciaMetros()));
@@ -129,8 +145,7 @@ export class Carrera {
       const anterior = puntos.at(-1)?.tiempoSegundos ?? 0;
       return [...puntos, aPunto(posicion, Math.max(anterior, this.segundos()))];
     });
-    const meta = this.distanciaRutaMetros();
-    if (meta > 0 && this.distanciaMetros() >= meta) {
+    if (this.completada()) {
       this.terminar();
     }
   }

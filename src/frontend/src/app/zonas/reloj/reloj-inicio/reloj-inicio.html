@@ -65,6 +65,7 @@
 } @else {
   <button type="button" class="finalizar" (click)="finalizar()">Ver resumen</button>
   @if (carrera.estado() === 'terminada') {
+    <a class="otra" routerLink="/reloj/fin">Ver resultado</a>
     <a class="otra" routerLink="/reloj/elegir">Correr otra vez</a>
   }
   <a class="salir" routerLink="/app">← Salir</a>

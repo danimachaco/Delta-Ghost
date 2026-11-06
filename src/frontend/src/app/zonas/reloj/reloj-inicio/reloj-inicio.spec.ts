@@ -11,6 +11,7 @@ describe('RelojInicio', () => {
   let component: RelojInicio;
   let fixture: ComponentFixture<RelojInicio>;
   let el: HTMLElement;
+  let navegar: ReturnType<typeof vi.spyOn>;
 
   /** Carrera falsa: la pantalla solo lee sus signals, así cada prueba pone los datos que quiere */
   const carrera = {
@@ -55,6 +56,9 @@ describe('RelojInicio', () => {
         { provide: PantallaEncendida, useValue: pantalla },
       ],
     }).compileComponents();
+
+    // PS-62: al terminar la carrera el reloj navega a /reloj/fin; aquí se espía para no navegar de verdad
+    navegar = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
 
     fixture = TestBed.createComponent(RelojInicio);
     component = fixture.componentInstance;
@@ -248,6 +252,26 @@ describe('RelojInicio', () => {
 
       expect(TestBed.inject(CarreraService).ultimaCarrera()).not.toBeNull();
       expect(navegar).toHaveBeenCalledWith('/app/resumen');
+    });
+  });
+
+  describe('fin de carrera (PS-62)', () => {
+    it('al acabar la carrera abre la pantalla de fin de carrera', async () => {
+      carrera.estado.set('terminada');
+      await actualizar();
+      expect(navegar).toHaveBeenCalledWith('/reloj/fin');
+    });
+
+    it('si se entra al reloj con la carrera ya terminada no salta solo, pero enlaza al resultado', async () => {
+      fixture.destroy(); // la pantalla abierta en beforeEach sí vería el cambio y navegaría
+      navegar.mockClear();
+      carrera.estado.set('terminada');
+      const otra = TestBed.createComponent(RelojInicio);
+      await otra.whenStable();
+      expect(navegar).not.toHaveBeenCalled();
+      expect(
+        (otra.nativeElement as HTMLElement).querySelector('a[href="/reloj/fin"]'),
+      ).not.toBeNull();
     });
   });
 });

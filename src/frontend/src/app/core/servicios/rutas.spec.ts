@@ -47,4 +47,15 @@ describe('Rutas', () => {
     expect(peticion.request.body).toEqual(nueva);
     peticion.flush({ id: '1', ...nueva, fecha: '2026-11-03T10:00:00' });
   });
+
+  it('subirCarrera() envía POST /api/rutas/{id}/carreras con los puntos', () => {
+    const puntos = [
+      { latitud: 40.41, longitud: -3.7, tiempoSegundos: 0 },
+      { latitud: 40.42, longitud: -3.7, tiempoSegundos: 55 },
+    ];
+    rutas.subirCarrera('7', puntos).subscribe();
+    const peticion = servidor.expectOne({ method: 'POST', url: `${base}/rutas/7/carreras` });
+    expect(peticion.request.body).toEqual({ puntos });
+    peticion.flush({});
+  });
 });

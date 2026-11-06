@@ -1,4 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, effect, inject, input } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FlechaSector } from '../../../compartido/componentes/flecha-sector/flecha-sector';
 import { PruebaAvisos } from '../../../compartido/componentes/prueba-avisos/prueba-avisos';
@@ -19,6 +19,7 @@ import { PantallaEncendida } from '../../../core/servicios/pantalla-encendida';
  * - Muestra el destello verde o rojo al terminar un sector (PS-49, servicio AvisoSector),
  *   con una flecha ▲/▼ y un texto para lectores de pantalla (PS-59).
  * - "Ver resumen" guarda la carrera y abre la pantalla de resumen (PS-50).
+ * - Al acabar la carrera (en la meta o con Terminar) abre el resultado final (PS-62).
  *
  * Los inputs `progresoTu` y `progresoSombra` (0 = salida, 1 = meta), si se les da un valor,
  * mandan sobre el dato de la carrera. Así una carrera simulada (HU-40) puede mover los puntos.
@@ -111,6 +112,19 @@ export class RelojInicio {
     const d = this.diferencia();
     return d === null ? '' : formatearDiferencia(d);
   });
+
+  constructor() {
+    // PS-62: en cuanto la carrera pasa de "en curso" a "terminada" (al llegar a la meta o con
+    // el botón Terminar) se abre la pantalla de fin de carrera con el resultado final.
+    let anterior = this.carrera.estado();
+    effect(() => {
+      const estado = this.carrera.estado();
+      if (anterior === 'en-curso' && estado === 'terminada') {
+        void this.router.navigateByUrl('/reloj/fin');
+      }
+      anterior = estado;
+    });
+  }
 
   /** Para la carrera antes de llegar a la meta (los datos se quedan para el resumen) */
   protected terminar(): void {
