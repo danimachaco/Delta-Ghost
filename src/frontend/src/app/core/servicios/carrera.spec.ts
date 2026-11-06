@@ -201,6 +201,24 @@ describe('Carrera', () => {
       expect(gps.detener).toHaveBeenCalled();
     });
 
+    it('PS-62: da la meta por alcanzada aunque el GPS se quede unos metros corto', () => {
+      carrera.iniciar(ruta, sombra);
+      correr(40, 100);
+      correr(40, 185); // a 15 m de la meta: todavía no
+      expect(carrera.completada()).toBe(false);
+      expect(carrera.estado()).toBe('en-curso');
+      correr(5, 194); // a 6 m: dentro del margen de 10 m
+      expect(carrera.completada()).toBe(true);
+      expect(carrera.estado()).toBe('terminada');
+    });
+
+    it('PS-62: una carrera parada antes de la meta no está completada', () => {
+      carrera.iniciar(ruta, sombra);
+      correr(40, 100);
+      carrera.terminar();
+      expect(carrera.completada()).toBe(false);
+    });
+
     it('no añade dos veces la misma lectura', () => {
       carrera.iniciar(ruta, sombra);
       const misma = posicion(10);
