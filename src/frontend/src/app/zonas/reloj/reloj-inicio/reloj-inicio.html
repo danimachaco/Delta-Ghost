@@ -1,5 +1,6 @@
 <div class="esfera" [class.mejor]="vasMejor()" [class.peor]="vasPeor()">
-  <!-- Destello de fin de sector (3 s): verde si mejoras a la sombra, rojo si no (PS-49) -->
+  <!-- Destello de fin de sector (3 s): verde si mejoras a la sombra, rojo si no (PS-49).
+       La flecha ▲/▼ (PS-59) dice lo mismo con la forma, para quien no distingue los colores. -->
   @if (aviso(); as resultado) {
     <div
       class="destello"
@@ -7,7 +8,11 @@
       [class.destello-peor]="resultado === 'peor'"
       aria-hidden="true"
     ></div>
+    <app-flecha-sector class="flecha" [resultado]="resultado" />
   }
+
+  <!-- PS-59: el aviso también se anuncia en los lectores de pantalla -->
+  <p class="solo-lector" aria-live="assertive">{{ textoAviso() }}</p>
 
   @if (carrera.estado() === 'sin-carrera') {
     <!-- Sin carrera: se invita a elegir una ruta -->

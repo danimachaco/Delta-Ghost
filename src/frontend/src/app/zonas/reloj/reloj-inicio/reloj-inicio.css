@@ -244,3 +244,29 @@
     opacity: 0.4;
   }
 }
+
+/* PS-59: flecha ▲ (mejor) o ▼ (peor) encima del destello, para no depender solo del color.
+   Va arriba de la esfera para no tapar el tiempo, y no se desvanece como el destello. */
+.flecha {
+  position: absolute;
+  top: 9%;
+  left: 50%;
+  z-index: 2;
+  transform: translateX(-50%);
+  font-size: 3rem;
+  /* Blanca con borde negro: contrasta igual sobre el destello verde que sobre el rojo.
+     El color ya lo da el destello; la flecha aporta la forma (arriba o abajo). */
+  color: #fff;
+  pointer-events: none;
+}
+
+/* Texto que solo leen los lectores de pantalla */
+.solo-lector {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
