@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Ruta Fantasma API",
-    "description": "Colección de la API de Ruta Fantasma (Spring Boot + MySQL).\n\nEjecútala en orden (Run collection): el registro crea un usuario con un email nuevo, el login guarda el token y las peticiones de rutas lo usan automáticamente.\n\nVariables: baseUrl (por defecto http://localhost:8080), email, password, token y rutaId.",
+    "description": "Colección de la API de Ruta Fantasma (Spring Boot + MySQL).\n\nEjecútala en orden (Run collection): el registro crea un usuario con un email nuevo, el login guarda el token y las peticiones de rutas lo usan automáticamente.\n\nVariables: baseUrl (por defecto http://localhost:8080), email, password, token, rutaId, emailAmigo, tokenAmigo y solicitudId.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -644,6 +644,275 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Amigos",
+      "description": "PS-56 · Enviar, aceptar y listar amigos. La petición 15 crea un segundo usuario (Luis) con su propio token en {{tokenAmigo}}.",
+      "item": [
+        {
+          "name": "15. Registrar a un amigo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/registro",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "registro"
+              ]
+            },
+            "description": "Crea a Luis con un email nuevo; guarda su email en {{emailAmigo}} y su token en {{tokenAmigo}} (no cambia {{token}}).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Luis\",\n  \"email\": \"{{emailAmigo}}\",\n  \"password\": \"{{password}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('emailAmigo', 'luis' + Date.now() + '@correo.com');"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 201 Created', () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set('tokenAmigo', pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "16. Enviar solicitud de amistad",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/amigos/solicitudes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "amigos",
+                "solicitudes"
+              ]
+            },
+            "description": "Ana envía una solicitud a Luis. Guarda el id en {{solicitudId}}.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{emailAmigo}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 201 Created', () => pm.response.to.have.status(201));",
+                  "const s = pm.response.json();",
+                  "pm.test('Queda pendiente', () => pm.expect(s.estado).to.eql('PENDIENTE'));",
+                  "pm.collectionVariables.set('solicitudId', s.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "17. Ver solicitudes recibidas (Luis)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/amigos/solicitudes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "amigos",
+                "solicitudes"
+              ]
+            },
+            "description": "Luis ve la solicitud de Ana.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAmigo}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 200 OK', () => pm.response.to.have.status(200));",
+                  "pm.test('Tiene la solicitud recibida', () => pm.expect(pm.response.json().recibidas.map((s) => s.id)).to.include(pm.collectionVariables.get('solicitudId')));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "18. Aceptar solicitud (Luis)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/amigos/solicitudes/{{solicitudId}}/aceptar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "amigos",
+                "solicitudes",
+                "{{solicitudId}}",
+                "aceptar"
+              ]
+            },
+            "description": "Luis acepta la solicitud de Ana.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenAmigo}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 200 OK', () => pm.response.to.have.status(200));",
+                  "pm.test('Pasa a aceptada', () => pm.expect(pm.response.json().estado).to.eql('ACEPTADA'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "19. Listar mis amigos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/amigos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "amigos"
+              ]
+            },
+            "description": "Ana ya tiene a Luis en su lista de amigos."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 200 OK', () => pm.response.to.have.status(200));",
+                  "pm.test('Luis es amigo de Ana', () => pm.expect(pm.response.json().map((a) => a.usuario.email)).to.include(pm.collectionVariables.get('emailAmigo')));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "20. Enviar solicitud repetida (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/amigos/solicitudes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "amigos",
+                "solicitudes"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{emailAmigo}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 409 Conflict', () => pm.response.to.have.status(409));",
+                  "pm.test('Explica el error', () => pm.expect(pm.response.json().error).to.eql('Ya sois amigos'));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "variable": [
@@ -665,6 +934,18 @@
     },
     {
       "key": "rutaId",
+      "value": ""
+    },
+    {
+      "key": "emailAmigo",
+      "value": ""
+    },
+    {
+      "key": "tokenAmigo",
+      "value": ""
+    },
+    {
+      "key": "solicitudId",
       "value": ""
     }
   ]
