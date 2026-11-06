@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '../../core/guardias/auth-guard';
 import { ElegirRuta } from './elegir-ruta/elegir-ruta';
+import { FinCarrera } from './fin-carrera/fin-carrera';
 import { RelojInicio } from './reloj-inicio/reloj-inicio';
 import { SimuladorPanel } from './simulador/simulador-panel';
 
@@ -14,5 +15,7 @@ export const RELOJ_ROUTES: Routes = [
     canActivate: [authGuard],
     title: 'Ruta Fantasma · Elige ruta',
   },
+  // PS-62: resultado final en el reloj al acabar la carrera
+  { path: 'fin', component: FinCarrera, title: 'Ruta Fantasma · Fin de carrera' },
   { path: 'simulador', component: SimuladorPanel, title: 'Ruta Fantasma · Simulador' },
 ];
