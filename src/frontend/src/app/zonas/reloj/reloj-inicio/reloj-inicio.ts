@@ -1,5 +1,6 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { FlechaSector } from '../../../compartido/componentes/flecha-sector/flecha-sector';
 import { PruebaAvisos } from '../../../compartido/componentes/prueba-avisos/prueba-avisos';
 import { formatearDiferencia } from '../../../compartido/utilidades/formato-tiempo';
 import { aPorcentaje } from '../../../compartido/utilidades/progreso';
@@ -15,14 +16,15 @@ import { PantallaEncendida } from '../../../core/servicios/pantalla-encendida';
  * - Desde la PS-45 lee los datos en vivo del servicio Carrera: el tiempo del cronómetro,
  *   tu progreso (según tu GPS), el de la sombra y la diferencia con ella.
  * - Avisa si el navegador no puede mantener la pantalla encendida (PS-46).
- * - Muestra el destello verde o rojo al terminar un sector (PS-49, servicio AvisoSector).
+ * - Muestra el destello verde o rojo al terminar un sector (PS-49, servicio AvisoSector),
+ *   con una flecha ▲/▼ y un texto para lectores de pantalla (PS-59).
  * - "Ver resumen" guarda la carrera y abre la pantalla de resumen (PS-50).
  *
  * Los inputs `progresoTu` y `progresoSombra` (0 = salida, 1 = meta), si se les da un valor,
  * mandan sobre el dato de la carrera. Así una carrera simulada (HU-40) puede mover los puntos.
  */
 @Component({
-  imports: [RouterLink, PruebaAvisos],
+  imports: [RouterLink, PruebaAvisos, FlechaSector],
   selector: 'app-reloj-inicio',
   styleUrl: './reloj-inicio.css',
   templateUrl: './reloj-inicio.html',
@@ -35,6 +37,14 @@ export class RelojInicio {
 
   /** Destello de fin de sector: 'mejor' (verde), 'peor' (rojo) o null (PS-49) */
   protected readonly aviso = inject(AvisoSector).aviso;
+
+  /** Texto del aviso para lectores de pantalla (PS-59): el destello y la flecha son solo visuales */
+  protected readonly textoAviso = computed(() => {
+    const aviso = this.aviso();
+    if (aviso === 'mejor') return 'Sector mejor que tu sombra';
+    if (aviso === 'peor') return 'Sector peor que tu sombra';
+    return '';
+  });
 
   /** Progreso del corredor, de 0 a 1. Si es null se usa el de la carrera en curso. */
   readonly progresoTu = input<number | null>(null);

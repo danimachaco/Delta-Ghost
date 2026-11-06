@@ -200,6 +200,33 @@ describe('RelojInicio', () => {
       expect(el.querySelector('.destello-mejor')).toBeNull();
     });
 
+    it('PS-59: el aviso lleva una flecha hacia arriba si mejoras y hacia abajo si no', async () => {
+      const avisos = TestBed.inject(AvisoSector);
+      expect(el.querySelector('.flecha')).toBeNull();
+
+      avisos.avisar('mejor');
+      await actualizar();
+      expect(el.querySelector('app-flecha-sector.flecha.mejor')).not.toBeNull();
+
+      avisos.avisar('peor');
+      await actualizar();
+      expect(el.querySelector('app-flecha-sector.flecha.peor')).not.toBeNull();
+      expect(el.querySelector('app-flecha-sector.flecha.mejor')).toBeNull();
+    });
+
+    it('PS-59: el aviso se anuncia con texto a los lectores de pantalla', async () => {
+      const anuncio = () => el.querySelector('[aria-live="assertive"]')?.textContent?.trim();
+      expect(anuncio()).toBe('');
+
+      TestBed.inject(AvisoSector).avisar('mejor');
+      await actualizar();
+      expect(anuncio()).toBe('Sector mejor que tu sombra');
+
+      TestBed.inject(AvisoSector).avisar('peor');
+      await actualizar();
+      expect(anuncio()).toBe('Sector peor que tu sombra');
+    });
+
     it('los botones de prueba lanzan los avisos', async () => {
       (el.querySelector('.prueba .verde') as HTMLButtonElement).click();
       await actualizar();
