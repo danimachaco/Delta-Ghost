@@ -9,6 +9,12 @@
   --color-mejor: #2ecc71; /* sector en verde: vas mejor */
   --color-peor: #e74c3c; /* sector en rojo: vas peor */
   --radio: 12px;
+
+  /* Pantalla del reloj (PS-60): colores revisados para cumplir el contraste WCAG AA
+     sobre el fondo negro de la esfera. Ver docs/memoria/sprint-02/…-contraste-tamanos-reloj.md */
+  --reloj-boton: #6a4ce8; /* morado más oscuro: texto blanco a 5,5:1 (el primario da 4,4:1) */
+  --reloj-boton-terminar: #c0392b; /* rojo más oscuro: texto blanco a 5,4:1 (el de sector da 3,8:1) */
+  --reloj-linea: #6e7681; /* pista y borde de la esfera: 4,4:1 sobre negro (antes 1,7:1) */
 }
 
 * {

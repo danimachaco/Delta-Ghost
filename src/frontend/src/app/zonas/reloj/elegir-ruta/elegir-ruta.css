@@ -13,7 +13,7 @@
   width: min(340px, 90vw);
   aspect-ratio: 1;
   border-radius: 50%;
-  border: 6px solid var(--color-borde);
+  border: 6px solid var(--reloj-linea);
   background: #050505;
   display: flex;
   flex-direction: column;
@@ -60,6 +60,7 @@
   justify-content: space-between;
   gap: 8px;
   width: 100%;
+  min-height: 44px; /* PS-60: área de pulsación de 44 px */
   padding: 8px 12px;
   border: 2px solid transparent;
   border-radius: var(--radio);
@@ -87,7 +88,7 @@
 
 .nombre {
   overflow: hidden;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -95,7 +96,7 @@
 
 .detalle {
   color: var(--color-texto-suave);
-  font-size: 0.7rem;
+  font-size: 0.8rem;
 }
 
 .distancia {
@@ -119,7 +120,7 @@
 .aviso {
   margin: 0;
   color: var(--color-texto-suave);
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   text-align: center;
 }
 
@@ -128,11 +129,14 @@
 }
 
 .boton {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px; /* PS-60: área de pulsación de 44 px */
   padding: 10px 26px;
   border: 0;
   border-radius: 999px;
-  background: var(--color-primario);
+  background: var(--reloj-boton); /* PS-60: texto blanco a 5,5:1 */
   color: #fff;
   font: inherit;
   font-weight: 600;
@@ -152,11 +156,13 @@
 
 .volver {
   margin-top: 16px;
+  padding: 12px 16px; /* PS-60: área de pulsación de 44 px */
   color: var(--color-primario);
 }
 
 .salir {
-  margin-top: 12px;
+  margin-top: 4px;
+  padding: 12px 16px; /* PS-60: área de pulsación de 44 px */
   color: var(--color-texto-suave);
   text-decoration: none;
 }
