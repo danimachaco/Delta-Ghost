@@ -18,6 +18,6 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(tokenInterceptor).addPathPatterns("/api/rutas", "/api/rutas/**");
+        registry.addInterceptor(tokenInterceptor).addPathPatterns("/api/rutas", "/api/rutas/**", "/api/amigos", "/api/amigos/**");
     }
 }
