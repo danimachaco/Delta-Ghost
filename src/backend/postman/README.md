@@ -1,6 +1,6 @@
 # Colección de Postman — Ruta Fantasma API (PS-25)
 
-`Ruta-Fantasma-API.postman_collection.json` es una colección de Postman (formato v2.1) con 14 peticiones
+`Ruta-Fantasma-API.postman_collection.json` es una colección de Postman (formato v2.1) con 20 peticiones
 y sus pruebas automáticas, para probar toda la API del backend (`../backend-springboot`).
 
 ## Peticiones
@@ -21,6 +21,12 @@ y sus pruebas automáticas, para probar toda la API del backend (`../backend-spr
 | 12 | Carreras | `POST /api/rutas/{{rutaId}}/carreras` (4 puntos, 250 s) | 201, `mejorMarca: true` |
 | 13 | Carreras | Subir carrera a ruta que no existe | 404 |
 | 14 | Carreras | `GET /api/rutas/{{rutaId}}/sombra` | 200, la carrera de 250 s con 3 sectores |
+| 15 | Amigos | Registrar a un amigo (Luis) | 201, guarda `{{tokenAmigo}}` |
+| 16 | Amigos | `POST /api/amigos/solicitudes` | 201, `PENDIENTE`, guarda `{{solicitudId}}` |
+| 17 | Amigos | `GET /api/amigos/solicitudes` (como Luis) | 200, la solicitud en `recibidas` |
+| 18 | Amigos | `POST /api/amigos/solicitudes/{{solicitudId}}/aceptar` (como Luis) | 200, `ACEPTADA` |
+| 19 | Amigos | `GET /api/amigos` | 200, incluye a Luis |
+| 20 | Amigos | Enviar solicitud repetida | 409 |
 
 ## Cómo usarla
 
@@ -30,7 +36,7 @@ y sus pruebas automáticas, para probar toda la API del backend (`../backend-spr
 4. Para lanzar peticiones sueltas, hazlo en orden (primero la 1 o la 4, que guardan el token).
 
 Variables de la colección (pestaña *Variables*): `baseUrl` (por defecto `http://localhost:8080`), `email`, `password`,
-`token` y `rutaId`. No hace falta tocarlas: el registro genera un email nuevo cada vez, así que la colección se puede
+`token`, `rutaId`, `emailAmigo`, `tokenAmigo` y `solicitudId`. No hace falta tocarlas: el registro genera un email nuevo cada vez, así que la colección se puede
 ejecutar todas las veces que quieras. Son datos de prueba: no pongas aquí contraseñas reales.
 
 Desde la terminal también se puede ejecutar con Newman: `npx newman run Ruta-Fantasma-API.postman_collection.json`
