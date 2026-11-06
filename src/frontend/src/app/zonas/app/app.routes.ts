@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '../../core/guardias/auth-guard';
+import { AmigosPantalla } from './amigos/amigos';
 import { AppInicio } from './app-inicio/app-inicio';
 import { GrabarRuta } from './grabar/grabar-ruta';
 import { ListaRutas } from './lista-rutas/lista-rutas';
@@ -16,7 +17,16 @@ export const APP_ROUTES: Routes = [
     // AppInicio es el marco (cabecera + menú); las pantallas van como hijas
     path: '',
     component: AppInicio,
-    children: [{ path: '', component: ListaRutas, title: 'Ruta Fantasma · Mis rutas' }],
+    children: [
+      { path: '', component: ListaRutas, title: 'Ruta Fantasma · Mis rutas' },
+      // Amigos necesita sesión: las solicitudes y la lista son de la cuenta del usuario (PS-57)
+      {
+        path: 'amigos',
+        component: AmigosPantalla,
+        canActivate: [authGuard],
+        title: 'Ruta Fantasma · Amigos',
+      },
+    ],
   },
   { path: 'gps', component: GpsPantalla, title: 'Ruta Fantasma · GPS' },
   // Grabar necesita sesión: la ruta se guarda en la cuenta del usuario (POST /api/rutas pide token)
