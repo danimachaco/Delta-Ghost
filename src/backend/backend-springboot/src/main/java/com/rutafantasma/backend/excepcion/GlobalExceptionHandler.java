@@ -37,6 +37,21 @@ public class GlobalExceptionHandler {
         return error(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
+    @ExceptionHandler({ UsuarioNoEncontradoException.class, SolicitudNoEncontradaException.class })
+    public ResponseEntity<Map<String, String>> noEncontrado(RuntimeException ex) {
+        return error(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(SolicitudAmistadIncorrectaException.class)
+    public ResponseEntity<Map<String, String>> solicitudIncorrecta(SolicitudAmistadIncorrectaException ex) {
+        return error(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(AmistadRepetidaException.class)
+    public ResponseEntity<Map<String, String>> amistadRepetida(AmistadRepetidaException ex) {
+        return error(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> validacion(MethodArgumentNotValidException ex) {
         Map<String, String> errores = ex.getBindingResult().getFieldErrors().stream()

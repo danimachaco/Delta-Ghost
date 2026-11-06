@@ -1,0 +1,192 @@
+/* Pantalla de amigos: mismo estilo de tarjetas que la lista de rutas */
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+h2 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+}
+
+.anadir {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.fila {
+  display: flex;
+  gap: 8px;
+}
+
+input {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 14px;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  font: inherit;
+}
+
+input:focus {
+  outline: 2px solid var(--color-primario);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+input.invalido {
+  border-color: var(--color-peor);
+}
+
+.error-campo {
+  color: var(--color-peor);
+  font-size: 0.85rem;
+}
+
+.mensaje {
+  margin: 10px 0 0;
+  padding: 10px 14px;
+  border: 1px solid;
+  border-radius: var(--radio);
+  color: var(--color-texto);
+  font-size: 0.9rem;
+}
+
+.exito {
+  border-color: var(--color-mejor);
+  background: color-mix(in srgb, var(--color-mejor) 12%, transparent);
+}
+
+.fallo {
+  border-color: var(--color-peor);
+  background: color-mix(in srgb, var(--color-peor) 12%, transparent);
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tarjeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-fondo);
+}
+
+/* Las solicitudes recibidas destacan: esperan una respuesta */
+.recibida {
+  border-color: var(--color-primario);
+}
+
+.avatar {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-primario) 20%, transparent);
+  color: var(--color-primario);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.nombre {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detalle {
+  color: var(--color-texto-suave);
+  font-size: 0.8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.estado {
+  flex-shrink: 0;
+}
+
+.suave {
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+.boton {
+  flex-shrink: 0;
+  padding: 10px 20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-primario);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.boton.pequeno {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+}
+
+.boton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.boton:focus-visible {
+  outline: 2px solid var(--color-texto);
+  outline-offset: 2px;
+}
+
+/* Tarjeta gris que "late" mientras carga */
+.esqueleto {
+  height: 64px;
+  animation: latido 1.2s ease-in-out infinite;
+}
+
+@keyframes latido {
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .esqueleto {
+    animation: none;
+  }
+}
+
+.aviso {
+  margin-top: 24px;
+  text-align: center;
+}
