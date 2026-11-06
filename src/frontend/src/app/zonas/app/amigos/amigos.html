@@ -1,0 +1,121 @@
+<!-- Añadir amigo: siempre visible, aunque la lista aún esté cargando -->
+<section class="bloque" aria-labelledby="titulo-anadir">
+  <h2 id="titulo-anadir">Añadir amigo</h2>
+  <form class="anadir" [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
+    <label for="email-amigo">Email de tu amigo</label>
+    <div class="fila">
+      <input
+        id="email-amigo"
+        type="email"
+        formControlName="email"
+        autocomplete="off"
+        placeholder="amigo@correo.com"
+        [class.invalido]="mostrarErrorEmail()"
+        [attr.aria-invalid]="mostrarErrorEmail()"
+        [attr.aria-describedby]="mostrarErrorEmail() ? 'error-email-amigo' : null"
+      />
+      <button class="boton" type="submit" [disabled]="enviando()">
+        {{ enviando() ? 'Enviando…' : 'Enviar' }}
+      </button>
+    </div>
+    @if (mostrarErrorEmail()) {
+      <span id="error-email-amigo" class="error-campo">
+        {{
+          formulario.controls.email.hasError('required')
+            ? 'Escribe el email de tu amigo.'
+            : 'El email no es válido.'
+        }}
+      </span>
+    }
+  </form>
+
+  <!-- Resultado de enviar o aceptar: se anuncia a los lectores de pantalla -->
+  @if (aviso(); as texto) {
+    <p class="mensaje exito" role="status">{{ texto }}</p>
+  }
+  @if (errorAccion(); as texto) {
+    <p class="mensaje fallo" role="alert">{{ texto }}</p>
+  }
+</section>
+
+@switch (estado()) {
+  @case ('cargando') {
+    <ul class="lista" aria-busy="true" aria-label="Cargando amigos">
+      @for (n of esqueletos; track n) {
+        <li class="tarjeta esqueleto"></li>
+      }
+    </ul>
+  }
+
+  @case ('error') {
+    <div class="aviso" role="alert">
+      <p>{{ mensajeError() }}</p>
+      <button type="button" class="boton" (click)="cargar()">Reintentar</button>
+    </div>
+  }
+
+  @case ('listo') {
+    @if (recibidas().length > 0) {
+      <section class="bloque" aria-labelledby="titulo-recibidas">
+        <h2 id="titulo-recibidas">Solicitudes recibidas ({{ recibidas().length }})</h2>
+        <ul class="lista">
+          @for (solicitud of recibidas(); track solicitud.id) {
+            <li class="tarjeta recibida">
+              <div class="info">
+                <span class="nombre">{{ solicitud.usuario.nombre }}</span>
+                <span class="detalle">{{ solicitud.usuario.email }}</span>
+              </div>
+              <button
+                type="button"
+                class="boton pequeno"
+                [disabled]="aceptando().has(solicitud.id)"
+                [attr.aria-label]="'Aceptar a ' + solicitud.usuario.nombre"
+                (click)="aceptar(solicitud)"
+              >
+                Aceptar
+              </button>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
+    <section class="bloque" aria-labelledby="titulo-amigos">
+      <h2 id="titulo-amigos">Mis amigos</h2>
+      @if (amigos().length === 0) {
+        <p class="suave">
+          Todavía no tienes amigos. Escribe el email de otro corredor para enviarle una solicitud.
+        </p>
+      } @else {
+        <ul class="lista">
+          @for (amigo of amigos(); track amigo.id) {
+            <li class="tarjeta amigo">
+              <span class="avatar" aria-hidden="true">{{ amigo.usuario.nombre.charAt(0) }}</span>
+              <div class="info">
+                <span class="nombre">{{ amigo.usuario.nombre }}</span>
+                <span class="detalle">amigos desde el {{ fecha(amigo.fecha) }}</span>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+    @if (enviadas().length > 0) {
+      <section class="bloque" aria-labelledby="titulo-enviadas">
+        <h2 id="titulo-enviadas">Solicitudes enviadas</h2>
+        <ul class="lista">
+          @for (solicitud of enviadas(); track solicitud.id) {
+            <li class="tarjeta enviada">
+              <div class="info">
+                <span class="nombre">{{ solicitud.usuario.nombre }}</span>
+                <span class="detalle">{{ solicitud.usuario.email }}</span>
+              </div>
+              <span class="estado suave">Pendiente</span>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+  }
+}
