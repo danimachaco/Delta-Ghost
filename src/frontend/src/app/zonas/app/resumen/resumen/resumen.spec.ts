@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { Carrera } from '../../../../core/modelos/carrera';
-import { CarreraService } from '../../../../core/servicios/carrera';
+import { CarreraService } from '../../../../core/servicios/carreras';
 import { Resumen } from './resumen';
 
 describe('Resumen', () => {

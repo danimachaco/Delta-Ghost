@@ -1,0 +1,196 @@
+/* Pantalla de fin de carrera del reloj (mockup "3 · Resumen").
+   Sigue las reglas de contraste y tamaños de la PS-60: colores --reloj-*, textos de 0,8 rem
+   como mínimo y botones de 44 px. */
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 16px;
+  background: #000;
+}
+
+.esfera {
+  position: relative;
+  width: min(340px, 90vw);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 6px solid var(--reloj-linea);
+  background: #050505;
+  display: grid;
+  place-items: center;
+  /* En px: un % se calcularía sobre el ancho de la página, no sobre el de la esfera */
+  padding: 34px 30px;
+  overflow: hidden;
+}
+
+/* Anillo de sectores pegado al borde. Se gira -90° para que el primer sector empiece arriba */
+.anillo {
+  position: absolute;
+  inset: 4px;
+  transform: rotate(-90deg);
+}
+
+.arco {
+  fill: none;
+  stroke-width: 4;
+}
+
+.arco.verde {
+  stroke: var(--color-mejor);
+}
+
+.arco.rojo {
+  stroke: var(--color-peor);
+}
+
+.arco.pendiente {
+  stroke: var(--reloj-linea);
+}
+
+.datos {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  text-align: center;
+}
+
+.titulo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.fantasma {
+  width: 14px;
+  height: 14px;
+  fill: var(--color-primario);
+}
+
+.tiempo {
+  font-size: 3.2rem;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Etiqueta "-12,0 s vs sombra" con flecha ▲/▼ y color */
+.diferencia {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--color-superficie);
+  font-size: 1rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.diferencia.mejor {
+  color: var(--color-mejor);
+}
+
+.diferencia.peor {
+  color: var(--color-peor);
+}
+
+.diferencia app-flecha-sector {
+  font-size: 0.9rem;
+}
+
+.cifras {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  width: 100%;
+  margin: 6px 0 4px;
+}
+
+.cifras div {
+  display: flex;
+  flex-direction: column-reverse; /* la cifra arriba y la etiqueta debajo, como en el mockup */
+}
+
+.cifras dt {
+  color: var(--color-texto-suave);
+  font-size: 0.8rem;
+}
+
+.cifras dd {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 28px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--reloj-boton);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.boton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.boton:focus-visible,
+.otra:focus-visible,
+.salir:focus-visible {
+  outline: 2px solid var(--color-texto);
+  outline-offset: 2px;
+}
+
+.estado-guardado {
+  /* Estrecho para que, al estar abajo de la esfera, no se meta en el anillo */
+  max-width: 75%;
+  margin: 0;
+  color: var(--color-mejor);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.nota {
+  margin: 0;
+  max-width: 80%;
+  color: var(--color-texto-suave);
+  font-size: 0.875rem;
+}
+
+.error {
+  margin: 0;
+  color: var(--color-peor);
+  font-size: 0.875rem;
+}
+
+.otra {
+  margin-top: 12px;
+  padding: 12px 16px; /* área de pulsación de 44 px */
+  color: var(--color-primario);
+}
+
+.salir {
+  padding: 12px 16px;
+  color: var(--color-texto-suave);
+  text-decoration: none;
+}

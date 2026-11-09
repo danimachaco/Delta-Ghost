@@ -14,6 +14,7 @@ import { CarreraService } from '../../../../core/servicios/carrera';
 import { MapaSectores } from '../../../../compartido/componentes/mapa-sectores/mapa-sectores/mapa-sectores';
 import { CIRCUITO_EJEMPLO } from '../../../../core/servicios/circuito-ejemplo';
 import { sectoresDesdeCarrera } from '../../../../core/servicios/sectores';
+import { CarreraService } from '../../../../core/servicios/carreras';
 
 /** Pantalla de resumen que aparece al terminar una carrera (HU-50). */
 @Component({
