@@ -10,11 +10,15 @@ import {
 import { formatearDiferencia, formatearTiempo } from '../../../../compartido/utilidades/formato-tiempo';
 import { DISTANCIA_SECTOR_METROS } from '../../../../core/modelos/carrera';
 import { CARRERA_EJEMPLO } from '../../../../core/servicios/carrera-ejemplo';
+import { CarreraService } from '../../../../core/servicios/carrera';
+import { MapaSectores } from '../../../../compartido/componentes/mapa-sectores/mapa-sectores/mapa-sectores';
+import { CIRCUITO_EJEMPLO } from '../../../../core/servicios/circuito-ejemplo';
+import { sectoresDesdeCarrera } from '../../../../core/servicios/sectores';
 import { CarreraService } from '../../../../core/servicios/carreras';
 
 /** Pantalla de resumen que aparece al terminar una carrera (HU-50). */
 @Component({
-  imports: [RouterLink],
+  imports: [RouterLink, MapaSectores],
   selector: 'app-resumen',
   styleUrl: './resumen.css',
   templateUrl: './resumen.html',
@@ -42,5 +46,10 @@ export class Resumen {
       diferencia: formatearDiferencia(diferenciaSector(s)),
       mejor: sectorMejor(s),
     })),
+  );
+
+  /** Sectores para el mapa: los tiempos de la carrera sobre el recorrido de ejemplo */
+  protected readonly sectoresMapa = computed(() =>
+    sectoresDesdeCarrera(this.carrera(), CIRCUITO_EJEMPLO),
   );
 }
