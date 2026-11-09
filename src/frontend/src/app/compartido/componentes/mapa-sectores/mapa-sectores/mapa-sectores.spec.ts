@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CARRERA_EJEMPLO } from '../../../../core/servicios/carrera-ejemplo';
 import { CIRCUITO_EJEMPLO } from '../../../../core/servicios/circuito-ejemplo';
-import { sectoresDesdeCarrera } from '../../../../core/servicios/sectores';
+import { sectoresDesdeCarrera } from '../../../../core/servicios/sectores-mapa';
 import { MapaSectores } from './mapa-sectores';
 
 // jsdom no implementa createSVGRect y sin él Leaflet no puede dibujar polilíneas
