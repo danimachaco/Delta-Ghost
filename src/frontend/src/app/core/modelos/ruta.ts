@@ -29,3 +29,15 @@ export interface NuevaRuta {
   /** Al menos 2 puntos, con tiempos que nunca van hacia atrás */
   puntos: PuntoGps[];
 }
+
+/** Carrera guardada, tal y como la devuelve POST /api/rutas/{id}/carreras (CarreraResponse del backend) */
+export interface CarreraGuardada {
+  id: string;
+  rutaId: string;
+  /** Fecha en formato ISO */
+  fecha: string;
+  tiempoTotalSegundos: number;
+  /** true si esta carrera es ahora la sombra de la ruta (la mejor marca) */
+  mejorMarca: boolean;
+  puntos: PuntoGps[];
+}

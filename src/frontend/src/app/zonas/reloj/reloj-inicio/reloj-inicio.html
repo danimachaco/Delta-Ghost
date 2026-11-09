@@ -1,12 +1,6 @@
-<div class="esfera" [class.mejor]="vasMejor()" [class.peor]="!vasMejor()">
-  <!-- Pista circular con los dos puntos: tú y tu sombra -->
-  <svg class="pista" viewBox="0 0 100 100" aria-hidden="true">
-    <circle cx="50" cy="50" r="44" class="recorrido" />
-    <circle cx="50" cy="6" r="4" class="punto-sombra" />
-    <circle cx="81" cy="19" r="4" class="punto-tu" />
-  </svg>
-
-  <!-- Destello de fin de sector (3 s): verde si mejoras a la sombra, rojo si no -->
+<div class="esfera" [class.mejor]="vasMejor()" [class.peor]="vasPeor()">
+  <!-- Destello de fin de sector (3 s): verde si mejoras a la sombra, rojo si no (PS-49).
+       La flecha ▲/▼ (PS-59) dice lo mismo con la forma, para quien no distingue los colores. -->
   @if (aviso(); as resultado) {
     <div
       class="destello"
@@ -14,23 +8,65 @@
       [class.destello-peor]="resultado === 'peor'"
       aria-hidden="true"
     ></div>
+    <app-flecha-sector class="flecha" [resultado]="resultado" />
   }
 
-  <div class="datos">
-    <span class="etiqueta">Sector 2</span>
-    <span class="tiempo">{{ tiempo() }}</span>
-    <span class="diferencia">{{ textoDiferencia() }}</span>
-  </div>
+  <!-- PS-59: el aviso también se anuncia en los lectores de pantalla -->
+  <p class="solo-lector" aria-live="assertive">{{ textoAviso() }}</p>
+
+  @if (carrera.estado() === 'sin-carrera') {
+    <!-- Sin carrera: se invita a elegir una ruta -->
+    <div class="datos">
+      <span class="tiempo">00:00</span>
+      <p class="sin-carrera">Elige una ruta para correr contra tu sombra</p>
+      <a class="boton" routerLink="/reloj/elegir">Elegir ruta</a>
+    </div>
+  } @else {
+    <div class="datos">
+      @if (carrera.estado() === 'terminada') {
+        <span class="etiqueta">Carrera terminada</span>
+      }
+      <span class="tiempo">{{ tiempo() }}</span>
+      <span class="km">{{ kilometros() }}</span>
+      <span class="diferencia">{{ textoDiferencia() }}</span>
+
+      <!-- Barra de progreso: cada punto está en su posición dentro de la ruta -->
+      <div class="barra" role="img" [attr.aria-label]="descripcionBarra()">
+        <div class="pista">
+          <span class="punto punto-sombra" [style.left.%]="posicionSombra()"></span>
+          <span class="punto punto-tu" [style.left.%]="posicionTu()"></span>
+        </div>
+      </div>
+    </div>
+  }
 </div>
 
-<p class="leyenda">
-  <span class="tu">● Tú</span>
-  <span class="sombra">● Sombra</span>
-</p>
+@if (carrera.estado() !== 'sin-carrera') {
+  <!-- La leyenda usa la misma forma que los puntos, así no depende solo del color -->
+  <p class="leyenda">
+    <span class="tu"><i class="marca marca-tu" aria-hidden="true"></i> Tú</span>
+    <span class="sombra"><i class="marca marca-sombra" aria-hidden="true"></i> Sombra</span>
+  </p>
+}
+
+@if (pantallaPuedeApagarse()) {
+  <!-- PS-46: si el navegador no deja bloquear la pantalla, se avisa para que el corredor lo sepa -->
+  <p class="aviso-pantalla" role="status">
+    Este navegador no puede mantener la pantalla encendida. Si se apaga, el tiempo sigue contando.
+  </p>
+}
 
 <!-- TEMPORAL: botones de prueba de los avisos (ver prueba-avisos.ts para quitarlos) -->
 <app-prueba-avisos />
 
-<button type="button" class="finalizar" (click)="finalizar()">Finalizar</button>
-
-<a class="salir" routerLink="/app">← Salir</a>
+@if (enCurso()) {
+  <!-- Mientras se corre no hay enlace de salir, para no abandonar la carrera sin querer -->
+  <button type="button" class="terminar" (click)="terminar()">Terminar</button>
+} @else {
+  <button type="button" class="finalizar" (click)="finalizar()">Ver resumen</button>
+  @if (carrera.estado() === 'terminada') {
+    <a class="otra" routerLink="/reloj/fin">Ver resultado</a>
+    <a class="otra" routerLink="/reloj/elegir">Correr otra vez</a>
+  }
+  <a class="salir" routerLink="/app">← Salir</a>
+}

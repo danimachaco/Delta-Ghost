@@ -14,7 +14,7 @@
   width: min(320px, 85vw);
   aspect-ratio: 1;
   border-radius: 50%;
-  border: 6px solid var(--color-borde);
+  border: 6px solid var(--reloj-linea);
   background: #050505;
   display: grid;
   place-items: center;
@@ -29,61 +29,6 @@
   border-color: var(--color-peor);
 }
 
-.pista {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.recorrido {
-  fill: none;
-  stroke: var(--color-borde);
-  stroke-width: 2;
-}
-
-.punto-tu {
-  fill: #fff;
-}
-
-.punto-sombra {
-  fill: var(--color-primario);
-  opacity: 0.7;
-}
-
-/* Destello de fin de sector: cubre la esfera 3 s y se desvanece */
-.destello {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  pointer-events: none;
-  opacity: 0;
-  animation: destello 3s ease-out forwards;
-}
-
-.destello-mejor {
-  background: var(--color-mejor);
-}
-
-.destello-peor {
-  background: var(--color-peor);
-}
-
-@keyframes destello {
-  0% { opacity: 0; }
-  10% { opacity: 0.55; }
-  75% { opacity: 0.55; }
-  100% { opacity: 0; }
-}
-
-/* Quien prefiere menos movimiento ve el color fijo, sin animación */
-@media (prefers-reduced-motion: reduce) {
-  .destello {
-    animation: none;
-    opacity: 0.4;
-  }
-}
-
 .datos {
   position: relative;
   z-index: 1; /* el texto queda por encima del destello */
@@ -91,13 +36,7 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
-}
-
-.etiqueta {
-  color: var(--color-texto-suave);
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  width: 100%;
 }
 
 .tiempo {
@@ -119,6 +58,50 @@
   color: var(--color-peor);
 }
 
+/* Barra de progreso con los dos puntos. El padding lateral deja sitio para que
+   un punto en 0 % o en 100 % no se salga de la barra. */
+.barra {
+  width: 68%;
+  margin-top: 14px;
+  padding: 0 9px;
+}
+
+.pista {
+  position: relative;
+  height: 20px;
+}
+
+.pista::before {
+  content: '';
+  position: absolute;
+  inset: 50% 0 auto;
+  height: 4px;
+  transform: translateY(-50%);
+  border-radius: 2px;
+  background: var(--reloj-linea);
+}
+
+/* El punto se centra en su posición: left (en %) sobre el ancho de la pista */
+.punto {
+  position: absolute;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  border-radius: 50%;
+  transition: left 0.4s linear;
+}
+
+/* Tú: círculo relleno. Sombra: círculo vacío y discontinuo (se distinguen por la forma) */
+.punto-tu {
+  background: var(--color-primario);
+  border: 2px solid #fff;
+}
+
+.punto-sombra {
+  border: 2px dashed var(--color-texto);
+}
+
 .leyenda {
   display: flex;
   gap: 20px;
@@ -126,28 +109,177 @@
   color: var(--color-texto-suave);
 }
 
-.tu {
-  color: #fff;
+.marca {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 4px;
+  border-radius: 50%;
+  vertical-align: -1px;
 }
 
-.sombra {
-  color: var(--color-primario);
+.marca-tu {
+  background: var(--color-primario);
+  border: 2px solid #fff;
+}
+
+.marca-sombra {
+  border: 2px dashed var(--color-texto);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .punto {
+    transition: none;
+  }
 }
 
 .salir {
-  margin-top: 12px;
+  margin-top: 4px;
+  padding: 12px 16px; /* PS-60: área de pulsación de 44 px */
   color: var(--color-texto-suave);
   text-decoration: none;
 }
 
+/* Kilómetros recorridos bajo el tiempo, como en el mockup */
+.km {
+  color: var(--color-texto-suave);
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.etiqueta {
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+.sin-carrera {
+  max-width: 70%;
+  margin: 4px 0 10px;
+  text-align: center;
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+.boton,
+.terminar,
 .finalizar {
-  margin-top: 16px;
-  padding: 10px 28px;
+  /* PS-60: al menos 44 px de alto para pulsarlo bien con el dedo, también en el reloj */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 26px;
   border: 0;
   border-radius: 999px;
-  background: var(--color-primario);
+  background: var(--reloj-boton);
   color: #fff;
+  font: inherit;
   font-weight: 600;
-  font-size: 1rem;
+  text-decoration: none;
   cursor: pointer;
+}
+
+.terminar {
+  margin-top: 16px;
+  background: var(--reloj-boton-terminar);
+}
+
+.boton:focus-visible,
+.terminar:focus-visible,
+.finalizar:focus-visible {
+  outline: 2px solid var(--color-texto);
+  outline-offset: 2px;
+}
+
+.otra {
+  margin-top: 8px;
+  padding: 12px 16px; /* PS-60: área de pulsación de 44 px */
+  color: var(--color-primario);
+}
+
+/* Aviso de la PS-46 cuando no se puede mantener la pantalla encendida */
+.aviso-pantalla {
+  max-width: 320px;
+  margin: 12px 0 0;
+  text-align: center;
+  color: var(--color-texto-suave);
+  font-size: 0.875rem;
+}
+
+/* PS-50: botón que abre el resumen de la carrera */
+.finalizar {
+  margin-top: 16px;
+}
+
+/* PS-49: destello de 3 s al terminar un sector, verde si mejoras a la sombra y rojo si no */
+.destello {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  /* PS-60: el destello es un anillo grueso en el borde de la esfera y no un relleno.
+     Así el centro sigue negro y el tiempo y los textos no pierden contraste (con el
+     relleno, el texto gris bajaba a 1,9:1 sobre el verde). */
+  box-shadow:
+    inset 0 0 0 20px var(--color-destello),
+    inset 0 0 36px 24px var(--color-destello);
+  animation: destello 3s ease-out forwards;
+}
+
+.destello-mejor {
+  --color-destello: var(--color-mejor);
+}
+
+.destello-peor {
+  --color-destello: var(--color-peor);
+}
+
+@keyframes destello {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Quien prefiere menos movimiento ve el color fijo, sin animación */
+@media (prefers-reduced-motion: reduce) {
+  .destello {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* PS-59: flecha ▲ (mejor) o ▼ (peor) encima del destello, para no depender solo del color.
+   Va arriba de la esfera para no tapar el tiempo, y no se desvanece como el destello. */
+.flecha {
+  position: absolute;
+  top: 9%;
+  left: 50%;
+  z-index: 2;
+  transform: translateX(-50%);
+  font-size: 3rem;
+  /* Blanca con borde negro: contrasta igual sobre el destello verde que sobre el rojo.
+     El color ya lo da el destello; la flecha aporta la forma (arriba o abajo). */
+  color: #fff;
+  pointer-events: none;
+}
+
+/* Texto que solo leen los lectores de pantalla */
+.solo-lector {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }

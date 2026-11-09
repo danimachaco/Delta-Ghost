@@ -22,6 +22,33 @@ mvn test
 
 También se puede abrir esta carpeta con IntelliJ IDEA (Open → carpeta → se detecta como proyecto Maven).
 
+## Publicar en Internet
+
+El backend se publica en **Render** con Docker (`Dockerfile` de esta carpeta y `render.yaml` en la raíz del repo) y
+la base de datos en **TiDB Cloud** (compatible con MySQL, gratis). Paso a paso en [docs/despliegue.md](../../../docs/despliegue.md).
+`GET /api/salud` responde `{"estado":"ok"}` para comprobar que está vivo.
+
+## Probar la app completa en local (registro e inicio de sesión)
+
+1. Arranca **MySQL** y después este backend (`mvn spring-boot:run`). Espera a ver `Started RutaFantasmaApplication`.
+2. En otra terminal, en `src/frontend`: `npm start`.
+3. Abre **http://localhost:4200**. El frontend llama a `/api/...` en su propia dirección y `ng serve`
+   la reenvía al backend (`src/frontend/proxy.conf.json`), así que no hay problemas de CORS.
+
+Si solo vas a tocar el frontend, no hace falta nada de esto: `npm run start:nube` (en `src/frontend`) usa la API
+publicada en Render en lugar de un backend local.
+
+## Problemas frecuentes
+
+| Lo que pasa | Causa | Solución |
+|---|---|---|
+| Al registrarse o entrar sale **"No se puede conectar con el servidor"** | El backend no está arrancado, o no arrancó por un error | Mira la consola del backend: tiene que poner `Started RutaFantasmaApplication` |
+| El backend no arranca: `Communications link failure` / `Connection refused` | MySQL no está encendido | Arranca el servicio de MySQL (Windows: Servicios → MySQL80 → Iniciar) |
+| El backend no arranca: `Access denied for user 'root'` | La contraseña de MySQL no coincide | Define `MYSQL_PASSWORD` antes de arrancar (ver Requisitos) |
+| El backend no arranca: `Unable to establish loopback connection` | Fallo de Java 25 en Windows cuando la carpeta temporal tiene una ruta corta (`C:\Users\USUARI~1\...`) | Usa **Java 17 o 21** en IntelliJ (File → Project Structure → SDK), o añade en *VM options*: `-Djdk.net.unixdomain.tmpdir=C:\tmp` (crea antes la carpeta) |
+| En el navegador sale un error de **CORS** | La web se abrió desde una dirección no permitida | Por defecto se permite `localhost` en cualquier puerto. Para otras direcciones, define `CORS_ORIGENES` (ver `.env.example`) |
+| La web publicada en Vercel no deja registrarse | La API y MySQL no están publicados, o la API de Render está "dormida" | Sigue [docs/despliegue.md](../../../docs/despliegue.md). Si ya está publicada, abre `https://ruta-fantasma-api.onrender.com/api/salud` y espera a que responda (hasta 1 minuto) |
+
 ## Estructura
 
 ```
@@ -54,6 +81,10 @@ backend-springboot/
 | GET | `/api/rutas/{id}` → `200` la ruta (`404` si no existe o es de otro usuario) | Sí | PS-24 |
 | POST | `/api/rutas/{id}/carreras` → `201` carrera guardada con sus puntos y `mejorMarca` (`404` si la ruta no es tuya) | Sí | PS-33 |
 | GET | `/api/rutas/{id}/sombra` → `200` puntos de la mejor marca y tiempo de la sombra en cada sector (`404` si la ruta no es tuya) | Sí | PS-36 |
+| GET | `/api/amigos` → `200` tus amigos, el más reciente primero | Sí | PS-56 |
+| GET | `/api/amigos/solicitudes` → `200 { recibidas, enviadas }` solicitudes pendientes | Sí | PS-56 |
+| POST | `/api/amigos/solicitudes` `{ email }` → `201` solicitud enviada (`ACEPTADA` si esa persona ya te la había enviado; `404` email sin cuenta, `400` tú mismo, `409` ya enviada o ya sois amigos) | Sí | PS-56 |
+| POST | `/api/amigos/solicitudes/{id}/aceptar` → `200` amistad aceptada (`404` si no es una solicitud pendiente para ti) | Sí | PS-56 |
 
 Los endpoints con token necesitan la cabecera `Authorization: Bearer <token>` (la comprueba `seguridad/TokenInterceptor`).
 Errores: `400 { campo: mensaje }` en validaciones, `401 { error }` sin sesión o login incorrecto, `404 { error }`, `409 { error }` email repetido.
@@ -69,6 +100,7 @@ El token es un JWT; la clave se define con la variable `JWT_SECRETO` (mínimo 32
 | `sector` | PS-23 | Tramos de la ruta (como en la F1), del punto `punto_inicio` al `punto_fin` |
 | `carrera` | PS-23 | Cada vez que se corre una ruta; la más rápida es la sombra |
 | `punto_carrera` | PS-33 | Puntos GPS grabados en cada carrera, con los tiempos de esa carrera |
+| `amistad` | PS-56 | Solicitudes de amistad (`PENDIENTE`) y amistades (`ACEPTADA`) entre dos usuarios |
 
 Al borrar una ruta se borran sus puntos, sectores y carreras, y al borrar una carrera sus puntos (`ON DELETE CASCADE`).
-Los scripts de `base-de-datos/` se ejecutan en orden: `01-usuario.sql`, `02-ruta-punto-sector-carrera.sql` y `03-punto-carrera.sql`.
+Los scripts de `base-de-datos/` se ejecutan en orden: `01-usuario.sql`, `02-ruta-punto-sector-carrera.sql`, `03-punto-carrera.sql` y `04-amistad.sql`.
