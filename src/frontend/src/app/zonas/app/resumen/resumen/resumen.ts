@@ -10,10 +10,9 @@ import {
 import { formatearDiferencia, formatearTiempo } from '../../../../compartido/utilidades/formato-tiempo';
 import { DISTANCIA_SECTOR_METROS } from '../../../../core/modelos/carrera';
 import { CARRERA_EJEMPLO } from '../../../../core/servicios/carrera-ejemplo';
-import { CarreraService } from '../../../../core/servicios/carrera';
 import { MapaSectores } from '../../../../compartido/componentes/mapa-sectores/mapa-sectores/mapa-sectores';
 import { CIRCUITO_EJEMPLO } from '../../../../core/servicios/circuito-ejemplo';
-import { sectoresDesdeCarrera } from '../../../../core/servicios/sectores';
+import { sectoresDesdeCarrera } from '../../../../core/servicios/sectores-mapa';
 import { CarreraService } from '../../../../core/servicios/carreras';
 
 /** Pantalla de resumen que aparece al terminar una carrera (HU-50). */
