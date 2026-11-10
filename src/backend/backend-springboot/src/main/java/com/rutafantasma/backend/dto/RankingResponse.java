@@ -4,7 +4,8 @@ import java.util.List;
 
 /**
  * Ranking de una ruta: GET /api/rutas/{id}/ranking
- * @param puestos la mejor marca de cada corredor, de la más rápida a la más lenta
+ * Mismos nombres que el modelo `RankingRuta` del frontend (PS-65).
+ * @param entradas la mejor marca de cada corredor, de la más rápida a la más lenta
  */
-public record RankingResponse(String rutaId, String nombre, List<PuestoRankingDto> puestos) {
+public record RankingResponse(String rutaId, String rutaNombre, List<PuestoRankingDto> entradas) {
 }
