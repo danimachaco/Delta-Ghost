@@ -5,6 +5,7 @@ import { AppInicio } from './app-inicio/app-inicio';
 import { GrabarRuta } from './grabar/grabar-ruta';
 import { ListaRutas } from './lista-rutas/lista-rutas';
 import { Login } from './login/login';
+import { RankingPantalla } from './ranking/ranking';
 import { Registro } from './registro/registro';
 import { GpsPantalla } from './gps/gps-pantalla';
 import { Resumen } from './resumen/resumen/resumen';
@@ -25,6 +26,13 @@ export const APP_ROUTES: Routes = [
         component: AmigosPantalla,
         canActivate: [authGuard],
         title: 'Ruta Fantasma · Amigos',
+      },
+      // Ranking de una ruta (PS-65): también necesita sesión, la API pide token
+      {
+        path: 'ranking/:rutaId',
+        component: RankingPantalla,
+        canActivate: [authGuard],
+        title: 'Ruta Fantasma · Ranking',
       },
     ],
   },

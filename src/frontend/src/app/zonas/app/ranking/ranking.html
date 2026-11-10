@@ -1,0 +1,63 @@
+<a class="volver" routerLink="/app">← Mis rutas</a>
+
+@switch (estado()) {
+  @case ('cargando') {
+    <h2>Ranking</h2>
+    <ul class="lista" aria-busy="true" aria-label="Cargando el ranking">
+      @for (n of esqueletos; track n) {
+        <li class="fila esqueleto"></li>
+      }
+    </ul>
+  }
+
+  @case ('error') {
+    <h2>Ranking</h2>
+    <div class="aviso" role="alert">
+      <p>{{ mensajeError() }}</p>
+      <button type="button" class="boton" (click)="cargar()">Reintentar</button>
+    </div>
+  }
+
+  @case ('listo') {
+    <h2>
+      Ranking <span class="ruta">· {{ nombreRuta() }}</span>
+    </h2>
+
+    @if (filas().length === 0) {
+      <div class="aviso">
+        <p>Todavía nadie ha corrido esta ruta.</p>
+        <p class="suave">Corre contra tu sombra y serás el primero del ranking.</p>
+        <a class="boton" routerLink="/reloj/elegir" [queryParams]="{ ruta: rutaId }">Correr</a>
+      </div>
+    } @else {
+      <p class="resumen" role="status">{{ resumen() }}</p>
+
+      <!-- Lista ordenada: el propio orden ya dice el puesto a los lectores de pantalla -->
+      <ol class="lista" role="list">
+        @for (fila of filas(); track fila.posicion) {
+          <li
+            class="fila"
+            [class.tuya]="fila.esTuya"
+            [attr.aria-current]="fila.esTuya ? 'true' : null"
+          >
+            <span class="puesto" aria-hidden="true">{{ fila.posicion }}.º</span>
+            <span class="info">
+              <span class="nombre">
+                {{ fila.nombre }}
+                @if (fila.esTuya) {
+                  <!-- Texto además del borde: tu fila no se distingue solo por el color -->
+                  <span class="etiqueta-tu">Tú</span>
+                }
+              </span>
+              <span class="detalle">{{ fila.fecha }}</span>
+            </span>
+            <span class="tiempos">
+              <span class="tiempo">{{ fila.tiempo }}</span>
+              <span class="detalle">{{ fila.diferencia }}</span>
+            </span>
+          </li>
+        }
+      </ol>
+    }
+  }
+}

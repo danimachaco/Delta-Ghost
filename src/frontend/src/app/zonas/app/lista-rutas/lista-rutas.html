@@ -33,6 +33,13 @@
               <span class="detalle">sombra {{ ruta.sombra }} · {{ ruta.fecha }}</span>
             </div>
             <span class="distancia">{{ ruta.distancia }}</span>
+            <!-- PS-65: ranking de la ruta. El nombre de la ruta va en la etiqueta para lectores de pantalla -->
+            <a
+              class="ranking"
+              [routerLink]="['/app/ranking', ruta.id]"
+              [attr.aria-label]="'Ranking de ' + ruta.nombre"
+              >Ranking</a
+            >
           </li>
         }
       </ul>
