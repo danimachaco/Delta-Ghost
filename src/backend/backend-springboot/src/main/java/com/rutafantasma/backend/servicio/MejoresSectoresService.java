@@ -6,9 +6,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.rutafantasma.backend.dto.CorredorDto;
 import com.rutafantasma.backend.dto.MejorSectorDto;
 import com.rutafantasma.backend.dto.MejoresSectoresResponse;
-import com.rutafantasma.backend.dto.UsuarioResponse;
 import com.rutafantasma.backend.modelo.Ruta;
 import com.rutafantasma.backend.modelo.Sector;
 
@@ -54,7 +54,7 @@ public class MejoresSectoresService {
             Sector s = sectores.get(i);
             Marca m = mejorMarca[i];
             resultado.add(new MejorSectorDto(s.getNumero(), s.getPuntoInicio(), s.getPuntoFin(), mejorTiempo[i],
-                    UsuarioResponse.de(m.usuario()), m.carreraId(), m.fecha(), m.usuario().getId().equals(usuarioId)));
+                    CorredorDto.de(m.usuario()), m.carreraId(), m.fecha(), m.usuario().getId().equals(usuarioId)));
             ideal += mejorTiempo[i];
         }
         return new MejoresSectoresResponse(String.valueOf(ruta.getId()), resultado, ideal);

@@ -119,6 +119,7 @@ class MejoresSectoresControllerTest {
                 .andExpect(jsonPath("$.sectores[0].puntoFin").value(2))
                 .andExpect(jsonPath("$.sectores[0].tiempoSegundos").value(60))
                 .andExpect(jsonPath("$.sectores[0].usuario.nombre").value("Ana"))
+                .andExpect(jsonPath("$.sectores[0].usuario.email").doesNotExist())
                 .andExpect(jsonPath("$.sectores[0].carreraId").doesNotExist())
                 .andExpect(jsonPath("$.sectores[0].tuyo").value(true))
                 .andExpect(jsonPath("$.tiempoIdealSegundos").value(180));

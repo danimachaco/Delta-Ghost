@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 /**
  * Un puesto del ranking de una ruta: la mejor marca de un corredor.
+ * Los campos posicion, usuario, tiempoTotalSegundos y fecha son los del modelo `EntradaRanking` del frontend (PS-65).
  * @param posicion        1, 2, 3… (dos corredores con el mismo tiempo comparten puesto)
  * @param carreraId       carrera de esa marca, o null si es la grabación original de la ruta
  * @param diferenciaConPrimeroSegundos segundos que le faltan para igualar al primero (0 si es el primero)
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
  */
 public record PuestoRankingDto(
         int posicion,
-        UsuarioResponse usuario,
+        CorredorDto usuario,
         long tiempoTotalSegundos,
         String carreraId,
         LocalDateTime fecha,
