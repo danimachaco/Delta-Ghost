@@ -85,7 +85,7 @@ backend-springboot/
 | GET | `/api/amigos/solicitudes` → `200 { recibidas, enviadas }` solicitudes pendientes | Sí | PS-56 |
 | POST | `/api/amigos/solicitudes` `{ email }` → `201` solicitud enviada (`ACEPTADA` si esa persona ya te la había enviado; `404` email sin cuenta, `400` tú mismo, `409` ya enviada o ya sois amigos) | Sí | PS-56 |
 | POST | `/api/amigos/solicitudes/{id}/aceptar` → `200` amistad aceptada (`404` si no es una solicitud pendiente para ti) | Sí | PS-56 |
-| GET | `/api/rutas/{id}/ranking` → `200 { rutaId, nombre, puestos }` la mejor marca de cada corredor, de la más rápida a la más lenta | Sí | PS-64 |
+| GET | `/api/rutas/{id}/ranking` → `200 { rutaId, rutaNombre, entradas }` la mejor marca de cada corredor, de la más rápida a la más lenta (cada corredor solo con `id` y `nombre`) | Sí | PS-64 |
 | GET | `/api/rutas/{id}/sectores/mejores` → `200 { rutaId, sectores, tiempoIdealSegundos }` el mejor tiempo de cada sector entre todos los corredores y la suma de todos (vuelta ideal) | Sí | PS-67 |
 | GET | `/api/rutas/{id}/sombra/{tipo}` → `200` sombra por tipo: `propia` (tu mejor marca), `record` (la mejor de todos) o `amigo` con `?amigoId=` (la mejor de ese amigo). Trae `tipo` y `usuario` (de quién es). `400` tipo que no existe o falta `amigoId`; `404` no es tu amigo o aún no ha corrido la ruta | Sí | PS-70 |
 

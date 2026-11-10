@@ -16,7 +16,7 @@ Se ha creado el endpoint `GET /api/rutas/{id}/sectores/mejores`, que calcula par
 - **`MejoresSectoresService`.** Recorre **todas** las marcas de la ruta con el `MarcasService` de PS-64: cada carrera de cada corredor y la grabación original. Para cada sector se queda con la más rápida y, si dos empatan, con la que se hizo antes. Así cuentan también los buenos sectores de vueltas que en total fueron lentas.
 - **Respuesta** `MejoresSectoresResponse`:
   - `rutaId`;
-  - `sectores`, cada uno con `numero`, `puntoInicio`, `puntoFin`, `tiempoSegundos` del sector, `usuario`, `carreraId` (`null` si es la grabación), `fecha` y `tuyo`;
+  - `sectores`, cada uno con `numero`, `puntoInicio`, `puntoFin`, `tiempoSegundos` del sector, `usuario` (solo `id` y `nombre`, como en el ranking), `carreraId` (`null` si es la grabación), `fecha` y `tuyo`;
   - `tiempoIdealSegundos`.
 - **Acceso:** lo pueden pedir el dueño de la ruta y sus amigos (`AccesoRutas`, PS-64); para los demás la ruta responde `404`.
 - **Pruebas** con `MockMvc` (5 nuevas, 55 en total):

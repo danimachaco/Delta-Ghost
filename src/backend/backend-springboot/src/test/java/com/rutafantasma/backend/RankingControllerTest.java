@@ -123,13 +123,13 @@ class RankingControllerTest {
         pedir(tokenAna, "/api/rutas/" + rutaId + "/ranking")
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.rutaId").value(rutaId))
-                .andExpect(jsonPath("$.nombre").value("Parque del Retiro"))
-                .andExpect(jsonPath("$.puestos.length()").value(1))
-                .andExpect(jsonPath("$.puestos[0].posicion").value(1))
-                .andExpect(jsonPath("$.puestos[0].usuario.nombre").value("Ana"))
-                .andExpect(jsonPath("$.puestos[0].tiempoTotalSegundos").value(260))
-                .andExpect(jsonPath("$.puestos[0].carreraId").doesNotExist())
-                .andExpect(jsonPath("$.puestos[0].tuya").value(true));
+                .andExpect(jsonPath("$.rutaNombre").value("Parque del Retiro"))
+                .andExpect(jsonPath("$.entradas.length()").value(1))
+                .andExpect(jsonPath("$.entradas[0].posicion").value(1))
+                .andExpect(jsonPath("$.entradas[0].usuario.nombre").value("Ana"))
+                .andExpect(jsonPath("$.entradas[0].tiempoTotalSegundos").value(260))
+                .andExpect(jsonPath("$.entradas[0].carreraId").doesNotExist())
+                .andExpect(jsonPath("$.entradas[0].tuya").value(true));
     }
 
     @Test
@@ -141,28 +141,28 @@ class RankingControllerTest {
 
         pedir(tokenLuis, "/api/rutas/" + rutaId + "/ranking")
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.puestos.length()").value(2))
-                .andExpect(jsonPath("$.puestos[0].usuario.nombre").value("Luis"))
-                .andExpect(jsonPath("$.puestos[0].tiempoTotalSegundos").value(250))
-                .andExpect(jsonPath("$.puestos[0].diferenciaConPrimeroSegundos").value(0))
-                .andExpect(jsonPath("$.puestos[0].carreraId").isString())
-                .andExpect(jsonPath("$.puestos[0].tuya").value(true))
-                .andExpect(jsonPath("$.puestos[1].usuario.nombre").value("Ana"))
-                .andExpect(jsonPath("$.puestos[1].posicion").value(2))
-                .andExpect(jsonPath("$.puestos[1].tiempoTotalSegundos").value(255))
-                .andExpect(jsonPath("$.puestos[1].diferenciaConPrimeroSegundos").value(5))
-                .andExpect(jsonPath("$.puestos[1].tuya").value(false))
-                .andExpect(jsonPath("$.puestos[1].usuario.password").doesNotExist());
+                .andExpect(jsonPath("$.entradas.length()").value(2))
+                .andExpect(jsonPath("$.entradas[0].usuario.nombre").value("Luis"))
+                .andExpect(jsonPath("$.entradas[0].tiempoTotalSegundos").value(250))
+                .andExpect(jsonPath("$.entradas[0].diferenciaConPrimeroSegundos").value(0))
+                .andExpect(jsonPath("$.entradas[0].carreraId").isString())
+                .andExpect(jsonPath("$.entradas[0].tuya").value(true))
+                .andExpect(jsonPath("$.entradas[1].usuario.nombre").value("Ana"))
+                .andExpect(jsonPath("$.entradas[1].posicion").value(2))
+                .andExpect(jsonPath("$.entradas[1].tiempoTotalSegundos").value(255))
+                .andExpect(jsonPath("$.entradas[1].diferenciaConPrimeroSegundos").value(5))
+                .andExpect(jsonPath("$.entradas[1].tuya").value(false))
+                .andExpect(jsonPath("$.entradas[1].usuario.email").doesNotExist());
     }
 
     @Test
     void dosCorredoresConElMismoTiempoCompartenPuesto() throws Exception {
         correr(tokenLuis, 260);
         pedir(tokenAna, "/api/rutas/" + rutaId + "/ranking")
-                .andExpect(jsonPath("$.puestos[0].posicion").value(1))
-                .andExpect(jsonPath("$.puestos[1].posicion").value(1))
+                .andExpect(jsonPath("$.entradas[0].posicion").value(1))
+                .andExpect(jsonPath("$.entradas[1].posicion").value(1))
                 // Empate: va primero quien lo hizo antes (la grabación de Ana)
-                .andExpect(jsonPath("$.puestos[0].usuario.nombre").value("Ana"));
+                .andExpect(jsonPath("$.entradas[0].usuario.nombre").value("Ana"));
     }
 
     @Test

@@ -20,8 +20,8 @@ Se ha creado el endpoint `GET /api/rutas/{id}/ranking`, que devuelve la clasific
   - Para un amigo, su primera carrera siempre es su mejor marca.
   - `SombraService` devuelve la sombra de quien la pide.
 - **`Marca` y `MarcasService`.** Una *marca* es un tiempo hecho en la ruta: una carrera o la grabación original del dueño. `MarcasService` reúne todas las marcas de la ruta y se queda con la mejor de cada corredor. Se ha hecho aparte porque también lo usarán los mejores sectores (PS-67) y la sombra por tipo (PS-70).
-- **Ranking (`RankingService`).** Ordena por tiempo y, si hay empate, va primero quien lo consiguió antes. Los empatados comparten puesto (1, 1, 3), como en las clasificaciones deportivas. Cada puesto trae:
-  - `posicion`, `usuario`, `tiempoTotalSegundos` y `fecha`;
+- **Ranking (`RankingService`).** Ordena por tiempo y, si hay empate, va primero quien lo consiguió antes. Los empatados comparten puesto (1, 1, 3), como en las clasificaciones deportivas. La respuesta es `{ rutaId, rutaNombre, entradas }`, con los mismos nombres que el modelo `RankingRuta` que Asier ya había hecho en el frontend (PS-65). Cada entrada trae:
+  - `posicion`, `usuario` (solo `id` y `nombre`, con `CorredorDto`), `tiempoTotalSegundos` y `fecha`;
   - `carreraId` (`null` si es la grabación de la ruta);
   - `diferenciaConPrimeroSegundos`;
   - `tuya`, para que el frontend pueda resaltar tu fila.
@@ -42,4 +42,5 @@ Se ha creado el endpoint `GET /api/rutas/{id}/ranking`, que devuelve la clasific
 ### Problemas encontrados
 
 - Al permitir que otros corredores suban carreras, la consulta antigua `findFirstByRutaIdAndMejorMarcaTrue` podía devolver la marca de otra persona. Se ha sustituido por la versión por usuario en todos los sitios donde se usaba.
+- La pantalla del ranking (PS-65) se hizo a la vez que este endpoint y ya esperaba unos nombres de campos concretos (`rutaNombre`, `entradas`) y que no se enviara el email de los demás corredores. Se cambió la respuesta para seguir ese contrato y se creó `CorredorDto`, que solo lleva id y nombre.
 - El enunciado de la tarea no decía qué corredores entran en el ranking. Se ha decidido que sean el dueño y sus amigos, y la decisión está anotada en `CLAUDE.md` para que el equipo la revise.

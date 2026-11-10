@@ -6,9 +6,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.rutafantasma.backend.dto.CorredorDto;
 import com.rutafantasma.backend.dto.PuestoRankingDto;
 import com.rutafantasma.backend.dto.RankingResponse;
-import com.rutafantasma.backend.dto.UsuarioResponse;
 import com.rutafantasma.backend.modelo.Ruta;
 
 /** Ranking de una ruta (PS-64): la mejor marca de cada corredor que la ha corrido. */
@@ -38,7 +38,7 @@ public class RankingService {
                     : i + 1;
             puestos.add(new PuestoRankingDto(
                     posicion,
-                    UsuarioResponse.de(m.usuario()),
+                    CorredorDto.de(m.usuario()),
                     m.tiempoTotalSegundos(),
                     m.carreraId(),
                     m.fecha(),

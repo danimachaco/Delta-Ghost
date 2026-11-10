@@ -671,9 +671,9 @@
                   "pm.test('Devuelve 200 OK', () => pm.response.to.have.status(200));",
                   "const r = pm.response.json();",
                   "pm.test('Ana va primera con 250 s', () => {",
-                  "  pm.expect(r.puestos[0].posicion).to.eql(1);",
-                  "  pm.expect(r.puestos[0].tiempoTotalSegundos).to.eql(250);",
-                  "  pm.expect(r.puestos[0].tuya).to.eql(true);",
+                  "  pm.expect(r.entradas[0].posicion).to.eql(1);",
+                  "  pm.expect(r.entradas[0].tiempoTotalSegundos).to.eql(250);",
+                  "  pm.expect(r.entradas[0].tuya).to.eql(true);",
                   "});"
                 ]
               }
