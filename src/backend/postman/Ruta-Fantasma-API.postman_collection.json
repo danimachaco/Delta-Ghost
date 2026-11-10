@@ -512,7 +512,7 @@
     },
     {
       "name": "Carreras",
-      "description": "PS-33 y PS-36 · Subir una carrera con sus puntos y descargar la sombra de la ruta. Usan el token y el {{rutaId}} guardado al crear la ruta.",
+      "description": "PS-33, PS-36 y PS-64 · Subir una carrera, descargar la sombra y ver el ranking. Usan el token y el {{rutaId}} guardado al crear la ruta.",
       "item": [
         {
           "name": "12. Subir carrera",
@@ -638,6 +638,43 @@
                   "pm.test('La sombra es la carrera más rápida', () => pm.expect(s.tiempoTotalSegundos).to.eql(250));",
                   "pm.test('Trae los puntos de la sombra', () => pm.expect(s.puntos).to.have.lengthOf(4));",
                   "pm.test('Trae el tiempo de cada sector', () => pm.expect(s.sectores).to.have.lengthOf(3));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "21. Ranking de la ruta",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/rutas/{{rutaId}}/ranking",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "rutas",
+                "{{rutaId}}",
+                "ranking"
+              ]
+            },
+            "description": "Mejor marca de cada corredor en la ruta. Ana es la única que la ha corrido: primera con la carrera de 250 s."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 200 OK', () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json();",
+                  "pm.test('Ana va primera con 250 s', () => {",
+                  "  pm.expect(r.puestos[0].posicion).to.eql(1);",
+                  "  pm.expect(r.puestos[0].tiempoTotalSegundos).to.eql(250);",
+                  "  pm.expect(r.puestos[0].tuya).to.eql(true);",
+                  "});"
                 ]
               }
             }

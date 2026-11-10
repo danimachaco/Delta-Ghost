@@ -1,6 +1,6 @@
 # Colección de Postman — Ruta Fantasma API (PS-25)
 
-`Ruta-Fantasma-API.postman_collection.json` es una colección de Postman (formato v2.1) con 20 peticiones
+`Ruta-Fantasma-API.postman_collection.json` es una colección de Postman (formato v2.1) con 21 peticiones
 y sus pruebas automáticas, para probar toda la API del backend (`../backend-springboot`).
 
 ## Peticiones
@@ -27,6 +27,7 @@ y sus pruebas automáticas, para probar toda la API del backend (`../backend-spr
 | 18 | Amigos | `POST /api/amigos/solicitudes/{{solicitudId}}/aceptar` (como Luis) | 200, `ACEPTADA` |
 | 19 | Amigos | `GET /api/amigos` | 200, incluye a Luis |
 | 20 | Amigos | Enviar solicitud repetida | 409 |
+| 21 | Carreras | `GET /api/rutas/{{rutaId}}/ranking` | 200, Ana primera con 250 s |
 
 ## Cómo usarla
 

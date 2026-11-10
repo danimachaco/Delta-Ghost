@@ -85,8 +85,11 @@ backend-springboot/
 | GET | `/api/amigos/solicitudes` → `200 { recibidas, enviadas }` solicitudes pendientes | Sí | PS-56 |
 | POST | `/api/amigos/solicitudes` `{ email }` → `201` solicitud enviada (`ACEPTADA` si esa persona ya te la había enviado; `404` email sin cuenta, `400` tú mismo, `409` ya enviada o ya sois amigos) | Sí | PS-56 |
 | POST | `/api/amigos/solicitudes/{id}/aceptar` → `200` amistad aceptada (`404` si no es una solicitud pendiente para ti) | Sí | PS-56 |
+| GET | `/api/rutas/{id}/ranking` → `200 { rutaId, nombre, puestos }` la mejor marca de cada corredor, de la más rápida a la más lenta | Sí | PS-64 |
 
 Los endpoints con token necesitan la cabecera `Authorization: Bearer <token>` (la comprueba `seguridad/TokenInterceptor`).
+
+**Quién puede ver una ruta (PS-64):** su dueño y los amigos del dueño (`servicio/AccesoRutas`). Los amigos pueden verla, correrla, descargar su sombra y ver su ranking; para cualquier otro usuario la ruta responde `404`. `GET /api/rutas` sigue listando solo las rutas propias. Cada corredor tiene su propia mejor marca en cada ruta; la del dueño parte de la grabación de la ruta.
 Errores: `400 { campo: mensaje }` en validaciones, `401 { error }` sin sesión o login incorrecto, `404 { error }`, `409 { error }` email repetido.
 El token es un JWT; la clave se define con la variable `JWT_SECRETO` (mínimo 32 caracteres).
 
