@@ -12,7 +12,9 @@ import com.rutafantasma.backend.servicio.SombraService;
 import com.rutafantasma.backend.servicio.TipoSombra;
 
 /**
- * API REST de la sombra: GET /api/rutas/{rutaId}/sombra (la tuya) y GET /api/rutas/{rutaId}/sombra/{tipo} (PS-70)
+ * API REST de la sombra: GET /api/rutas/{rutaId}/sombra?tipo=MEJOR|ULTIMA|ORIGINAL|RECORD|AMIGO (PS-70)
+ * Sin tipo devuelve tu mejor marca, como antes. Para AMIGO se indica cuál con &amigoId=
+ * (no se llama usuarioId para no confundirlo con quien hace la petición).
  * Como cuelga de /api/rutas, TokenInterceptor ya exige el token y deja el id del usuario en "usuarioId".
  */
 @RestController
@@ -25,17 +27,8 @@ public class SombraController {
     }
 
     @GetMapping("/api/rutas/{rutaId}/sombra")
-    public SombraResponse obtener(@RequestAttribute(TokenInterceptor.USUARIO_ID) Long usuarioId, @PathVariable Long rutaId) {
-        return servicio.obtener(usuarioId, rutaId);
-    }
-
-    /**
-     * Sombra por tipo (PS-70): propia, record o amigo.
-     * Para "amigo" se indica cuál con ?amigoId= (no se llama usuarioId para no confundirlo con quien pide).
-     */
-    @GetMapping("/api/rutas/{rutaId}/sombra/{tipo}")
-    public SombraResponse obtenerPorTipo(@RequestAttribute(TokenInterceptor.USUARIO_ID) Long usuarioId,
-            @PathVariable Long rutaId, @PathVariable String tipo, @RequestParam(required = false) Long amigoId) {
+    public SombraResponse obtener(@RequestAttribute(TokenInterceptor.USUARIO_ID) Long usuarioId, @PathVariable Long rutaId,
+            @RequestParam(required = false) String tipo, @RequestParam(required = false) Long amigoId) {
         return servicio.obtener(usuarioId, rutaId, TipoSombra.desde(tipo), amigoId);
     }
 }

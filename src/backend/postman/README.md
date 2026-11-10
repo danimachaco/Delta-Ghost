@@ -29,7 +29,7 @@ y sus pruebas automáticas, para probar toda la API del backend (`../backend-spr
 | 20 | Amigos | Enviar solicitud repetida | 409 |
 | 21 | Carreras | `GET /api/rutas/{{rutaId}}/ranking` | 200, Ana primera con 250 s |
 | 22 | Carreras | `GET /api/rutas/{{rutaId}}/sectores/mejores` | 200, 3 sectores y la vuelta ideal |
-| 23 | Carreras | `GET /api/rutas/{{rutaId}}/sombra/record` | 200, el récord de la ruta (250 s) |
+| 23 | Carreras | `GET /api/rutas/{{rutaId}}/sombra?tipo=RECORD` | 200, el récord de la ruta (250 s) |
 | 24 | Carreras | Sombra de un tipo que no existe | 400 |
 
 ## Cómo usarla

@@ -4,42 +4,47 @@
 
 ### Qué se ha hecho
 
-Se ha creado el endpoint `GET /api/rutas/{id}/sombra/{tipo}`, que permite elegir contra quién correr:
+El endpoint de la sombra acepta ahora un parámetro `tipo` para elegir contra qué sombra correr: `GET /api/rutas/{id}/sombra?tipo=…`. Sigue el contrato acordado con la pantalla "Elige sombra" del reloj (PS-71, de Asier), que ya estaba anotado en `CLAUDE.md`:
 
-- **`propia`**: tu mejor marca en la ruta (lo que ya devolvía `GET /api/rutas/{id}/sombra`).
-- **`record`**: la mejor marca de todos los corredores de la ruta, es decir, el primero del ranking (PS-64).
-- **`amigo`**: la mejor marca de un amigo concreto, indicado con `?amigoId=`.
+- **`MEJOR`**: tu mejor marca en la ruta. Es el tipo por defecto, así que `GET /api/rutas/{id}/sombra` sin parámetros responde igual que antes.
+- **`ULTIMA`**: tu última carrera en la ruta, aunque no sea la mejor.
+- **`ORIGINAL`**: la grabación con la que se creó la ruta.
 
-La respuesta es la misma sombra que ya descarga el reloj (puntos y tiempo de la sombra en cada sector), con dos campos nuevos: `tipo` y `usuario` (de quién es la sombra).
+Además se han añadido dos tipos para competir con otros corredores, aprovechando el ranking (PS-64):
+
+- **`RECORD`**: la mejor marca de todos los corredores de la ruta.
+- **`AMIGO`**: la mejor marca de un amigo concreto, indicado con `&amigoId=`.
+
+La respuesta es la sombra de siempre (puntos y tiempo de la sombra en cada sector) con dos campos nuevos: `tipo` (el tipo devuelto) y `usuario` (de quién es la sombra, solo con `id` y `nombre`).
 
 ### Cómo se ha hecho
 
-- **`TipoSombra`**, un `enum` con `PROPIA`, `RECORD` y `AMIGO`. Convierte el texto de la URL sin importar mayúsculas o minúsculas. Si el tipo no existe, responde `400` con un mensaje que dice cuáles hay.
-- **`SombraService`** elige la marca según el tipo, usando las marcas de `MarcasService` (PS-64):
-  - *propia*: tu mejor marca. Si todavía no tienes ninguna (eres un amigo que aún no la ha corrido), corres contra la grabación de la ruta.
-  - *record*: la más rápida de todos.
-  - *amigo*: tiene que ser tu amigo (`AmistadRepository.sonAmigos`) y haber corrido ya la ruta. Si no, responde `404` con el motivo; si falta `amigoId`, responde `400`.
+- **`TipoSombra`**, un `enum` con los cinco tipos. Convierte el parámetro sin importar mayúsculas o minúsculas; sin parámetro es `MEJOR`. Si el tipo no existe responde `400` con un mensaje que dice cuáles hay.
+- **`SombraService`** elige la marca según el tipo, con las marcas de `MarcasService` (PS-64):
+  - `MEJOR`: tu mejor marca. Si todavía no tienes ninguna (eres un amigo que aún no la ha corrido), la grabación de la ruta, como antes.
+  - `ULTIMA`: la carrera más reciente del corredor en esa ruta (`findFirstByRutaIdAndUsuarioIdOrderByFechaDescIdDesc`; el id desempata si dos tienen la misma fecha). Si no ha corrido nunca la ruta responde `404`, tal y como pide el contrato.
+  - `ORIGINAL`: siempre la grabación de la ruta.
+  - `RECORD`: el primero del ranking.
+  - `AMIGO`: tiene que ser tu amigo (`AmistadRepository.sonAmigos`) y haber corrido ya la ruta; si no, `404` con el motivo. Si falta `amigoId`, `400`.
 
-  Después calcula los tiempos por sector con `TiemposSector` (PS-67), igual que antes.
-- **El endpoint de siempre sigue funcionando:** `GET /api/rutas/{id}/sombra` devuelve ahora la sombra `propia`. Los dos campos nuevos no rompen el frontend, que ignora lo que no conoce.
-- **El parámetro se llama `amigoId`** y no `usuarioId`, para no confundirlo con el usuario que hace la petición, que el `TokenInterceptor` deja en el atributo `usuarioId`.
-- **Pruebas** con `MockMvc` (7 nuevas, 62 en total):
-  - el récord, antes y después de que alguien lo bata;
-  - la sombra propia aunque otro sea más rápido, y la de quien aún no ha corrido la ruta;
-  - la sombra de un amigo en los dos sentidos;
-  - los errores de `amigo` (sin `amigoId`, alguien que no es amigo, un amigo que no ha corrido la ruta);
-  - un tipo que no existe y en mayúsculas;
+  Después se calculan los tiempos por sector con `TiemposSector` (PS-67), igual que antes.
+- **El parámetro del amigo se llama `amigoId`** y no `usuarioId`, para no confundirlo con el usuario que hace la petición, que el `TokenInterceptor` deja en el atributo `usuarioId`.
+- **Pruebas** con `MockMvc` (10 nuevas, 65 en total):
+  - sin tipo y con `MEJOR`, también para un amigo que aún no ha corrido la ruta;
+  - `ULTIMA`, con y sin carreras;
+  - `ORIGINAL`, `RECORD` y `AMIGO`, con sus errores;
+  - un tipo que no existe;
   - una ruta que no puedes ver y una petición sin token.
 
   Se han añadido las peticiones 23 y 24 a la colección de Postman.
 
 ### Por qué
 
-- **Elegir contra quién correr** hace la app más motivadora: puedes intentar batirte a ti mismo, al récord de la ruta o a un amigo concreto.
-- **Un solo endpoint con el tipo en la URL** en vez de tres distintos: el reloj descarga siempre la misma forma de sombra y solo cambia la dirección, así que pantallas y servicios no tienen que duplicarse.
-- **La sombra de un amigo solo si es amigo:** igual que las rutas (PS-64), las carreras de alguien solo las ven sus amigos.
+- **Seguir el contrato que ya usaba el frontend:** la pantalla "Elige sombra" se hizo antes que este endpoint. Mientras el servidor no enviaba `tipo`, desactivaba las opciones `ULTIMA` y `ORIGINAL`. Con este endpoint funcionan sin cambiar nada en el frontend.
+- **Un parámetro en la misma dirección**, en lugar de endpoints nuevos: el reloj descarga siempre la misma forma de sombra y quien no envía `tipo` (por ejemplo, una versión anterior de la app) sigue recibiendo la mejor marca.
+- **`RECORD` y `AMIGO` como extra:** no rompen el contrato y permiten correr contra el récord de la ruta o contra un amigo concreto, lo que hace la app más motivadora.
 
 ### Problemas encontrados
 
-- La tarea no explicaba qué "tipos" de sombra había. Se han elegido los tres más útiles con lo que ya existía (tu marca, el récord y la de un amigo). Si el equipo quiere otro, como la última carrera, basta con añadirlo a `TipoSombra`.
+- Al principio el endpoint se hizo como `/sombra/{tipo}` con los tipos `propia`, `record` y `amigo`, porque la tarea no explicaba qué tipos había. Al subir la rama se vio que Asier ya había dejado el contrato en su rama de la PS-71 (`?tipo=MEJOR|ULTIMA|ORIGINAL`). Se rehízo para seguirlo y se mantuvieron `RECORD` y `AMIGO` como tipos adicionales. La lección para el equipo: mirar las ramas abiertas de los compañeros antes de definir un endpoint que otros van a usar.
 - Las tres tareas (PS-64, PS-67 y PS-70) dependen unas de otras, así que cada rama sale de la anterior y las PR se tienen que fusionar en ese orden.

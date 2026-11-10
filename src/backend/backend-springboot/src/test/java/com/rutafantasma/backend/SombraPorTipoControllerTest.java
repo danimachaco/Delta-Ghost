@@ -22,7 +22,10 @@ import com.rutafantasma.backend.repositorio.CarreraRepository;
 import com.rutafantasma.backend.repositorio.RutaRepository;
 import com.rutafantasma.backend.repositorio.UsuarioRepository;
 
-/** Pruebas de GET /api/rutas/{id}/sombra/{tipo}: propia, record y amigo (PS-70). */
+/**
+ * Pruebas de GET /api/rutas/{id}/sombra?tipo=… (PS-70): MEJOR, ULTIMA y ORIGINAL (contrato de la
+ * pantalla "Elige sombra", PS-71) y RECORD y AMIGO para competir con otros corredores.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 class SombraPorTipoControllerTest {
@@ -123,97 +126,119 @@ class SombraPorTipoControllerTest {
         return json.readTree(respuesta).get("id").asText();
     }
 
-    private ResultActions sombra(JsonNode quien, String tipoYParametros) throws Exception {
-        return mvc.perform(get("/api/rutas/" + rutaId + "/sombra/" + tipoYParametros)
+    /** Pide la sombra con los parámetros indicados (por ejemplo "?tipo=ULTIMA") */
+    private ResultActions sombra(JsonNode quien, String parametros) throws Exception {
+        return mvc.perform(get("/api/rutas/" + rutaId + "/sombra" + parametros)
                 .header("Authorization", "Bearer " + token(quien)));
     }
 
     @Test
-    void elRecordEsLaMejorMarcaDeTodos() throws Exception {
-        // Sin carreras, el récord es la grabación de Ana
-        sombra(luis, "record")
+    void sinTipoEsLaMejorMarcaYTraeElTipo() throws Exception {
+        correr(ana, 250);
+        correr(ana, 255);
+        sombra(ana, "")
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.tipo").value("record"))
+                .andExpect(jsonPath("$.tipo").value("MEJOR"))
                 .andExpect(jsonPath("$.usuario.nombre").value("Ana"))
+                .andExpect(jsonPath("$.usuario.email").doesNotExist())
+                .andExpect(jsonPath("$.tiempoTotalSegundos").value(250));
+        sombra(ana, "?tipo=MEJOR").andExpect(jsonPath("$.tiempoTotalSegundos").value(250));
+    }
+
+    @Test
+    void laMejorEsLaTuyaAunqueOtroSeaMasRapidoOLaGrabacionSiNoHasCorrido() throws Exception {
+        correr(luis, 240);
+        sombra(ana, "?tipo=MEJOR").andExpect(jsonPath("$.tiempoTotalSegundos").value(260));
+        // Eva se hace amiga de Ana y aún no ha corrido: su mejor sombra es la grabación
+        hacerAmigos(ana, eva);
+        sombra(eva, "?tipo=MEJOR")
+                .andExpect(jsonPath("$.usuario.nombre").value("Ana"))
+                .andExpect(jsonPath("$.carreraId").doesNotExist());
+    }
+
+    @Test
+    void laUltimaEsTuCarreraMasRecienteAunqueNoSeaLaMejor() throws Exception {
+        correr(ana, 250);
+        String ultima = correr(ana, 290);
+        correr(luis, 200); // las carreras de otros no cuentan
+        sombra(ana, "?tipo=ULTIMA")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.tipo").value("ULTIMA"))
+                .andExpect(jsonPath("$.carreraId").value(ultima))
+                .andExpect(jsonPath("$.tiempoTotalSegundos").value(290))
+                .andExpect(jsonPath("$.sectores.length()").value(3));
+    }
+
+    @Test
+    void sinCarrerasNoHayUltimaYDevuelve404() throws Exception {
+        sombra(ana, "?tipo=ULTIMA")
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("Todavía no has corrido esta ruta"));
+    }
+
+    @Test
+    void laOriginalEsSiempreLaGrabacionDeLaRuta() throws Exception {
+        correr(ana, 200);
+        sombra(luis, "?tipo=ORIGINAL")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.tipo").value("ORIGINAL"))
                 .andExpect(jsonPath("$.carreraId").doesNotExist())
-                .andExpect(jsonPath("$.tiempoTotalSegundos").value(260));
+                .andExpect(jsonPath("$.usuario.nombre").value("Ana"))
+                .andExpect(jsonPath("$.tiempoTotalSegundos").value(260))
+                .andExpect(jsonPath("$.sectores[0].tiempoSegundos").value(85));
+    }
+
+    @Test
+    void elRecordEsLaMejorMarcaDeTodos() throws Exception {
+        sombra(luis, "?tipo=RECORD").andExpect(jsonPath("$.usuario.nombre").value("Ana"));
 
         String carreraLuis = correr(luis, 240);
         correr(ana, 250);
-        sombra(ana, "record")
+        sombra(ana, "?tipo=record")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.tipo").value("RECORD"))
                 .andExpect(jsonPath("$.usuario.nombre").value("Luis"))
                 .andExpect(jsonPath("$.carreraId").value(carreraLuis))
-                .andExpect(jsonPath("$.tiempoTotalSegundos").value(240))
-                .andExpect(jsonPath("$.puntos.length()").value(4))
-                .andExpect(jsonPath("$.sectores.length()").value(3))
-                .andExpect(jsonPath("$.sectores[2].tiempoSegundos").value(240));
-    }
-
-    @Test
-    void laPropiaEsTuMejorMarcaAunqueOtroSeaMasRapido() throws Exception {
-        correr(luis, 240);
-        sombra(ana, "propia")
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.tipo").value("propia"))
-                .andExpect(jsonPath("$.usuario.nombre").value("Ana"))
-                .andExpect(jsonPath("$.tiempoTotalSegundos").value(260));
-        // El endpoint de siempre (PS-36) devuelve la sombra propia
-        mvc.perform(get("/api/rutas/" + rutaId + "/sombra").header("Authorization", "Bearer " + token(ana)))
-                .andExpect(jsonPath("$.tipo").value("propia"))
-                .andExpect(jsonPath("$.tiempoTotalSegundos").value(260));
-    }
-
-    @Test
-    void siAunNoHasCorridoLaRutaTuSombraPropiaEsLaGrabacion() throws Exception {
-        sombra(luis, "propia")
-                .andExpect(jsonPath("$.usuario.nombre").value("Ana"))
-                .andExpect(jsonPath("$.carreraId").doesNotExist());
+                .andExpect(jsonPath("$.tiempoTotalSegundos").value(240));
     }
 
     @Test
     void laDeUnAmigoEsSuMejorMarcaEnLaRuta() throws Exception {
         String carreraLuis = correr(luis, 245);
         correr(luis, 290);
-
-        sombra(ana, "amigo?amigoId=" + id(luis))
+        sombra(ana, "?tipo=AMIGO&amigoId=" + id(luis))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.tipo").value("amigo"))
+                .andExpect(jsonPath("$.tipo").value("AMIGO"))
                 .andExpect(jsonPath("$.usuario.nombre").value("Luis"))
                 .andExpect(jsonPath("$.carreraId").value(carreraLuis))
                 .andExpect(jsonPath("$.tiempoTotalSegundos").value(245));
-        // Y al revés: la de Ana es su grabación
-        sombra(luis, "amigo?amigoId=" + id(ana))
-                .andExpect(jsonPath("$.usuario.nombre").value("Ana"))
-                .andExpect(jsonPath("$.tiempoTotalSegundos").value(260));
     }
 
     @Test
     void laDeUnAmigoNecesitaUnAmigoQueHayaCorridoLaRuta() throws Exception {
-        sombra(ana, "amigo")
+        sombra(ana, "?tipo=AMIGO")
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("Para correr contra un amigo indica cuál con ?amigoId="));
-        // Eva no es amiga de Ana
-        sombra(ana, "amigo?amigoId=" + id(eva))
+                .andExpect(jsonPath("$.error").value("Para correr contra un amigo indica cuál con &amigoId="));
+        sombra(ana, "?tipo=AMIGO&amigoId=" + id(eva))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("No tienes ningún amigo con id " + id(eva)));
-        // Ahora sí lo es, pero todavía no ha corrido la ruta
         hacerAmigos(ana, eva);
-        sombra(ana, "amigo?amigoId=" + id(eva))
+        sombra(ana, "?tipo=AMIGO&amigoId=" + id(eva))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("Tu amigo todavía no ha corrido esta ruta"));
     }
 
     @Test
-    void elTipoTieneQueExistirPeroDaIgualMayusculas() throws Exception {
-        sombra(ana, "fantasma")
+    void unTipoQueNoExisteDevuelve400() throws Exception {
+        sombra(ana, "?tipo=FANTASMA")
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("El tipo de sombra \"fantasma\" no existe: usa propia, record o amigo"));
-        sombra(ana, "RECORD").andExpect(status().isOk()).andExpect(jsonPath("$.tipo").value("record"));
+                .andExpect(jsonPath("$.error")
+                        .value("El tipo de sombra \"FANTASMA\" no existe: usa MEJOR, ULTIMA, ORIGINAL, RECORD o AMIGO"));
     }
 
     @Test
     void quienNoPuedeVerLaRutaRecibe404YSinToken401() throws Exception {
-        sombra(eva, "record").andExpect(status().isNotFound());
-        mvc.perform(get("/api/rutas/" + rutaId + "/sombra/record")).andExpect(status().isUnauthorized());
+        sombra(eva, "?tipo=RECORD").andExpect(status().isNotFound());
+        mvc.perform(get("/api/rutas/" + rutaId + "/sombra?tipo=RECORD")).andExpect(status().isUnauthorized());
     }
 }

@@ -722,7 +722,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/rutas/{{rutaId}}/sombra/record",
+              "raw": "{{baseUrl}}/api/rutas/{{rutaId}}/sombra?tipo=RECORD",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -730,11 +730,16 @@
                 "api",
                 "rutas",
                 "{{rutaId}}",
-                "sombra",
-                "record"
+                "sombra"
+              ],
+              "query": [
+                {
+                  "key": "tipo",
+                  "value": "RECORD"
+                }
               ]
             },
-            "description": "Sombra por tipo (PS-70): la mejor marca de todos los corredores de la ruta. También existen /sombra/propia y /sombra/amigo?amigoId=."
+            "description": "Sombra por tipo (PS-70): la mejor marca de todos los corredores de la ruta. Otros tipos: MEJOR (por defecto), ULTIMA, ORIGINAL y AMIGO (&amigoId=)."
           },
           "event": [
             {
@@ -745,7 +750,7 @@
                   "pm.test('Devuelve 200 OK', () => pm.response.to.have.status(200));",
                   "const s = pm.response.json();",
                   "pm.test('Es el récord de la ruta', () => {",
-                  "  pm.expect(s.tipo).to.eql('record');",
+                  "  pm.expect(s.tipo).to.eql('RECORD');",
                   "  pm.expect(s.tiempoTotalSegundos).to.eql(250);",
                   "});"
                 ]
@@ -759,7 +764,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/rutas/{{rutaId}}/sombra/fantasma",
+              "raw": "{{baseUrl}}/api/rutas/{{rutaId}}/sombra?tipo=FANTASMA",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -767,8 +772,13 @@
                 "api",
                 "rutas",
                 "{{rutaId}}",
-                "sombra",
-                "fantasma"
+                "sombra"
+              ],
+              "query": [
+                {
+                  "key": "tipo",
+                  "value": "FANTASMA"
+                }
               ]
             },
             "description": ""
