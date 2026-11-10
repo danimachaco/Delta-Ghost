@@ -2,6 +2,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
+import { RouterTestingHarness } from '@angular/router/testing';
 import { environment } from '../../../../environments/environment';
 import { erroresInterceptor } from '../../../core/interceptores/errores-interceptor';
 import { Login } from './login';
@@ -84,5 +85,30 @@ describe('Login', () => {
       'El email o la contraseña no son correctos',
     );
     expect(el.querySelector('button')?.disabled).toBe(false);
+  });
+
+  it('normalmente no muestra el aviso de sesión caducada', () => {
+    expect(el.querySelector('.aviso-sesion')).toBeNull();
+  });
+
+  it('con ?caducada=1 explica que la sesión ha caducado', async () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([{ path: 'app/login', component: Login }]),
+        provideHttpClient(withInterceptors([erroresInterceptor])),
+        provideHttpClientTesting(),
+      ],
+    });
+    servidor = TestBed.inject(HttpTestingController);
+    const harness = await RouterTestingHarness.create();
+    const pantalla = await harness.navigateByUrl(
+      '/app/login?caducada=1&volver=%2Fapp%2Famigos',
+      Login,
+    );
+    expect(pantalla).toBeTruthy();
+    expect(harness.routeNativeElement?.querySelector('.aviso-sesion')?.textContent).toContain(
+      'Tu sesión ha caducado',
+    );
   });
 });
