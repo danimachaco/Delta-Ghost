@@ -9,7 +9,6 @@ import com.rutafantasma.backend.dto.PuntoDto;
 import com.rutafantasma.backend.dto.RutaRequest;
 import com.rutafantasma.backend.dto.RutaResponse;
 import com.rutafantasma.backend.excepcion.DatosRutaIncorrectosException;
-import com.rutafantasma.backend.excepcion.RutaNoEncontradaException;
 import com.rutafantasma.backend.modelo.Punto;
 import com.rutafantasma.backend.modelo.Ruta;
 import com.rutafantasma.backend.modelo.Sector;
@@ -17,16 +16,21 @@ import com.rutafantasma.backend.modelo.Usuario;
 import com.rutafantasma.backend.repositorio.RutaRepository;
 import com.rutafantasma.backend.repositorio.UsuarioRepository;
 
-/** Lógica de negocio de las rutas. Cada usuario solo ve y crea sus propias rutas. */
+/**
+ * Lógica de negocio de las rutas. Cada usuario crea y lista sus propias rutas; una ruta concreta
+ * la pueden ver también los amigos de su dueño, para poder correrla (PS-64).
+ */
 @Service
 public class RutaService {
 
     private final RutaRepository rutas;
     private final UsuarioRepository usuarios;
+    private final AccesoRutas acceso;
 
-    public RutaService(RutaRepository rutas, UsuarioRepository usuarios) {
+    public RutaService(RutaRepository rutas, UsuarioRepository usuarios, AccesoRutas acceso) {
         this.rutas = rutas;
         this.usuarios = usuarios;
+        this.acceso = acceso;
     }
 
     /** Rutas del usuario, de la más reciente a la más antigua. */
@@ -37,11 +41,8 @@ public class RutaService {
 
     @Transactional(readOnly = true)
     public RutaResponse obtener(Long usuarioId, Long id) {
-        // Si la ruta es de otro usuario se responde igual que si no existiera, para no revelar nada
-        Ruta ruta = rutas.findById(id)
-                .filter(r -> r.getUsuario().getId().equals(usuarioId))
-                .orElseThrow(() -> new RutaNoEncontradaException(id));
-        return RutaResponse.de(ruta);
+        // Si la ruta no es tuya ni de un amigo se responde igual que si no existiera, para no revelar nada
+        return RutaResponse.de(acceso.visible(usuarioId, id));
     }
 
     @Transactional

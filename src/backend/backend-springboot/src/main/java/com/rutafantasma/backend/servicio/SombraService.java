@@ -9,13 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.rutafantasma.backend.dto.PuntoDto;
 import com.rutafantasma.backend.dto.SectorSombraDto;
 import com.rutafantasma.backend.dto.SombraResponse;
-import com.rutafantasma.backend.excepcion.RutaNoEncontradaException;
 import com.rutafantasma.backend.modelo.Carrera;
 import com.rutafantasma.backend.modelo.Punto;
 import com.rutafantasma.backend.modelo.Ruta;
 import com.rutafantasma.backend.modelo.Sector;
 import com.rutafantasma.backend.repositorio.CarreraRepository;
-import com.rutafantasma.backend.repositorio.RutaRepository;
 
 /**
  * Calcula la sombra de una ruta: los puntos y tiempos de la mejor marca, que el reloj
@@ -27,23 +25,22 @@ public class SombraService {
     /** Radio medio de la Tierra en metros, para la fórmula de Haversine */
     private static final double RADIO_TIERRA = 6_371_000;
 
-    private final RutaRepository rutas;
+    private final AccesoRutas acceso;
     private final CarreraRepository carreras;
 
-    public SombraService(RutaRepository rutas, CarreraRepository carreras) {
-        this.rutas = rutas;
+    public SombraService(AccesoRutas acceso, CarreraRepository carreras) {
+        this.acceso = acceso;
         this.carreras = carreras;
     }
 
     @Transactional(readOnly = true)
     public SombraResponse obtener(Long usuarioId, Long rutaId) {
-        // Las rutas de otro usuario responden 404, igual que en RutaService
-        Ruta ruta = rutas.findById(rutaId)
-                .filter(r -> r.getUsuario().getId().equals(usuarioId))
-                .orElseThrow(() -> new RutaNoEncontradaException(rutaId));
+        // La ven el dueño y sus amigos; para los demás la ruta no existe (404)
+        Ruta ruta = acceso.visible(usuarioId, rutaId);
 
-        // Si ninguna carrera ha batido la grabación de la ruta, la sombra es la propia grabación (PS-33)
-        Carrera mejor = carreras.findFirstByRutaIdAndMejorMarcaTrue(rutaId).orElse(null);
+        // La sombra es la mejor marca de quien la pide (PS-64). Si todavía no tiene ninguna
+        // (no ha batido la grabación o es un amigo que aún no la ha corrido), es la grabación de la ruta.
+        Carrera mejor = carreras.findFirstByRutaIdAndUsuarioIdAndMejorMarcaTrue(rutaId, usuarioId).orElse(null);
         List<PuntoDto> puntos = mejor != null
                 ? mejor.getPuntos().stream().map(PuntoDto::de).toList()
                 : ruta.getPuntos().stream().map(PuntoDto::de).toList();
