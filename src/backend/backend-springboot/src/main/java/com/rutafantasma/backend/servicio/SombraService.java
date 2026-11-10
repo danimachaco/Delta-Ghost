@@ -10,7 +10,6 @@ import com.rutafantasma.backend.dto.PuntoDto;
 import com.rutafantasma.backend.dto.SectorSombraDto;
 import com.rutafantasma.backend.dto.SombraResponse;
 import com.rutafantasma.backend.modelo.Carrera;
-import com.rutafantasma.backend.modelo.Punto;
 import com.rutafantasma.backend.modelo.Ruta;
 import com.rutafantasma.backend.modelo.Sector;
 import com.rutafantasma.backend.repositorio.CarreraRepository;
@@ -21,9 +20,6 @@ import com.rutafantasma.backend.repositorio.CarreraRepository;
  */
 @Service
 public class SombraService {
-
-    /** Radio medio de la Tierra en metros, para la fórmula de Haversine */
-    private static final double RADIO_TIERRA = 6_371_000;
 
     private final AccesoRutas acceso;
     private final CarreraRepository carreras;
@@ -53,38 +49,14 @@ public class SombraService {
                 tiemposPorSector(ruta, puntos));
     }
 
-    /**
-     * Tiempo de la sombra al final de cada sector. Los sectores se definen con los puntos de la ruta,
-     * pero la carrera de la sombra tiene sus propios puntos GPS (pueden ser más o menos y no caer justo
-     * en el mismo sitio), así que para cada final de sector se busca el punto de la sombra más cercano.
-     * La búsqueda sigue hacia delante desde el sector anterior para que, si la ruta pasa dos veces por
-     * el mismo sitio, los tiempos nunca vayan hacia atrás.
-     */
+    /** Tiempo de la sombra al final de cada sector, calculado con TiemposSector */
     private static List<SectorSombraDto> tiemposPorSector(Ruta ruta, List<PuntoDto> sombra) {
+        List<Long> finales = TiemposSector.finales(ruta, sombra);
         List<SectorSombraDto> sectores = new ArrayList<>();
-        int desde = 0;
-        for (Sector s : ruta.getSectores()) {
-            Punto fin = ruta.getPuntos().get(s.getPuntoFin());
-            int masCercano = desde;
-            for (int i = desde; i < sombra.size(); i++) {
-                if (distancia(fin, sombra.get(i)) < distancia(fin, sombra.get(masCercano))) {
-                    masCercano = i;
-                }
-            }
-            sectores.add(new SectorSombraDto(s.getNumero(), s.getPuntoInicio(), s.getPuntoFin(),
-                    sombra.get(masCercano).tiempoSegundos()));
-            desde = masCercano;
+        for (int i = 0; i < finales.size(); i++) {
+            Sector s = ruta.getSectores().get(i);
+            sectores.add(new SectorSombraDto(s.getNumero(), s.getPuntoInicio(), s.getPuntoFin(), finales.get(i)));
         }
         return sectores;
-    }
-
-    /** Distancia en metros entre dos coordenadas con la fórmula de Haversine (la misma que el servicio Calculo del frontend) */
-    private static double distancia(Punto a, PuntoDto b) {
-        double dLat = Math.toRadians(b.latitud() - a.getLatitud());
-        double dLon = Math.toRadians(b.longitud() - a.getLongitud());
-        double h = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-                + Math.cos(Math.toRadians(a.getLatitud())) * Math.cos(Math.toRadians(b.latitud()))
-                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        return 2 * RADIO_TIERRA * Math.asin(Math.sqrt(h));
     }
 }
