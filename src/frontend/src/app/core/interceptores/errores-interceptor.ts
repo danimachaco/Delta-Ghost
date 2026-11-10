@@ -18,7 +18,8 @@ export const erroresInterceptor: HttpInterceptorFn = (req, next) =>
 export function aErrorApi(error: HttpErrorResponse): ErrorApi {
   const cuerpo: unknown = error.error;
   // El backend responde { error: '...' } en los errores generales
-  const mensajeServidor = esObjeto(cuerpo) && typeof cuerpo['error'] === 'string' ? cuerpo['error'] : null;
+  const mensajeServidor =
+    esObjeto(cuerpo) && typeof cuerpo['error'] === 'string' ? cuerpo['error'] : null;
 
   switch (true) {
     case error.status === 0:
