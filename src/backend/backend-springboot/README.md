@@ -86,6 +86,7 @@ backend-springboot/
 | POST | `/api/amigos/solicitudes` `{ email }` → `201` solicitud enviada (`ACEPTADA` si esa persona ya te la había enviado; `404` email sin cuenta, `400` tú mismo, `409` ya enviada o ya sois amigos) | Sí | PS-56 |
 | POST | `/api/amigos/solicitudes/{id}/aceptar` → `200` amistad aceptada (`404` si no es una solicitud pendiente para ti) | Sí | PS-56 |
 | GET | `/api/rutas/{id}/ranking` → `200 { rutaId, nombre, puestos }` la mejor marca de cada corredor, de la más rápida a la más lenta | Sí | PS-64 |
+| GET | `/api/rutas/{id}/sectores/mejores` → `200 { rutaId, sectores, tiempoIdealSegundos }` el mejor tiempo de cada sector entre todos los corredores y la suma de todos (vuelta ideal) | Sí | PS-67 |
 
 Los endpoints con token necesitan la cabecera `Authorization: Bearer <token>` (la comprueba `seguridad/TokenInterceptor`).
 
