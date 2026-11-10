@@ -91,3 +91,23 @@
   font-weight: 600;
   cursor: pointer;
 }
+
+/* PS-65: enlace al ranking de la ruta */
+.ranking {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  min-height: 44px; /* área de pulsación de 44 px */
+  padding: 8px 14px;
+  border: 1px solid var(--color-borde);
+  border-radius: 999px;
+  color: var(--color-texto);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.ranking:hover,
+.ranking:focus-visible {
+  border-color: var(--color-primario);
+}

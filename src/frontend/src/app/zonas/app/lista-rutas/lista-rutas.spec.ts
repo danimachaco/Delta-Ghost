@@ -1,6 +1,7 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { erroresInterceptor } from '../../../core/interceptores/errores-interceptor';
 import { Ruta } from '../../../core/modelos/ruta';
@@ -29,6 +30,7 @@ describe('ListaRutas', () => {
     await TestBed.configureTestingModule({
       imports: [ListaRutas],
       providers: [
+        provideRouter([]),
         provideHttpClient(withInterceptors([erroresInterceptor])),
         provideHttpClientTesting(),
       ],
@@ -42,7 +44,10 @@ describe('ListaRutas', () => {
 
   afterEach(() => servidor.verify());
 
-  async function responder(cuerpo: Ruta[] | null, opciones?: { status: number; statusText: string }) {
+  async function responder(
+    cuerpo: Ruta[] | null,
+    opciones?: { status: number; statusText: string },
+  ) {
     servidor.expectOne(url).flush(cuerpo, opciones);
     fixture.detectChanges();
     await fixture.whenStable();
@@ -83,5 +88,12 @@ describe('ListaRutas', () => {
 
     await responder([ruta('a', 'Parque', '2026-10-18T09:12:00', 600)]);
     expect(el.querySelectorAll('.tarjeta').length).toBe(1);
+  });
+
+  it('PS-65: cada ruta enlaza a su ranking', async () => {
+    await responder([ruta('7', 'Circuito del parque', '2026-10-18T09:12:00', 1661)]);
+    const enlace = el.querySelector<HTMLAnchorElement>('.tarjeta a.ranking');
+    expect(enlace?.getAttribute('href')).toBe('/app/ranking/7');
+    expect(enlace?.getAttribute('aria-label')).toBe('Ranking de Circuito del parque');
   });
 });
