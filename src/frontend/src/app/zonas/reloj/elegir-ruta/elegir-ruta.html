@@ -39,7 +39,7 @@
               >
                 <span class="info">
                   <span class="nombre">{{ fila.nombre }}</span>
-                  <span class="detalle">sombra {{ fila.sombra }}</span>
+                  <span class="detalle">grabada en {{ fila.sombra }}</span>
                 </span>
                 <span class="distancia">{{ fila.distancia }}</span>
               </button>
@@ -47,21 +47,17 @@
           }
         </ul>
 
-        <p
-          class="aviso"
-          [class.error]="avisoEsError()"
-          [attr.role]="avisoEsError() ? 'alert' : 'status'"
-        >
-          {{ aviso() }}
+        <p class="aviso" role="status">
+          {{ elegida() === null ? 'Toca una ruta para elegirla' : 'Ahora elige tu sombra' }}
         </p>
 
         <button
           type="button"
-          class="boton empezar"
-          (click)="empezar()"
-          [disabled]="!puedeEmpezar()"
+          class="boton siguiente"
+          (click)="siguiente()"
+          [disabled]="elegida() === null"
         >
-          Empezar
+          Siguiente
         </button>
       }
     }
