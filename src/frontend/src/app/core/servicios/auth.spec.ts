@@ -5,7 +5,7 @@ import { environment } from '../../../environments/environment';
 import { authInterceptor } from '../interceptores/auth-interceptor';
 import { erroresInterceptor } from '../interceptores/errores-interceptor';
 import { RespuestaAuth } from '../modelos/usuario';
-import { Auth } from './auth';
+import { Auth, tokenCaducado } from './auth';
 
 const RESPUESTA: RespuestaAuth = {
   token: 'token-de-prueba',
@@ -73,7 +73,9 @@ describe('Auth', () => {
   it('si el login falla no inicia sesión', () => {
     const auth = configurar();
     let estado = 0;
-    auth.login({ email: 'a@a.es', password: 'mal' }).subscribe({ error: (e) => (estado = e.estado) });
+    auth
+      .login({ email: 'a@a.es', password: 'mal' })
+      .subscribe({ error: (e) => (estado = e.estado) });
 
     servidor
       .expectOne(`${base}/auth/login`)
@@ -96,5 +98,42 @@ describe('Auth', () => {
     expect(aOtro.request.headers.has('Authorization')).toBe(false);
     aLaApi.flush([]);
     aOtro.flush({});
+  });
+
+  describe('sesión caducada', () => {
+    /** Crea un JWT de prueba que caduca en la fecha `exp` (segundos). La firma da igual. */
+    const jwt = (exp: number) =>
+      `cabecera.${btoa(JSON.stringify({ sub: 'u1', exp })).replace(/=+$/, '')}.firma`;
+    const ahora = Date.UTC(2026, 10, 10, 12, 0, 0);
+
+    it('tokenCaducado() lee la fecha de caducidad del token', () => {
+      expect(tokenCaducado(jwt(ahora / 1000 + 60), ahora)).toBe(false);
+      expect(tokenCaducado(jwt(ahora / 1000 - 60), ahora)).toBe(true);
+      expect(tokenCaducado(jwt(ahora / 1000), ahora)).toBe(true);
+    });
+
+    it('si el token no se puede leer, lo da por bueno (decide el servidor)', () => {
+      expect(tokenCaducado('token-de-prueba')).toBe(false);
+      expect(tokenCaducado('a.no-es-base64!.c')).toBe(false);
+    });
+
+    it('al abrir la app, una sesión guardada con el token caducado no se carga', () => {
+      localStorage.setItem(
+        'ruta-fantasma.sesion',
+        JSON.stringify({ ...RESPUESTA, token: jwt(Date.now() / 1000 - 3600) }),
+      );
+      const auth = configurar();
+      expect(auth.estaAutenticado()).toBe(false);
+      expect(localStorage.getItem('ruta-fantasma.sesion')).toBeNull();
+    });
+
+    it('una sesión guardada con el token en vigor sí se carga', () => {
+      localStorage.setItem(
+        'ruta-fantasma.sesion',
+        JSON.stringify({ ...RESPUESTA, token: jwt(Date.now() / 1000 + 3600) }),
+      );
+      const auth = configurar();
+      expect(auth.usuario()?.nombre).toBe('Asier');
+    });
   });
 });

@@ -24,6 +24,9 @@ export class Login {
   /** true mientras se espera la respuesta del servidor */
   protected readonly enviando = signal(false);
 
+  /** true si se ha llegado al login porque la sesión anterior caducó (?caducada=1) */
+  protected readonly sesionCaducada = this.ruta.snapshot.queryParamMap.get('caducada') === '1';
+
   /** Mensaje de error del servidor (credenciales incorrectas, sin conexión…) */
   protected readonly errorServidor = signal<string | null>(null);
 

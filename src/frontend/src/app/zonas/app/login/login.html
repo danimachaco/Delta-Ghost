@@ -4,6 +4,11 @@
   <p class="subtitulo">Tu sombra te está esperando.</p>
 </header>
 
+@if (sesionCaducada) {
+  <!-- Se llega aquí con ?caducada=1 cuando el servidor ya no acepta la sesión guardada -->
+  <p class="aviso-sesion" role="status">Tu sesión ha caducado. Vuelve a entrar para seguir.</p>
+}
+
 <form [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
   <div class="campo">
     <label for="email">Email</label>
@@ -16,7 +21,11 @@
     />
     @if (mostrarError('email')) {
       <span class="error-campo">
-        {{ formulario.controls.email.hasError('required') ? 'Escribe tu email.' : 'El email no es válido.' }}
+        {{
+          formulario.controls.email.hasError('required')
+            ? 'Escribe tu email.'
+            : 'El email no es válido.'
+        }}
       </span>
     }
   </div>
