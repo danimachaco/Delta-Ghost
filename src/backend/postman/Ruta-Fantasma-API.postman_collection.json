@@ -512,7 +512,7 @@
     },
     {
       "name": "Carreras",
-      "description": "PS-33, PS-36 y PS-64 · Subir una carrera, descargar la sombra y ver el ranking. Usan el token y el {{rutaId}} guardado al crear la ruta.",
+      "description": "PS-33, PS-36, PS-64 y PS-67 · Subir una carrera, descargar la sombra, ver el ranking y los mejores sectores. Usan el token y el {{rutaId}} guardado al crear la ruta.",
       "item": [
         {
           "name": "12. Subir carrera",
@@ -675,6 +675,42 @@
                   "  pm.expect(r.entradas[0].tiempoTotalSegundos).to.eql(250);",
                   "  pm.expect(r.entradas[0].tuya).to.eql(true);",
                   "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "22. Mejores sectores",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/rutas/{{rutaId}}/sectores/mejores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "rutas",
+                "{{rutaId}}",
+                "sectores",
+                "mejores"
+              ]
+            },
+            "description": "Mejor tiempo de cada sector entre todos los corredores de la ruta y la vuelta ideal (la suma de todos)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 200 OK', () => pm.response.to.have.status(200));",
+                  "const r = pm.response.json();",
+                  "pm.test('Trae los 3 sectores', () => pm.expect(r.sectores).to.have.lengthOf(3));",
+                  "pm.test('La vuelta ideal es la suma de los mejores sectores', () =>",
+                  "  pm.expect(r.tiempoIdealSegundos).to.eql(r.sectores.reduce((total, s) => total + s.tiempoSegundos, 0)));"
                 ]
               }
             }
