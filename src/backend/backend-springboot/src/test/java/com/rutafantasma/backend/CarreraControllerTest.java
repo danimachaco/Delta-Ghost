@@ -113,11 +113,12 @@ class CarreraControllerTest {
         subir(tokenAna, rutaId, carrera(255)).andExpect(jsonPath("$.mejorMarca").value(false));
         subir(tokenAna, rutaId, carrera(240)).andExpect(jsonPath("$.mejorMarca").value(true));
 
-        // La de 250 s ha dejado de ser la mejor: solo hay una mejor marca por ruta
+        // La de 250 s ha dejado de ser la mejor: solo hay una mejor marca por corredor y ruta
         long mejores = carreras.findAll().stream().filter(c -> c.isMejorMarca()).count();
         assertEquals(1, mejores);
-        assertEquals(240,
-                carreras.findFirstByRutaIdAndMejorMarcaTrue(Long.valueOf(rutaId)).orElseThrow().getTiempoTotalSegundos());
+        Long ana = usuarios.findByEmailIgnoreCase("ana@correo.com").orElseThrow().getId();
+        assertEquals(240, carreras.findFirstByRutaIdAndUsuarioIdAndMejorMarcaTrue(Long.valueOf(rutaId), ana)
+                .orElseThrow().getTiempoTotalSegundos());
     }
 
     @Test

@@ -29,4 +29,13 @@ public interface AmistadRepository extends JpaRepository<Amistad, Long> {
             order by a.fechaAceptada desc
             """)
     List<Amistad> amigosDe(@Param("usuarioId") Long usuarioId);
+
+    /** true si los dos usuarios son amigos (amistad aceptada, la pidiera quien la pidiera) */
+    @Query("""
+            select count(a) > 0 from Amistad a
+            where a.estado = com.rutafantasma.backend.modelo.Amistad.Estado.ACEPTADA
+              and ((a.solicitante.id = :uno and a.destinatario.id = :otro)
+                or (a.solicitante.id = :otro and a.destinatario.id = :uno))
+            """)
+    boolean sonAmigos(@Param("uno") Long uno, @Param("otro") Long otro);
 }
