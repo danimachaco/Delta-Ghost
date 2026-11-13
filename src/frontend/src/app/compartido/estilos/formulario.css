@@ -111,3 +111,15 @@ input.invalido {
   color: var(--color-primario);
   font-weight: 600;
 }
+
+/* Aviso de sesión caducada en el login: informativo, no es un error */
+.aviso-sesion {
+  max-width: 360px;
+  margin: 0 auto 16px;
+  padding: 10px 14px;
+  border: 1px solid var(--color-primario);
+  border-radius: var(--radio);
+  color: var(--color-texto);
+  font-size: 0.9rem;
+  text-align: center;
+}

@@ -29,6 +29,17 @@ describe('Rutas', () => {
     servidor.expectOne({ method: 'GET', url: `${base}/rutas/abc` }).flush({});
   });
 
+  it('sombra() con tipo pide GET /api/rutas/{id}/sombra?tipo=…', () => {
+    rutas.sombra('7', 'ULTIMA').subscribe();
+    const peticion = servidor.expectOne(`${base}/rutas/7/sombra?tipo=ULTIMA`);
+    expect(peticion.request.method).toBe('GET');
+    peticion.flush({});
+
+    // La mejor marca es la sombra por defecto: no hace falta el parámetro
+    rutas.sombra('7', 'MEJOR').subscribe();
+    servidor.expectOne(`${base}/rutas/7/sombra`).flush({});
+  });
+
   it('sombra() pide GET /api/rutas/{id}/sombra', () => {
     rutas.sombra('abc').subscribe();
     servidor.expectOne({ method: 'GET', url: `${base}/rutas/abc/sombra` }).flush({});

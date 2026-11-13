@@ -1,7 +1,7 @@
 import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CarreraGuardada, NuevaRuta, PuntoGps, Ruta } from '../modelos/ruta';
-import { Sombra } from '../modelos/sombra';
+import { Sombra, TipoSombra } from '../modelos/sombra';
 import { Api } from './api';
 
 /**
@@ -22,9 +22,15 @@ export class Rutas {
     return this.api.get<Ruta>(`rutas/${encodeURIComponent(id)}`);
   }
 
-  /** Sombra de una ruta (mejor marca con el tiempo de cada sector) → GET /api/rutas/{id}/sombra */
-  sombra(id: string): Observable<Sombra> {
-    return this.api.get<Sombra>(`rutas/${encodeURIComponent(id)}/sombra`);
+  /**
+   * Sombra de una ruta con el tiempo de cada sector → GET /api/rutas/{id}/sombra?tipo=…
+   * Sin tipo (o con MEJOR) devuelve la mejor marca; ULTIMA y ORIGINAL se piden con `?tipo=` (PS-70).
+   */
+  sombra(id: string, tipo: TipoSombra = 'MEJOR'): Observable<Sombra> {
+    return this.api.get<Sombra>(
+      `rutas/${encodeURIComponent(id)}/sombra`,
+      tipo === 'MEJOR' ? undefined : { tipo },
+    );
   }
 
   /** Guarda una ruta nueva con sus puntos → POST /api/rutas (necesita sesión iniciada) */

@@ -1,0 +1,64 @@
+<div class="esfera">
+  <h1 class="titulo">
+    <svg class="fantasma" viewBox="0 0 16 16" aria-hidden="true">
+      <path
+        d="M8 1a6 6 0 0 0-6 6v8l2-1.5L6 15l2-1.5 2 1.5 2-1.5 2 1.5V7a6 6 0 0 0-6-6Zm-2 5.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Zm4 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"
+      />
+    </svg>
+    Elige sombra
+  </h1>
+
+  @switch (estado()) {
+    @case ('cargando') {
+      <p class="mensaje" aria-busy="true">Cargando la ruta…</p>
+    }
+
+    @case ('error') {
+      <div class="mensaje" role="alert">
+        <p>{{ mensajeError() }}</p>
+        <a class="boton" routerLink="/reloj/elegir">Elegir ruta</a>
+      </div>
+    }
+
+    @case ('listo') {
+      <p class="ruta">{{ ruta()?.nombre }}</p>
+
+      <!-- Tres sombras posibles. Las que no se pueden elegir salen desactivadas y dicen por qué -->
+      <ul class="lista" aria-label="Sombras de esta ruta">
+        @for (fila of filas(); track fila.tipo) {
+          <li>
+            <button
+              type="button"
+              class="tarjeta"
+              [class.elegida]="elegida() === fila.tipo"
+              [attr.aria-pressed]="elegida() === fila.tipo"
+              [disabled]="!fila.disponible"
+              (click)="elegir(fila.tipo)"
+            >
+              <span class="nombre">{{ fila.nombre }}</span>
+              <span class="detalle" [class.tiempo]="fila.disponible">{{ fila.detalle }}</span>
+            </button>
+          </li>
+        }
+      </ul>
+
+      <p
+        class="aviso"
+        [class.error]="avisoEsError()"
+        [attr.role]="avisoEsError() ? 'alert' : 'status'"
+      >
+        {{ aviso() }}
+      </p>
+
+      <button type="button" class="boton empezar" (click)="empezar()" [disabled]="!puedeEmpezar()">
+        Empezar
+      </button>
+    }
+  }
+</div>
+
+@if (carrera.estado() === 'en-curso') {
+  <a class="volver" routerLink="/reloj">Tienes una carrera en curso · Volver al reloj</a>
+}
+
+<a class="salir" routerLink="/reloj/elegir">← Cambiar de ruta</a>

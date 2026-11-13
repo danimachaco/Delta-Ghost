@@ -20,9 +20,22 @@ export interface SectorSombra extends Sector {
   tiempoSegundos: number;
 }
 
-/** Sombra de una ruta → GET /api/rutas/{id}/sombra */
+/**
+ * Contra qué sombra se corre (PS-69):
+ *  - `MEJOR`: tu mejor marca en la ruta (la de siempre, por defecto).
+ *  - `ULTIMA`: tu última carrera en la ruta, aunque no sea la mejor.
+ *  - `ORIGINAL`: la grabación con la que se creó la ruta.
+ */
+export type TipoSombra = 'MEJOR' | 'ULTIMA' | 'ORIGINAL';
+
+/** Sombra de una ruta → GET /api/rutas/{id}/sombra?tipo=… */
 export interface Sombra {
   rutaId: string;
+  /**
+   * Tipo de sombra que ha devuelto el servidor (PS-70). Un servidor anterior a la PS-70
+   * no lo envía y devuelve siempre la mejor marca.
+   */
+  tipo?: TipoSombra;
   /** Carrera que es la mejor marca, o null si la sombra es la propia grabación de la ruta */
   carreraId: string | null;
   tiempoTotalSegundos: number;

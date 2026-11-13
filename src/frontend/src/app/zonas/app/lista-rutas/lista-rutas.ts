@@ -1,4 +1,5 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import {
   distanciaKm,
   duracionSegundos,
@@ -25,6 +26,7 @@ type Estado = 'cargando' | 'error' | 'listo';
 
 /** Pantalla con la lista de rutas guardadas (/app) */
 @Component({
+  imports: [RouterLink],
   selector: 'app-lista-rutas',
   styleUrl: './lista-rutas.css',
   templateUrl: './lista-rutas.html',
