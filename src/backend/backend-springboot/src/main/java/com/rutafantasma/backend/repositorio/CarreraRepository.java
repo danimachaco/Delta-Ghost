@@ -19,6 +19,9 @@ public interface CarreraRepository extends JpaRepository<Carrera, Long> {
      */
     Optional<Carrera> findFirstByRutaIdAndUsuarioIdAndMejorMarcaTrue(Long rutaId, Long usuarioId);
 
+    /** La última carrera de un corredor en la ruta (sombra ULTIMA, PS-70); el id desempata dos con la misma fecha */
+    Optional<Carrera> findFirstByRutaIdAndUsuarioIdOrderByFechaDescIdDesc(Long rutaId, Long usuarioId);
+
     /** Historial de carreras de una ruta, de la más reciente a la más antigua */
     List<Carrera> findByRutaIdOrderByFechaDesc(Long rutaId);
 }

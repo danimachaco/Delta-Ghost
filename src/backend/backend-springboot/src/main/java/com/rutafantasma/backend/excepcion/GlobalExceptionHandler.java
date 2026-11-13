@@ -37,13 +37,14 @@ public class GlobalExceptionHandler {
         return error(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
-    @ExceptionHandler({ UsuarioNoEncontradoException.class, SolicitudNoEncontradaException.class })
+    @ExceptionHandler({ UsuarioNoEncontradoException.class, SolicitudNoEncontradaException.class,
+            SombraNoDisponibleException.class })
     public ResponseEntity<Map<String, String>> noEncontrado(RuntimeException ex) {
         return error(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
-    @ExceptionHandler(SolicitudAmistadIncorrectaException.class)
-    public ResponseEntity<Map<String, String>> solicitudIncorrecta(SolicitudAmistadIncorrectaException ex) {
+    @ExceptionHandler({ SolicitudAmistadIncorrectaException.class, TipoSombraIncorrectoException.class })
+    public ResponseEntity<Map<String, String>> peticionIncorrecta(RuntimeException ex) {
         return error(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 

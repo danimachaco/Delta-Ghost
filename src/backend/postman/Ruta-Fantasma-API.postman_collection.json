@@ -512,7 +512,7 @@
     },
     {
       "name": "Carreras",
-      "description": "PS-33, PS-36, PS-64 y PS-67 · Subir una carrera, descargar la sombra, ver el ranking y los mejores sectores. Usan el token y el {{rutaId}} guardado al crear la ruta.",
+      "description": "PS-33, PS-36, PS-64, PS-67 y PS-70 · Subir una carrera, descargar la sombra (también por tipo), ver el ranking y los mejores sectores. Usan el token y el {{rutaId}} guardado al crear la ruta.",
       "item": [
         {
           "name": "12. Subir carrera",
@@ -711,6 +711,85 @@
                   "pm.test('Trae los 3 sectores', () => pm.expect(r.sectores).to.have.lengthOf(3));",
                   "pm.test('La vuelta ideal es la suma de los mejores sectores', () =>",
                   "  pm.expect(r.tiempoIdealSegundos).to.eql(r.sectores.reduce((total, s) => total + s.tiempoSegundos, 0)));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "23. Sombra récord",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/rutas/{{rutaId}}/sombra?tipo=RECORD",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "rutas",
+                "{{rutaId}}",
+                "sombra"
+              ],
+              "query": [
+                {
+                  "key": "tipo",
+                  "value": "RECORD"
+                }
+              ]
+            },
+            "description": "Sombra por tipo (PS-70): la mejor marca de todos los corredores de la ruta. Otros tipos: MEJOR (por defecto), ULTIMA, ORIGINAL y AMIGO (&amigoId=)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 200 OK', () => pm.response.to.have.status(200));",
+                  "const s = pm.response.json();",
+                  "pm.test('Es el récord de la ruta', () => {",
+                  "  pm.expect(s.tipo).to.eql('RECORD');",
+                  "  pm.expect(s.tiempoTotalSegundos).to.eql(250);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "24. Sombra de un tipo que no existe (400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/rutas/{{rutaId}}/sombra?tipo=FANTASMA",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "rutas",
+                "{{rutaId}}",
+                "sombra"
+              ],
+              "query": [
+                {
+                  "key": "tipo",
+                  "value": "FANTASMA"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 400 Bad Request', () => pm.response.to.have.status(400));"
                 ]
               }
             }
