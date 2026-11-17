@@ -8,6 +8,7 @@
   --color-primario: #7c5cff; /* morado "fantasma" */
   --color-mejor: #2ecc71; /* sector en verde: vas mejor */
   --color-peor: #e74c3c; /* sector en rojo: vas peor */
+  --color-morado: #d04dff; /* sector morado: el más rápido de todos los corredores */
   --radio: 12px;
 
   /* Pantalla del reloj (PS-60): colores revisados para cumplir el contraste WCAG AA

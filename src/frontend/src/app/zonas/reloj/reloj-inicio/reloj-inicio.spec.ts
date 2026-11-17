@@ -204,6 +204,22 @@ describe('RelojInicio', () => {
       expect(el.querySelector('.destello-mejor')).toBeNull();
     });
 
+    it('PS-68: muestra el destello morado con una estrella', async () => {
+      const avisos = TestBed.inject(AvisoSector);
+
+      avisos.avisar('morado');
+      await actualizar();
+      expect(el.querySelector('.destello-morado')).not.toBeNull();
+      expect(el.querySelector('.destello-mejor')).toBeNull();
+      expect(el.querySelector('.destello-peor')).toBeNull();
+      expect(el.querySelector('app-flecha-sector.flecha.morado')).not.toBeNull();
+
+      // Al llegar un aviso verde, el morado desaparece
+      avisos.avisar('mejor');
+      await actualizar();
+      expect(el.querySelector('.destello-morado')).toBeNull();
+    });
+
     it('PS-59: el aviso lleva una flecha hacia arriba si mejoras y hacia abajo si no', async () => {
       const avisos = TestBed.inject(AvisoSector);
       expect(el.querySelector('.flecha')).toBeNull();
@@ -229,12 +245,20 @@ describe('RelojInicio', () => {
       TestBed.inject(AvisoSector).avisar('peor');
       await actualizar();
       expect(anuncio()).toBe('Sector peor que tu sombra');
+
+      TestBed.inject(AvisoSector).avisar('morado');
+      await actualizar();
+      expect(anuncio()).toBe('Sector morado: el más rápido de todos los corredores');
     });
 
     it('los botones de prueba lanzan los avisos', async () => {
       (el.querySelector('.prueba .verde') as HTMLButtonElement).click();
       await actualizar();
       expect(el.querySelector('.destello-mejor')).not.toBeNull();
+
+      (el.querySelector('.prueba .morado') as HTMLButtonElement).click();
+      await actualizar();
+      expect(el.querySelector('.destello-morado')).not.toBeNull();
     });
   });
 

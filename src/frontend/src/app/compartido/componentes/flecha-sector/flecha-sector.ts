@@ -1,6 +1,9 @@
 import { Component, computed, input } from '@angular/core';
 import { ResultadoAviso } from '../../../core/modelos/aviso';
 
+const ESTRELLA =
+  'M12 2.3 L14.7 9.1 L22 9.6 L16.4 14.2 L18.2 21.3 L12 17.4 L5.8 21.3 L7.6 14.2 L2 9.6 L9.3 9.1 Z';
+
 /**
  * Flecha del resultado de un sector (PS-59): ▲ hacia arriba si has ido mejor que tu sombra
  * y ▼ hacia abajo si has ido peor.
@@ -42,6 +45,7 @@ import { ResultadoAviso } from '../../../core/modelos/aviso';
   host: {
     '[class.mejor]': "resultado() === 'mejor'",
     '[class.peor]': "resultado() === 'peor'",
+    '[class.morado]': "resultado() === 'morado'",
   },
 })
 export class FlechaSector {
@@ -49,7 +53,14 @@ export class FlechaSector {
   readonly resultado = input.required<ResultadoAviso>();
 
   /** Triángulo con la punta hacia arriba o hacia abajo */
-  protected readonly trazo = computed(() =>
-    this.resultado() === 'mejor' ? 'M12 3 L22 20 H2 Z' : 'M12 21 L2 4 H22 Z',
-  );
+  protected readonly trazo = computed(() => {
+    switch (this.resultado()) {
+      case 'mejor':
+        return 'M12 3 L22 20 H2 Z';
+      case 'peor':
+        return 'M12 21 L2 4 H22 Z';
+      case 'morado':
+        return ESTRELLA;
+    }
+  });
 }

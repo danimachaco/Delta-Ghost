@@ -18,13 +18,15 @@ import { AvisoSector } from '../../../core/servicios/aviso-sector';
       <span>Prueba (temporal)</span>
       <button type="button" class="verde" (click)="probar('mejor')">Sector mejor</button>
       <button type="button" class="rojo" (click)="probar('peor')">Sector peor</button>
+      <button type="button" class="morado" (click)="probar('morado')">Sector morado</button>
     </div>
   `,
   styles: `
-    .prueba { display: flex; align-items: center; gap: 8px; margin-top: 16px; font-size: 0.8rem; color: var(--color-texto-suave); }
+    .prueba { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; margin-top: 16px; font-size: 0.8rem; color: var(--color-texto-suave); }
     button { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--color-borde); background: transparent; color: var(--color-texto); cursor: pointer; }
     .verde { border-color: var(--color-mejor); }
     .rojo { border-color: var(--color-peor); }
+    .morado { border-color: var(--color-morado); }
   `,
 })
 export class PruebaAvisos {

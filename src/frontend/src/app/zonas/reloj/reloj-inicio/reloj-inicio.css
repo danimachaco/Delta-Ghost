@@ -211,7 +211,8 @@
   margin-top: 16px;
 }
 
-/* PS-49: destello de 3 s al terminar un sector, verde si mejoras a la sombra y rojo si no */
+/* PS-49 y PS-68: destello de 3 s al terminar un sector: verde si mejoras a la sombra, rojo si no
+   y morado si es el mejor sector de todos */
 .destello {
   position: absolute;
   inset: 0;
@@ -233,6 +234,11 @@
 
 .destello-peor {
   --color-destello: var(--color-peor);
+}
+
+/* PS-68: morado cuando el sector es el más rápido de todos los corredores de la ruta */
+.destello-morado {
+  --color-destello: var(--color-morado);
 }
 
 @keyframes destello {
