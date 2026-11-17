@@ -12,6 +12,7 @@ const PALETA: Record<string, string> = {
   '--color-primario': '#7c5cff',
   '--color-mejor': '#2ecc71',
   '--color-peor': '#e74c3c',
+  '--color-morado': '#d04dff',
   '--reloj-boton': '#6a4ce8',
   '--reloj-boton-terminar': '#c0392b',
   '--reloj-linea': '#6e7681',
@@ -72,6 +73,8 @@ describe('contraste (WCAG)', () => {
       ['borde de la esfera', variable('--reloj-linea'), negro, CONTRASTE_GRAFICO],
       ['destello verde en el borde', variable('--color-mejor'), negro, CONTRASTE_GRAFICO],
       ['destello rojo en el borde', variable('--color-peor'), negro, CONTRASTE_GRAFICO],
+      ['destello morado en el borde (PS-68)', variable('--color-morado'), negro, CONTRASTE_GRAFICO],
+      ['botón de prueba morado sobre el fondo', variable('--color-morado'), negro, CONTRASTE_GRAFICO],
     ];
 
     for (const [nombre, frente, fondo, minimo] of pares) {

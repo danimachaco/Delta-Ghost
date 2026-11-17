@@ -16,8 +16,8 @@ import { PantallaEncendida } from '../../../core/servicios/pantalla-encendida';
  * - Desde la PS-45 lee los datos en vivo del servicio Carrera: el tiempo del cronómetro,
  *   tu progreso (según tu GPS), el de la sombra y la diferencia con ella.
  * - Avisa si el navegador no puede mantener la pantalla encendida (PS-46).
- * - Muestra el destello verde o rojo al terminar un sector (PS-49, servicio AvisoSector),
- *   con una flecha ▲/▼ y un texto para lectores de pantalla (PS-59).
+ * - Muestra el destello verde, rojo o morado al terminar un sector (PS-49 y PS-68, servicio
+ *   AvisoSector), con una flecha ▲/▼ o una estrella ★ y un texto para lectores de pantalla (PS-59).
  * - "Ver resumen" guarda la carrera y abre la pantalla de resumen (PS-50).
  * - Al acabar la carrera (en la meta o con Terminar) abre el resultado final (PS-62).
  *
@@ -44,6 +44,7 @@ export class RelojInicio {
     const aviso = this.aviso();
     if (aviso === 'mejor') return 'Sector mejor que tu sombra';
     if (aviso === 'peor') return 'Sector peor que tu sombra';
+    if (aviso === 'morado') return 'Sector morado: el más rápido de todos los corredores';
     return '';
   });
 

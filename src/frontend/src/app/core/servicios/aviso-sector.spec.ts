@@ -1,5 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-import { AvisoSector, DURACION_AVISO_MS, VIBRACION_MEJOR, VIBRACION_PEOR } from './aviso-sector';
+import {
+  AvisoSector,
+  DURACION_AVISO_MS,
+  VIBRACION_MEJOR,
+  VIBRACION_MORADO,
+  VIBRACION_PEOR,
+} from './aviso-sector';
 
 describe('AvisoSector', () => {
   let servicio: AvisoSector;
@@ -36,6 +42,22 @@ describe('AvisoSector', () => {
     servicio.avisar('peor');
     expect(servicio.aviso()).toBe('peor');
     expect(vibrar).toHaveBeenCalledWith(VIBRACION_PEOR);
+  });
+
+  it('PS-68: el aviso morado dura 3 s y tiene su propia vibración', () => {
+    servicio.avisar('morado');
+    expect(servicio.aviso()).toBe('morado');
+    expect(vibrar).toHaveBeenCalledWith(VIBRACION_MORADO);
+
+    vi.advanceTimersByTime(DURACION_AVISO_MS - 1);
+    expect(servicio.aviso()).toBe('morado');
+    vi.advanceTimersByTime(1);
+    expect(servicio.aviso()).toBeNull();
+  });
+
+  it('PS-68: la vibración morada es distinta de la verde y de la roja', () => {
+    expect(VIBRACION_MORADO).not.toEqual(VIBRACION_MEJOR);
+    expect(VIBRACION_MORADO).not.toEqual(VIBRACION_PEOR);
   });
 
   it('un aviso nuevo reinicia el tiempo del anterior', () => {

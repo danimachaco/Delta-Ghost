@@ -7,6 +7,15 @@ export const DURACION_AVISO_MS = 3000;
 export const VIBRACION_MEJOR = [200, 100, 200];
 /** Rojo: una vibración larga. */
 export const VIBRACION_PEOR = 800;
+/** Morado (PS-68): tres pulsos cortos y uno largo, distinto del verde y del rojo. */
+export const VIBRACION_MORADO = [100, 60, 100, 60, 100, 60, 500];
+
+
+const PATRONES_VIBRACION: Record<ResultadoAviso, number | number[]> = {
+  mejor: VIBRACION_MEJOR,
+  peor: VIBRACION_PEOR,
+  morado: VIBRACION_MORADO,
+};
 
 /**
  * Gestiona el aviso de fin de sector: activa el destello verde o rojo durante
@@ -34,6 +43,6 @@ export class AvisoSector {
   private vibrar(resultado: ResultadoAviso): void {
     // iOS Safari no soporta la API de vibración: en ese caso solo hay destello
     if (typeof navigator === 'undefined' || !('vibrate' in navigator)) return;
-    navigator.vibrate(resultado === 'mejor' ? VIBRACION_MEJOR : VIBRACION_PEOR);
+    navigator.vibrate(PATRONES_VIBRACION[resultado]);
   }
 }
