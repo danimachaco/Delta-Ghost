@@ -1,0 +1,109 @@
+<h2>Tus estadísticas</h2>
+
+@switch (estado()) {
+  @case ('cargando') {
+    <div class="totales" aria-busy="true" aria-label="Cargando estadísticas">
+      @for (n of [1, 2, 3, 4]; track n) {
+        <div class="cifra esqueleto"></div>
+      }
+    </div>
+  }
+
+  @case ('error') {
+    <div class="aviso" role="alert">
+      <p>{{ mensajeError() }}</p>
+      <button type="button" class="boton" (click)="cargar()">Reintentar</button>
+    </div>
+  }
+
+  @case ('listo') {
+    @if (vacio()) {
+      <div class="aviso">
+        <p>Todavía no has corrido ninguna carrera.</p>
+        <p class="suave">Corre contra tu sombra y aquí verás tus kilómetros y tu ritmo.</p>
+        <a class="boton" routerLink="/reloj/elegir">Correr</a>
+      </div>
+    } @else {
+      <dl class="totales">
+        @for (total of totales(); track total.nombre) {
+          <div class="cifra">
+            <dt>{{ total.nombre }}</dt>
+            <dd>{{ total.valor }}</dd>
+          </div>
+        }
+      </dl>
+
+      <section class="bloque" aria-labelledby="titulo-semanas">
+        <h3 id="titulo-semanas">Kilómetros por semana</h3>
+        <app-grafico
+          tipo="bar"
+          [etiquetas]="etiquetasSemanas()"
+          [valores]="kmSemanas()"
+          nombreSerie="Distancia"
+          [formato]="formatoKm"
+          [descripcion]="descripcionSemanas()"
+        />
+        <!-- Los mismos datos en una tabla: un canvas no lo lee un lector de pantalla -->
+        <details>
+          <summary>Ver los datos</summary>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Semana del</th>
+                <th scope="col">Carreras</th>
+                <th scope="col">Distancia</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (fila of filasSemanas(); track fila.semana) {
+                <tr>
+                  <td>{{ fila.semana }}</td>
+                  <td>{{ fila.carreras }}</td>
+                  <td>{{ fila.distancia }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </details>
+      </section>
+
+      <section class="bloque" aria-labelledby="titulo-ritmo">
+        <h3 id="titulo-ritmo">Tu ritmo</h3>
+        <p class="suave">
+          Minutos por kilómetro en tus últimas carreras: cuanto más bajo, más rápido.
+        </p>
+        <app-grafico
+          tipo="line"
+          [etiquetas]="etiquetasRitmo()"
+          [valores]="minutosPorKm()"
+          nombreSerie="Ritmo"
+          [formato]="formatoRitmo"
+          [descripcion]="descripcionRitmo()"
+        />
+      </section>
+
+      <section class="bloque" aria-labelledby="titulo-ultimas">
+        <h3 id="titulo-ultimas">Últimas carreras</h3>
+        <ul class="lista">
+          @for (carrera of ultimas(); track carrera.clave) {
+            <li class="tarjeta">
+              <span class="info">
+                <span class="nombre">
+                  {{ carrera.ruta }}
+                  @if (carrera.mejorMarca) {
+                    <span class="etiqueta">Mejor marca</span>
+                  }
+                </span>
+                <span class="detalle">{{ carrera.fecha }} · {{ carrera.distancia }}</span>
+              </span>
+              <span class="tiempos">
+                <span class="tiempo">{{ carrera.tiempo }}</span>
+                <span class="detalle">{{ carrera.ritmo }}</span>
+              </span>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+  }
+}
