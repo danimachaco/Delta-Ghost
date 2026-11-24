@@ -27,6 +27,15 @@ export const APP_ROUTES: Routes = [
         canActivate: [authGuard],
         title: 'Ruta Fantasma · Amigos',
       },
+      // Estadísticas del corredor con Chart.js (PS-76): necesitan sesión, la API pide token
+      {
+        path: 'estadisticas',
+        // Carga diferida: Chart.js solo se descarga cuando se abre esta pantalla
+        loadComponent: () =>
+          import('./estadisticas/estadisticas').then((m) => m.EstadisticasPantalla),
+        canActivate: [authGuard],
+        title: 'Ruta Fantasma · Estadísticas',
+      },
       // Ranking de una ruta (PS-65): también necesita sesión, la API pide token
       {
         path: 'ranking/:rutaId',

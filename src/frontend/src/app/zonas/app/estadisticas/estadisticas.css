@@ -1,0 +1,190 @@
+/* Estadísticas: mismas tarjetas que "Mis rutas" y "Ranking" */
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+/* Las cuatro cifras de arriba, en una rejilla de 2 x 2 */
+.totales {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 0;
+}
+
+.cifra {
+  padding: 12px 14px;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-fondo);
+}
+
+.cifra dt {
+  color: var(--color-texto-suave);
+  font-size: 0.8rem;
+}
+
+.cifra dd {
+  margin: 4px 0 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.bloque {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+details {
+  font-size: 0.9rem;
+}
+
+summary {
+  padding: 8px 0;
+  color: var(--color-primario);
+  cursor: pointer;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+th,
+td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--color-borde);
+  text-align: left;
+}
+
+th {
+  color: var(--color-texto-suave);
+  font-weight: 600;
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tarjeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  background: var(--color-fondo);
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.nombre {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.etiqueta {
+  margin-left: 6px;
+  padding: 1px 8px;
+  border: 1px solid var(--color-mejor);
+  border-radius: 999px;
+  color: var(--color-mejor);
+  font-size: 0.75rem;
+}
+
+.detalle {
+  color: var(--color-texto-suave);
+  font-size: 0.8rem;
+}
+
+.tiempos {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.tiempo {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.suave {
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+/* Cifra gris que "late" mientras carga */
+.esqueleto {
+  height: 64px;
+  animation: latido 1.2s ease-in-out infinite;
+}
+
+@keyframes latido {
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .esqueleto {
+    animation: none;
+  }
+}
+
+.aviso {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.aviso p {
+  margin: 0 0 10px;
+}
+
+.boton {
+  display: inline-block;
+  padding: 10px 24px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--reloj-boton); /* texto blanco a 5,5:1 (PS-60) */
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.boton:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--color-texto);
+  outline-offset: 2px;
+}
