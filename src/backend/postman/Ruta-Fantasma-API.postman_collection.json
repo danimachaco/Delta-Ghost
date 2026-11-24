@@ -1065,6 +1065,51 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Estadísticas",
+      "description": "PS-75 · Estadísticas del corredor para la web con Chart.js (PS-76). Usa el token de la colección.",
+      "item": [
+        {
+          "name": "25. Mis estadísticas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/estadisticas?semanas=12",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "estadisticas"
+              ],
+              "query": [
+                {
+                  "key": "semanas",
+                  "value": "12"
+                }
+              ]
+            },
+            "description": "Totales, actividad de las últimas 12 semanas, progreso en cada ruta y evolución del ritmo."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Devuelve 200 OK', () => pm.response.to.have.status(200));",
+                  "const e = pm.response.json();",
+                  "pm.test('Cuenta la grabación de la ruta y la carrera de Ana', () => pm.expect(e.resumen.carreras).to.eql(2));",
+                  "pm.test('Trae 12 semanas', () => pm.expect(e.semanas).to.have.lengthOf(12));",
+                  "pm.test('Trae el progreso en la ruta', () => pm.expect(e.rutas[0].mejorTiempoSegundos).to.eql(250));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "variable": [

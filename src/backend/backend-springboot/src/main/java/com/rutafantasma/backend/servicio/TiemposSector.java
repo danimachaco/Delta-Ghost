@@ -18,9 +18,6 @@ import com.rutafantasma.backend.modelo.Sector;
  */
 public final class TiemposSector {
 
-    /** Radio medio de la Tierra en metros, para la fórmula de Haversine */
-    private static final double RADIO_TIERRA = 6_371_000;
-
     private TiemposSector() {
     }
 
@@ -57,13 +54,8 @@ public final class TiemposSector {
         return duraciones;
     }
 
-    /** Distancia en metros entre dos coordenadas con la fórmula de Haversine (la misma que el servicio Calculo del frontend) */
+    /** Distancia en metros del final de un sector a un punto del recorrido (Haversine, con Geo) */
     private static double distancia(Punto a, PuntoDto b) {
-        double dLat = Math.toRadians(b.latitud() - a.getLatitud());
-        double dLon = Math.toRadians(b.longitud() - a.getLongitud());
-        double h = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-                + Math.cos(Math.toRadians(a.getLatitud())) * Math.cos(Math.toRadians(b.latitud()))
-                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        return 2 * RADIO_TIERRA * Math.asin(Math.sqrt(h));
+        return Geo.metros(a.getLatitud(), a.getLongitud(), b.latitud(), b.longitud());
     }
 }
