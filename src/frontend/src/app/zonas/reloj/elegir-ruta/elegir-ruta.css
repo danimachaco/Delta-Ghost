@@ -166,3 +166,10 @@
   color: var(--color-texto-suave);
   text-decoration: none;
 }
+
+/* PS-79: enlace al modo vuelta rápida */
+.vueltas {
+  margin-top: 12px;
+  padding: 12px 16px; /* área de pulsación de 44 px */
+  color: var(--color-primario);
+}

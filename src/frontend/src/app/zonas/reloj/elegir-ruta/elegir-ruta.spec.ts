@@ -114,4 +114,9 @@ describe('ElegirRuta', () => {
     await actualizar();
     expect(tarjetas().length).toBe(2);
   });
+
+  it('PS-79: enlaza al modo vuelta rápida para correr en pista', async () => {
+    await abrir();
+    expect(el.querySelector('a.vueltas')?.getAttribute('href')).toBe('/reloj/vueltas');
+  });
 });
