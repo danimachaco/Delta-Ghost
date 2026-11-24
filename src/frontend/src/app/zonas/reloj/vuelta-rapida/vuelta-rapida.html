@@ -1,0 +1,101 @@
+<div class="esfera" [class.terminado]="modo.estado() === 'terminado'">
+  <!-- Destello al cerrar una vuelta: morado si es tu mejor vuelta, verde si mejoras la anterior,
+       rojo si no (PS-49/68). La flecha o la estrella dicen lo mismo con la forma (PS-59). -->
+  @if (aviso(); as resultado) {
+    <div
+      class="destello"
+      [class.destello-mejor]="resultado === 'mejor'"
+      [class.destello-peor]="resultado === 'peor'"
+      [class.destello-morado]="resultado === 'morado'"
+      aria-hidden="true"
+    ></div>
+    <app-flecha-sector class="flecha" [resultado]="resultado" />
+  }
+  <p class="solo-lector" aria-live="assertive">{{ textoAviso() }}</p>
+
+  @switch (modo.estado()) {
+    @case ('parado') {
+      <div class="datos">
+        <h1 class="titulo">Vuelta rápida</h1>
+        <p class="explicacion">
+          Ponte en la línea de salida y pulsa Empezar. Cada vez que vuelvas a pasar por aquí se
+          cierra una vuelta.
+        </p>
+        <p class="aviso-inicio" [class.error]="avisoEsError()" role="status">{{ avisoInicio() }}</p>
+        <button type="button" class="boton" (click)="empezar()" [disabled]="!puedeEmpezar()">
+          Empezar
+        </button>
+      </div>
+    }
+
+    @case ('en-curso') {
+      <div class="datos">
+        <span class="etiqueta">Vuelta {{ modo.numeroVuelta() }}</span>
+        <span class="tiempo">{{ tiempoVuelta() }}</span>
+        <dl class="cifras">
+          <div>
+            <dt>mejor vuelta</dt>
+            <dd class="mejor-vuelta">{{ textoMejor() }}</dd>
+          </div>
+          <div>
+            <dt>última</dt>
+            @if (ultima(); as u) {
+              <dd [class]="'ultima ' + u.resultado">{{ u.texto }}</dd>
+            } @else {
+              <dd class="ultima">—</dd>
+            }
+          </div>
+        </dl>
+      </div>
+    }
+
+    @case ('terminado') {
+      <div class="datos">
+        <h1 class="titulo">Vueltas</h1>
+        @if (filas().length === 0) {
+          <p class="explicacion">No has completado ninguna vuelta.</p>
+        } @else {
+          <ol class="vueltas">
+            @for (fila of filas(); track fila.numero) {
+              <li [class.mejor]="fila.esMejor">
+                <!-- Los textos ocultos separan las columnas para los lectores de pantalla:
+                     sin ellos leerían "11:35,0" en lugar de "Vuelta 1, 1:35,0" -->
+                <span class="numero"
+                  ><span class="solo-lector">Vuelta </span>{{ fila.numero }}</span
+                >
+                <span class="tiempo-vuelta"
+                  ><span class="solo-lector">, </span>{{ fila.tiempo }}</span
+                >
+                @if (fila.esMejor) {
+                  <!-- Texto además del color: la mejor vuelta no depende solo del morado -->
+                  <span class="marca-mejor"
+                    ><span class="solo-lector">, </span>Mejor<span class="solo-lector">
+                      vuelta</span
+                    ></span
+                  >
+                } @else if (fila.diferencia) {
+                  <span class="dif"><span class="solo-lector">, </span>{{ fila.diferencia }}</span>
+                }
+              </li>
+            }
+          </ol>
+          <p class="total">Total {{ tiempoTotal() }}</p>
+        }
+      </div>
+    }
+  }
+</div>
+
+@switch (modo.estado()) {
+  @case ('en-curso') {
+    <!-- Mientras se corre no hay enlace de salir, para no perder las vueltas sin querer -->
+    <button type="button" class="terminar" (click)="terminar()">Terminar</button>
+  }
+  @case ('terminado') {
+    <button type="button" class="otra" (click)="otraVez()">Otra vez</button>
+    <a class="salir" routerLink="/reloj/elegir">← Salir</a>
+  }
+  @default {
+    <a class="salir" routerLink="/reloj/elegir">← Salir</a>
+  }
+}
