@@ -1,0 +1,280 @@
+/* Misma esfera del reloj, con los colores y tamaños de la PS-60 */
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 16px;
+  background: #000;
+}
+
+.esfera {
+  position: relative;
+  width: min(340px, 90vw);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 6px solid var(--reloj-linea);
+  background: #050505;
+  display: grid;
+  place-items: center;
+  /* En px: un % se calcularía sobre el ancho de la página y no sobre el de la esfera */
+  padding: 36px 34px;
+  overflow: hidden;
+}
+
+.datos {
+  position: relative;
+  z-index: 1; /* el texto queda por encima del destello */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  text-align: center;
+}
+
+.titulo {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.explicacion {
+  max-width: 85%;
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: 0.85rem;
+}
+
+.aviso-inicio {
+  margin: 4px 0;
+  color: var(--color-texto-suave);
+  font-size: 0.8rem;
+}
+
+.aviso-inicio.error {
+  color: var(--color-peor);
+}
+
+.etiqueta {
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.tiempo {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.cifras {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 85%;
+  margin: 4px 0 0;
+}
+
+.cifras div {
+  display: flex;
+  flex-direction: column-reverse; /* la cifra arriba y la etiqueta debajo */
+}
+
+.cifras dt {
+  color: var(--color-texto-suave);
+  font-size: 0.8rem;
+}
+
+.cifras dd {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.ultima.mejor {
+  color: var(--color-mejor);
+}
+
+.ultima.peor {
+  color: var(--color-peor);
+}
+
+.ultima.morado {
+  color: var(--color-morado);
+}
+
+/* Resumen: lista de vueltas, se desplaza si hay muchas */
+.vueltas {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  max-height: 150px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.vueltas li {
+  display: grid;
+  grid-template-columns: 2em 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  border-radius: var(--radio);
+  background: var(--color-superficie);
+  font-variant-numeric: tabular-nums;
+}
+
+/* La mejor vuelta: borde morado y la palabra "Mejor" (no depende solo del color) */
+.vueltas li.mejor {
+  border-color: var(--color-morado);
+}
+
+.numero {
+  color: var(--color-texto-suave);
+  font-size: 0.85rem;
+}
+
+.tiempo-vuelta {
+  font-weight: 700;
+  text-align: left;
+}
+
+.dif {
+  color: var(--color-texto-suave);
+  font-size: 0.8rem;
+}
+
+.marca-mejor {
+  color: var(--color-morado);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.total {
+  margin: 4px 0 0;
+  color: var(--color-texto-suave);
+  font-size: 0.85rem;
+}
+
+.boton,
+.terminar,
+.otra {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 26px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--reloj-boton);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.boton:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.terminar {
+  margin-top: 16px;
+  background: var(--reloj-boton-terminar);
+}
+
+.otra {
+  margin-top: 16px;
+}
+
+.boton:focus-visible,
+.terminar:focus-visible,
+.otra:focus-visible,
+.salir:focus-visible {
+  outline: 2px solid var(--color-texto);
+  outline-offset: 2px;
+}
+
+.salir {
+  margin-top: 4px;
+  padding: 12px 16px;
+  color: var(--color-texto-suave);
+  text-decoration: none;
+}
+
+/* Destello al cerrar una vuelta: anillo en el borde (PS-60), 3 s */
+.destello {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  box-shadow:
+    inset 0 0 0 20px var(--color-destello),
+    inset 0 0 36px 24px var(--color-destello);
+  animation: destello 3s ease-out forwards;
+}
+
+.destello-mejor {
+  --color-destello: var(--color-mejor);
+}
+
+.destello-peor {
+  --color-destello: var(--color-peor);
+}
+
+.destello-morado {
+  --color-destello: var(--color-morado);
+}
+
+@keyframes destello {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .destello {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Flecha ▲/▼ o estrella encima del destello (PS-59/68) */
+.flecha {
+  position: absolute;
+  top: 8%;
+  left: 50%;
+  z-index: 2;
+  transform: translateX(-50%);
+  font-size: 2.6rem;
+  color: #fff;
+  pointer-events: none;
+}
+
+.solo-lector {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
