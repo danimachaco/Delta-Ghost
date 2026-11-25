@@ -21,10 +21,9 @@ function etiquetaSemana(inicio: string): string {
   return fechaCorta.format(new Date(`${inicio}T00:00:00`)).replace('.', '');
 }
 
-/** Segundos por km de una distancia y un tiempo, o null si no hay distancia */
-function ritmo(distanciaMetros: number, tiempoSegundos: number): number | null {
-  return distanciaMetros > 0 ? (tiempoSegundos / distanciaMetros) * 1000 : null;
-}
+/** Carreras que se dibujan en el gráfico del ritmo y que salen en la lista */
+const CARRERAS_GRAFICO = 20;
+const CARRERAS_LISTA = 10;
 
 /** Kilómetros con un decimal y coma: 5234 m → "5,2" */
 function km(metros: number): string {
@@ -53,19 +52,19 @@ export class EstadisticasPantalla implements OnInit {
   private readonly datos = signal<Estadisticas | null>(null);
 
   /** true si todavía no has corrido ninguna carrera */
-  protected readonly vacio = computed(() => (this.datos()?.totales.carreras ?? 0) === 0);
+  protected readonly vacio = computed(() => (this.datos()?.resumen.carreras ?? 0) === 0);
 
   /** Las cuatro cifras de arriba */
   protected readonly totales = computed(() => {
-    const t = this.datos()?.totales;
-    if (!t) {
+    const r = this.datos()?.resumen;
+    if (!r) {
       return [];
     }
     return [
-      { nombre: 'Carreras', valor: String(t.carreras) },
-      { nombre: 'Distancia', valor: formatearKm(t.distanciaMetros / 1000) },
-      { nombre: 'Tiempo', valor: formatearDuracion(t.tiempoSegundos) },
-      { nombre: 'Ritmo medio', valor: formatearRitmo(ritmo(t.distanciaMetros, t.tiempoSegundos)) },
+      { nombre: 'Carreras', valor: String(r.carreras) },
+      { nombre: 'Distancia', valor: formatearKm(r.distanciaTotalMetros / 1000) },
+      { nombre: 'Tiempo', valor: formatearDuracion(r.tiempoTotalSegundos) },
+      { nombre: 'Ritmo medio', valor: formatearRitmo(r.ritmoMedioSegundosKm) },
     ];
   });
 
@@ -95,43 +94,48 @@ export class EstadisticasPantalla implements OnInit {
   );
 
   // ---- Gráfico 2: evolución del ritmo (línea) ----
-  /** Carreras con distancia (sin ella no hay ritmo), de la más antigua a la más reciente */
+  /** Últimas carreras con ritmo (sin distancia no hay), de la más antigua a la más reciente */
   private readonly carrerasConRitmo = computed(() =>
-    (this.datos()?.carreras ?? []).filter((c) => c.distanciaMetros > 0),
+    (this.datos()?.evolucion ?? [])
+      .filter((c) => c.ritmoSegundosKm !== null)
+      .slice(-CARRERAS_GRAFICO),
   );
   protected readonly etiquetasRitmo = computed(() =>
     this.carrerasConRitmo().map((c) => etiquetaSemana(c.fecha.slice(0, 10))),
   );
   /** Ritmo en minutos por km (5,28 = 5:17 /km), que es lo que dibuja el gráfico */
   protected readonly minutosPorKm = computed(() =>
-    this.carrerasConRitmo().map(
-      (c) => Math.round(((ritmo(c.distanciaMetros, c.tiempoSegundos) ?? 0) / 60) * 100) / 100,
-    ),
+    this.carrerasConRitmo().map((c) => Math.round(((c.ritmoSegundosKm ?? 0) / 60) * 100) / 100),
   );
   protected readonly formatoRitmo = (minutos: number) => formatearRitmo(minutos * 60);
   protected readonly descripcionRitmo = computed(
     () =>
       'Ritmo de tus últimas carreras: ' +
       this.carrerasConRitmo()
-        .map(
-          (c) =>
-            `${etiquetaSemana(c.fecha.slice(0, 10))}, ${formatearRitmo(ritmo(c.distanciaMetros, c.tiempoSegundos))}`,
-        )
+        .map((c) => `${etiquetaSemana(c.fecha.slice(0, 10))}, ${formatearRitmo(c.ritmoSegundosKm)}`)
         .join('; '),
   );
 
-  /** Lista de las últimas carreras, de la más reciente a la más antigua */
-  protected readonly ultimas = computed(() =>
-    [...(this.datos()?.carreras ?? [])].reverse().map((c, i) => ({
-      clave: `${c.fecha}-${i}`,
-      ruta: c.rutaNombre,
-      fecha: formatearFecha(c.fecha),
-      distancia: formatearKm(c.distanciaMetros / 1000),
-      tiempo: formatearDuracion(c.tiempoSegundos),
-      ritmo: formatearRitmo(ritmo(c.distanciaMetros, c.tiempoSegundos)),
-      mejorMarca: c.mejorMarca,
-    })),
-  );
+  /**
+   * Lista de las últimas carreras, de la más reciente a la más antigua. Una carrera es tu
+   * mejor marca si su tiempo es el mejor que tienes en esa ruta (dato de `rutas`).
+   */
+  protected readonly ultimas = computed(() => {
+    const datos = this.datos();
+    const mejores = new Map((datos?.rutas ?? []).map((r) => [r.rutaId, r.mejorTiempoSegundos]));
+    return (datos?.evolucion ?? [])
+      .slice(-CARRERAS_LISTA)
+      .reverse()
+      .map((c, i) => ({
+        clave: `${c.fecha}-${i}`,
+        ruta: c.rutaNombre,
+        fecha: formatearFecha(c.fecha),
+        distancia: formatearKm(c.distanciaMetros / 1000),
+        tiempo: formatearDuracion(c.tiempoTotalSegundos),
+        ritmo: formatearRitmo(c.ritmoSegundosKm),
+        mejorMarca: mejores.get(c.rutaId) === c.tiempoTotalSegundos,
+      }));
+  });
 
   ngOnInit(): void {
     this.cargar();
@@ -146,7 +150,7 @@ export class EstadisticasPantalla implements OnInit {
         this.estado.set('listo');
       },
       error: (error: ErrorApi) => {
-        // 404: el servidor todavía no tiene la API de estadísticas (PS-75)
+        // 404: el servidor todavía no tiene desplegada la API de estadísticas (PS-75)
         this.mensajeError.set(
           error.estado === 404 ? 'Las estadísticas todavía no están disponibles.' : error.mensaje,
         );

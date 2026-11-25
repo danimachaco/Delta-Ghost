@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { AvisoSector } from '../../../core/servicios/aviso-sector';
 import { PantallaEncendida } from '../../../core/servicios/pantalla-encendida';
-import { VueltaRapida } from '../../../core/servicios/vuelta-rapida';
+import { VueltaRapidaGps } from '../../../core/servicios/vuelta-rapida-gps';
 import { VueltaRapidaPantalla } from './vuelta-rapida';
 
 /** Lectura del GPS (formato del navegador) a `metros` al norte de la salida */
@@ -14,7 +14,7 @@ const lectura = (metros: number, timestamp: number) => ({
 describe('VueltaRapidaPantalla', () => {
   let fixture: ComponentFixture<VueltaRapidaPantalla>;
   let el: HTMLElement;
-  let modo: VueltaRapida;
+  let modo: VueltaRapidaGps;
   let exito: (p: unknown) => void;
   const geo = {
     watchPosition: vi.fn((ok: (p: unknown) => void) => {
@@ -62,7 +62,7 @@ describe('VueltaRapidaPantalla', () => {
     }).compileComponents();
     fixture = TestBed.createComponent(VueltaRapidaPantalla);
     el = fixture.nativeElement;
-    modo = TestBed.inject(VueltaRapida);
+    modo = TestBed.inject(VueltaRapidaGps);
     await fixture.whenStable();
   });
 

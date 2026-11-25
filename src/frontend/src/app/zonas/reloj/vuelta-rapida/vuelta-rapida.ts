@@ -8,7 +8,7 @@ import {
 import { AvisoSector } from '../../../core/servicios/aviso-sector';
 import { Carrera } from '../../../core/servicios/carrera';
 import { ErrorGps, Gps } from '../../../core/servicios/gps';
-import { VueltaRapida } from '../../../core/servicios/vuelta-rapida';
+import { VueltaRapidaGps } from '../../../core/servicios/vuelta-rapida-gps';
 
 /** Mensajes cortos para cada error del GPS (caben en la pantalla del reloj) */
 const ERRORES_GPS: Record<ErrorGps, string> = {
@@ -26,7 +26,7 @@ const ERRORES_GPS: Record<ErrorGps, string> = {
  *    cómo fue la última. Al cerrar cada vuelta, destello morado/verde/rojo con su forma (PS-59/68).
  * 3. Al terminar: la lista de vueltas con la mejor destacada.
  *
- * La lógica (detectar vueltas y compararlas) está en el servicio VueltaRapida.
+ * La lógica (detectar vueltas y compararlas) está en el servicio VueltaRapidaGps.
  */
 @Component({
   imports: [RouterLink, FlechaSector],
@@ -36,7 +36,7 @@ const ERRORES_GPS: Record<ErrorGps, string> = {
 })
 export class VueltaRapidaPantalla implements OnInit, OnDestroy {
   private readonly gps = inject(Gps);
-  protected readonly modo = inject(VueltaRapida);
+  protected readonly modo = inject(VueltaRapidaGps);
   protected readonly carrera = inject(Carrera);
 
   /** Destello del reloj al cerrar una vuelta */
