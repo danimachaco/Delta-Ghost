@@ -1,15 +1,21 @@
 /**
- * Modelos de las estadísticas del corredor. Es el contrato de la API de la PS-75
- * (GET /api/estadisticas), anotado también en CLAUDE.md.
+ * Modelos de las estadísticas del corredor: lo que responde GET /api/estadisticas
+ * (PS-75, `EstadisticasResponse` del backend), anotado también en CLAUDE.md.
+ * Distancias en metros, tiempos en segundos y ritmos en segundos por km.
  */
 
-/** Totales de todas tus carreras */
-export interface TotalesEstadisticas {
+/** Totales de todas tus carreras (incluida la grabación de tus rutas) */
+export interface ResumenEstadisticas {
   carreras: number;
-  distanciaMetros: number;
-  tiempoSegundos: number;
   /** Rutas distintas que has corrido */
-  rutas: number;
+  rutasCorridas: number;
+  distanciaTotalMetros: number;
+  tiempoTotalSegundos: number;
+  /** Tiempo total entre distancia total; null si aún no has corrido */
+  ritmoMedioSegundosKm: number | null;
+  /** Ritmo de tu carrera más rápida por km; null si aún no has corrido */
+  mejorRitmoSegundosKm: number | null;
+  carreraMasLargaMetros: number;
 }
 
 /** Lo que has corrido en una semana (de lunes a domingo) */
@@ -21,23 +27,39 @@ export interface SemanaEstadisticas {
   tiempoSegundos: number;
 }
 
-/** Una carrera, para ver cómo evoluciona tu ritmo */
-export interface CarreraEstadisticas {
-  /** Fecha ISO de la carrera */
-  fecha: string;
+/** Tus tiempos en una ruta */
+export interface RutaEstadisticas {
   rutaId: string;
-  rutaNombre: string;
-  distanciaMetros: number;
-  tiempoSegundos: number;
-  /** true si esa carrera es tu mejor marca en la ruta */
-  mejorMarca: boolean;
+  nombre: string;
+  carreras: number;
+  primerTiempoSegundos: number;
+  mejorTiempoSegundos: number;
+  ultimoTiempoSegundos: number;
+  /** Cuánto has bajado desde la primera vez (primer tiempo − mejor tiempo) */
+  mejoraSegundos: number;
 }
 
-/** Estadísticas del usuario → GET /api/estadisticas */
+/** Una carrera, para ver cómo evoluciona tu ritmo */
+export interface CarreraEstadisticas {
+  /** null si es la grabación de la ruta */
+  carreraId: string | null;
+  rutaId: string;
+  rutaNombre: string;
+  /** Fecha y hora ISO de la carrera */
+  fecha: string;
+  tiempoTotalSegundos: number;
+  distanciaMetros: number;
+  /** null si la carrera no tiene distancia */
+  ritmoSegundosKm: number | null;
+}
+
+/** Estadísticas del usuario → GET /api/estadisticas?semanas=N */
 export interface Estadisticas {
-  totales: TotalesEstadisticas;
-  /** Las últimas 8 semanas, de la más antigua a la más reciente (también las que tienen 0 carreras) */
+  resumen: ResumenEstadisticas;
+  /** Las últimas N semanas, de la más antigua a la actual (también las que tienen 0 carreras) */
   semanas: SemanaEstadisticas[];
-  /** Tus últimas 20 carreras, de la más antigua a la más reciente */
-  carreras: CarreraEstadisticas[];
+  /** Una fila por ruta que has corrido */
+  rutas: RutaEstadisticas[];
+  /** Tus últimas carreras (hasta 50), de la más antigua a la más reciente */
+  evolucion: CarreraEstadisticas[];
 }

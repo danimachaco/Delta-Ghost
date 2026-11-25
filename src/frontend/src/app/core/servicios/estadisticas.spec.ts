@@ -5,7 +5,7 @@ import { environment } from '../../../environments/environment';
 import { EstadisticasServicio } from './estadisticas';
 
 describe('EstadisticasServicio', () => {
-  it('mias() pide GET /api/estadisticas', () => {
+  it('mias() pide GET /api/estadisticas con las últimas 8 semanas', () => {
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting()],
     });
@@ -13,7 +13,9 @@ describe('EstadisticasServicio', () => {
 
     TestBed.inject(EstadisticasServicio).mias().subscribe();
 
-    servidor.expectOne({ method: 'GET', url: `${environment.apiUrl}/estadisticas` }).flush({});
+    servidor
+      .expectOne({ method: 'GET', url: `${environment.apiUrl}/estadisticas?semanas=8` })
+      .flush({});
     servidor.verify();
   });
 });

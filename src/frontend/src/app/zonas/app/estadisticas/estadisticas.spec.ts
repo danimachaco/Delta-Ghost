@@ -31,30 +31,51 @@ describe('EstadisticasPantalla', () => {
   let fixture: ComponentFixture<EstadisticasPantalla>;
   let el: HTMLElement;
   let servidor: HttpTestingController;
-  const url = `${environment.apiUrl}/estadisticas`;
+  const url = `${environment.apiUrl}/estadisticas?semanas=8`;
 
   const datos: Estadisticas = {
-    totales: { carreras: 3, distanciaMetros: 15_300, tiempoSegundos: 4_860, rutas: 2 },
+    resumen: {
+      carreras: 3,
+      rutasCorridas: 2,
+      distanciaTotalMetros: 15_300,
+      tiempoTotalSegundos: 4_860,
+      ritmoMedioSegundosKm: 318,
+      mejorRitmoSegundosKm: 300,
+      carreraMasLargaMetros: 5_300,
+    },
     semanas: [
       { inicio: '2026-11-09', carreras: 1, distanciaMetros: 5_000, tiempoSegundos: 1_650 },
       { inicio: '2026-11-16', carreras: 2, distanciaMetros: 10_300, tiempoSegundos: 3_210 },
     ],
-    carreras: [
+    rutas: [
       {
-        fecha: '2026-11-12T08:00:00',
+        rutaId: '1',
+        nombre: 'Circuito del parque',
+        carreras: 2,
+        primerTiempoSegundos: 1_650,
+        mejorTiempoSegundos: 1_500,
+        ultimoTiempoSegundos: 1_500,
+        mejoraSegundos: 150,
+      },
+    ],
+    evolucion: [
+      {
+        carreraId: null,
         rutaId: '1',
         rutaNombre: 'Circuito del parque',
+        fecha: '2026-11-12T08:00:00',
+        tiempoTotalSegundos: 1_650,
         distanciaMetros: 5_000,
-        tiempoSegundos: 1_650,
-        mejorMarca: false,
+        ritmoSegundosKm: 330,
       },
       {
-        fecha: '2026-11-20T08:00:00',
+        carreraId: '7',
         rutaId: '1',
         rutaNombre: 'Circuito del parque',
+        fecha: '2026-11-20T08:00:00',
+        tiempoTotalSegundos: 1_500,
         distanciaMetros: 5_000,
-        tiempoSegundos: 1_500,
-        mejorMarca: true,
+        ritmoSegundosKm: 300,
       },
     ],
   };
@@ -107,7 +128,6 @@ describe('EstadisticasPantalla', () => {
     const cifras = [...el.querySelectorAll('.totales .cifra')].map(
       (c) => `${c.querySelector('dt')?.textContent}: ${c.querySelector('dd')?.textContent}`,
     );
-    // 4860 s en 15,3 km → 317,6 s/km = 5:18 /km
     expect(cifras).toEqual([
       'Carreras: 3',
       'Distancia: 15,3 km',
@@ -125,7 +145,7 @@ describe('EstadisticasPantalla', () => {
     expect(semanas.valores()).toEqual([5, 10.3]);
     expect(semanas.formato()(10.3)).toBe('10,3 km');
 
-    // 1650 s en 5 km = 5,5 min/km; 1500 s = 5 min/km
+    // 330 s/km = 5,5 min/km; 300 s/km = 5 min/km
     const ritmo = componenteGrafico(1);
     expect(ritmo.valores()).toEqual([5.5, 5]);
     expect(ritmo.formato()(5.5)).toBe('5:30 /km');
@@ -162,9 +182,18 @@ describe('EstadisticasPantalla', () => {
 
   it('si aún no has corrido invita a hacerlo y no pinta gráficos', async () => {
     await responder({
-      totales: { carreras: 0, distanciaMetros: 0, tiempoSegundos: 0, rutas: 0 },
+      resumen: {
+        carreras: 0,
+        rutasCorridas: 0,
+        distanciaTotalMetros: 0,
+        tiempoTotalSegundos: 0,
+        ritmoMedioSegundosKm: null,
+        mejorRitmoSegundosKm: null,
+        carreraMasLargaMetros: 0,
+      },
       semanas: [],
-      carreras: [],
+      rutas: [],
+      evolucion: [],
     });
     expect(el.textContent).toContain('Todavía no has corrido ninguna carrera');
     expect(el.querySelector('a.boton')?.getAttribute('href')).toBe('/reloj/elegir');
