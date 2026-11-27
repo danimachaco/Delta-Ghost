@@ -3,9 +3,9 @@ import { authGuard } from '../../core/guardias/auth-guard';
 import { ElegirRuta } from './elegir-ruta/elegir-ruta';
 import { ElegirSombra } from './elegir-sombra/elegir-sombra';
 import { FinCarrera } from './fin-carrera/fin-carrera';
+import { RelojDemo } from './reloj-demo/reloj-demo';
 import { RelojInicio } from './reloj-inicio/reloj-inicio';
 import { SimuladorPanel } from './simulador/simulador-panel';
-import { VueltaRapidaPantalla } from './vuelta-rapida/vuelta-rapida';
 
 /** Rutas de la zona /reloj. Las nuevas pantallas del reloj se añaden aquí. */
 export const RELOJ_ROUTES: Routes = [
@@ -26,8 +26,7 @@ export const RELOJ_ROUTES: Routes = [
   },
   // PS-62: resultado final en el reloj al acabar la carrera
   { path: 'fin', component: FinCarrera, title: 'Ruta Fantasma · Fin de carrera' },
-  // PS-79: modo vuelta rápida para correr en pista (cada vuelta es un sector). No usa rutas
-  // guardadas ni el backend, así que no necesita sesión
-  { path: 'vueltas', component: VueltaRapidaPantalla, title: 'Ruta Fantasma · Vuelta rápida' },
   { path: 'simulador', component: SimuladorPanel, title: 'Ruta Fantasma · Simulador' },
+  // PS-81: reloj en un marco grande con una carrera simulada, para enseñarlo en el proyector
+  { path: 'demo', component: RelojDemo, title: 'Ruta Fantasma · Demo del reloj' },
 ];

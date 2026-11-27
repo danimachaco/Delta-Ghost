@@ -1,0 +1,58 @@
+:host {
+  display: block;
+  background: #000;
+}
+
+/* Controles discretos abajo del todo: no tapan el reloj en el proyector */
+.controles {
+  position: fixed;
+  right: 0;
+  bottom: 12px;
+  left: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 16px;
+  color: var(--color-texto-suave);
+  font-size: 0.875rem;
+}
+
+.velocidades {
+  display: flex;
+  gap: 6px;
+}
+
+button {
+  min-height: 44px; /* PS-60: área de pulsación de 44 px */
+  padding: 8px 18px;
+  border: 1px solid var(--reloj-linea);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-texto);
+  font: inherit;
+  cursor: pointer;
+}
+
+button.principal {
+  border-color: transparent;
+  background: var(--reloj-boton); /* texto blanco a 5,5:1 */
+  color: #fff;
+  font-weight: 600;
+}
+
+button[aria-pressed='true'] {
+  border-color: var(--color-primario);
+  color: var(--color-primario);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--color-texto);
+  outline-offset: 2px;
+}
+
+.error {
+  margin: 0;
+  color: var(--color-peor);
+}
