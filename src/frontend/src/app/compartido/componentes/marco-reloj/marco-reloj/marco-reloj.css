@@ -1,0 +1,53 @@
+/* Sin modo demo el marco no existe: el contenido queda como hijo directo de quien lo usa */
+:host(:not(.activo)),
+:host(:not(.activo)) .caja,
+:host(:not(.activo)) .bisel {
+  display: contents;
+}
+
+:host(:not(.activo)) .corona {
+  display: none;
+}
+
+:host(.activo) {
+  display: grid;
+  place-items: center;
+}
+
+.caja {
+  position: relative;
+}
+
+/* Bisel metálico: el grosor y las sombras escalan con el diámetro --d de la esfera */
+.bisel {
+  padding: calc(var(--d, 320px) * 0.045);
+  border-radius: 50%;
+  background: conic-gradient(
+    from 210deg,
+    #8b949e,
+    #e6edf3 12%,
+    #6e7681 25%,
+    #c9d1d9 40%,
+    #4b525b 55%,
+    #a8b0b9 70%,
+    #6e7681 85%,
+    #8b949e
+  );
+  box-shadow:
+    0 0 0 calc(var(--d, 320px) * 0.006) #000,
+    0 calc(var(--d, 320px) * 0.03) calc(var(--d, 320px) * 0.1) rgb(124 92 255 / 35%),
+    inset 0 0 calc(var(--d, 320px) * 0.02) rgb(0 0 0 / 60%);
+}
+
+/* Corona a la derecha, medio escondida tras el bisel */
+.corona {
+  position: absolute;
+  top: 50%;
+  right: calc(var(--d, 320px) * -0.032);
+  z-index: -1;
+  width: calc(var(--d, 320px) * 0.06);
+  height: calc(var(--d, 320px) * 0.13);
+  border-radius: calc(var(--d, 320px) * 0.015);
+  background: linear-gradient(90deg, #4b525b, #c9d1d9 45%, #6e7681);
+  transform: translateY(-50%);
+}

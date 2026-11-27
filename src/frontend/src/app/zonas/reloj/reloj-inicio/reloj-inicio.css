@@ -48,6 +48,8 @@
 .diferencia {
   font-size: 1.4rem;
   font-weight: 600;
+  /* PS-82: el color cambia de verde a rojo con suavidad */
+  transition: color 0.3s;
 }
 
 .mejor .diferencia {
@@ -81,7 +83,10 @@
   background: var(--reloj-linea);
 }
 
-/* El punto se centra en su posición: left (en %) sobre el ancho de la pista */
+/* El punto se centra en su posición: left (en %) sobre el ancho de la pista.
+   PS-82: la duración de la transición coincide con cada cuánto llega el dato, así el
+   movimiento es continuo y no a saltos: la sombra se actualiza con el cronómetro (cada
+   0,2 s) y tú con el GPS (una lectura por segundo). */
 .punto {
   position: absolute;
   top: 50%;
@@ -89,7 +94,12 @@
   height: 18px;
   margin: -9px 0 0 -9px;
   border-radius: 50%;
-  transition: left 0.4s linear;
+  transition: left 0.2s linear;
+  will-change: left;
+}
+
+.punto-tu {
+  transition-duration: 1s;
 }
 
 /* Tú: círculo relleno. Sombra: círculo vacío y discontinuo (se distinguen por la forma) */
@@ -128,7 +138,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .punto {
+  .punto,
+  .esfera,
+  .diferencia {
     transition: none;
   }
 }
@@ -225,7 +237,9 @@
   box-shadow:
     inset 0 0 0 20px var(--color-destello),
     inset 0 0 36px 24px var(--color-destello);
-  animation: destello 3s ease-out forwards;
+  /* PS-82: entra con un pequeño "latido" y se apaga suave */
+  animation: destello 3s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  will-change: opacity, transform;
 }
 
 .destello-mejor {
@@ -244,15 +258,19 @@
 @keyframes destello {
   0% {
     opacity: 0;
+    transform: scale(1.06);
   }
   10% {
     opacity: 1;
+    transform: scale(1);
   }
   75% {
     opacity: 1;
+    transform: scale(1);
   }
   100% {
     opacity: 0;
+    transform: scale(1);
   }
 }
 
@@ -262,10 +280,15 @@
     animation: none;
     opacity: 1;
   }
+
+  .flecha {
+    animation: none;
+  }
 }
 
 /* PS-59: flecha ▲ (mejor) o ▼ (peor) encima del destello, para no depender solo del color.
-   Va arriba de la esfera para no tapar el tiempo, y no se desvanece como el destello. */
+   Va arriba de la esfera para no tapar el tiempo. PS-82: aparece con un "pop" y se desvanece
+   al final de los 3 s, a la vez que el destello. */
 .flecha {
   position: absolute;
   top: 9%;
@@ -277,6 +300,27 @@
      El color ya lo da el destello; la flecha aporta la forma (arriba o abajo). */
   color: #fff;
   pointer-events: none;
+  animation: flecha 3s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+@keyframes flecha {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.4);
+  }
+  8% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.18);
+  }
+  14%,
+  85% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) scale(1);
+  }
 }
 
 /* Texto que solo leen los lectores de pantalla */
@@ -288,4 +332,68 @@
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+/* PS-81: modo demo para el proyector. --d es el diámetro de la esfera (se adapta a la ventana)
+   y todo lo demás se mide como fracción de --d, así el reloj entero escala sin perder proporciones.
+   El marco (bisel) añade un 4,5 % por cada lado, por eso la esfera no ocupa toda la altura. */
+:host(.demo) {
+  --d: min(66vh, 84vw);
+}
+
+:host(.demo) .esfera {
+  width: var(--d);
+  border-width: calc(var(--d) * 0.019);
+}
+
+:host(.demo) .tiempo {
+  font-size: calc(var(--d) * 0.15);
+}
+
+:host(.demo) .diferencia {
+  font-size: calc(var(--d) * 0.07);
+}
+
+:host(.demo) .km {
+  font-size: calc(var(--d) * 0.05);
+}
+
+:host(.demo) .etiqueta,
+:host(.demo) .sin-carrera {
+  font-size: calc(var(--d) * 0.045);
+}
+
+:host(.demo) .barra {
+  margin-top: calc(var(--d) * 0.045);
+  padding: 0 calc(var(--d) * 0.03);
+}
+
+:host(.demo) .pista {
+  height: calc(var(--d) * 0.065);
+}
+
+:host(.demo) .pista::before {
+  height: calc(var(--d) * 0.012);
+}
+
+:host(.demo) .punto {
+  width: calc(var(--d) * 0.06);
+  height: calc(var(--d) * 0.06);
+  margin: calc(var(--d) * -0.03) 0 0 calc(var(--d) * -0.03);
+  border-width: calc(var(--d) * 0.008);
+}
+
+:host(.demo) .leyenda {
+  margin-top: calc(var(--d) * 0.06);
+  font-size: calc(var(--d) * 0.04);
+}
+
+:host(.demo) .flecha {
+  font-size: calc(var(--d) * 0.16);
+}
+
+:host(.demo) .destello {
+  box-shadow:
+    inset 0 0 0 calc(var(--d) * 0.0625) var(--color-destello),
+    inset 0 0 calc(var(--d) * 0.11) calc(var(--d) * 0.075) var(--color-destello);
 }

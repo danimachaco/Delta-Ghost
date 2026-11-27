@@ -1,6 +1,7 @@
 import { Component, computed, effect, inject, input } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FlechaSector } from '../../../compartido/componentes/flecha-sector/flecha-sector';
+import { MarcoReloj } from '../../../compartido/componentes/marco-reloj/marco-reloj/marco-reloj';
 import { PruebaAvisos } from '../../../compartido/componentes/prueba-avisos/prueba-avisos';
 import { formatearDiferencia } from '../../../compartido/utilidades/formato-tiempo';
 import { aPorcentaje } from '../../../compartido/utilidades/progreso';
@@ -20,15 +21,18 @@ import { PantallaEncendida } from '../../../core/servicios/pantalla-encendida';
  *   AvisoSector), con una flecha ▲/▼ o una estrella ★ y un texto para lectores de pantalla (PS-59).
  * - "Ver resumen" guarda la carrera y abre la pantalla de resumen (PS-50).
  * - Al acabar la carrera (en la meta o con Terminar) abre el resultado final (PS-62).
+ * - Con `demo = true` (PS-81) se dibuja dentro de un marco de reloj grande que escala con la
+ *   ventana, para enseñarlo en el proyector; sin botones de prueba ni enlaces de navegación.
  *
  * Los inputs `progresoTu` y `progresoSombra` (0 = salida, 1 = meta), si se les da un valor,
  * mandan sobre el dato de la carrera. Así una carrera simulada (HU-40) puede mover los puntos.
  */
 @Component({
-  imports: [RouterLink, PruebaAvisos, FlechaSector],
+  imports: [RouterLink, PruebaAvisos, FlechaSector, MarcoReloj],
   selector: 'app-reloj-inicio',
   styleUrl: './reloj-inicio.css',
   templateUrl: './reloj-inicio.html',
+  host: { '[class.demo]': 'demo()' },
 })
 export class RelojInicio {
   protected readonly carrera = inject(Carrera);
@@ -36,8 +40,16 @@ export class RelojInicio {
   private readonly carreras = inject(CarreraService);
   private readonly router = inject(Router);
 
+  /** Modo demo para el proyector (PS-81): marco grande de reloj y sin controles de navegación */
+  readonly demo = input(false);
+
+  private readonly avisos = inject(AvisoSector);
+
   /** Destello de fin de sector: 'mejor' (verde), 'peor' (rojo) o null (PS-49) */
-  protected readonly aviso = inject(AvisoSector).aviso;
+  protected readonly aviso = this.avisos.aviso;
+
+  /** Cambia en cada aviso: hace que la animación se reinicie aunque el color sea el mismo (PS-82) */
+  protected readonly secuencia = this.avisos.secuencia;
 
   /** Texto del aviso para lectores de pantalla (PS-59): el destello y la flecha son solo visuales */
   protected readonly textoAviso = computed(() => {
@@ -117,10 +129,11 @@ export class RelojInicio {
   constructor() {
     // PS-62: en cuanto la carrera pasa de "en curso" a "terminada" (al llegar a la meta o con
     // el botón Terminar) se abre la pantalla de fin de carrera con el resultado final.
+    // En la demo (PS-81) el reloj se queda en pantalla con el resultado.
     let anterior = this.carrera.estado();
     effect(() => {
       const estado = this.carrera.estado();
-      if (anterior === 'en-curso' && estado === 'terminada') {
+      if (anterior === 'en-curso' && estado === 'terminada' && !this.demo()) {
         void this.router.navigateByUrl('/reloj/fin');
       }
       anterior = estado;

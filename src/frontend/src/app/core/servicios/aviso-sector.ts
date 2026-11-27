@@ -27,15 +27,23 @@ const PATRONES_VIBRACION: Record<ResultadoAviso, number | number[]> = {
 @Injectable({ providedIn: 'root' })
 export class AvisoSector {
   private readonly _aviso = signal<ResultadoAviso | null>(null);
+  private readonly _secuencia = signal(0);
   private temporizador?: ReturnType<typeof setTimeout>;
 
   /** Aviso activo ahora mismo (null si no hay destello). */
   readonly aviso = this._aviso.asReadonly();
 
+  /**
+   * Número de avisos lanzados hasta ahora (PS-82). Cambia en CADA aviso, aunque sea del mismo color
+   * que el anterior: la pantalla lo usa para reiniciar la animación del destello.
+   */
+  readonly secuencia = this._secuencia.asReadonly();
+
   avisar(resultado: ResultadoAviso): void {
     // Si llega un aviso nuevo mientras hay otro activo, se reinicia el tiempo
     clearTimeout(this.temporizador);
     this._aviso.set(resultado);
+    this._secuencia.update((n) => n + 1);
     this.vibrar(resultado);
     this.temporizador = setTimeout(() => this._aviso.set(null), DURACION_AVISO_MS);
   }

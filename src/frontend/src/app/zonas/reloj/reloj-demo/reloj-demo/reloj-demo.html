@@ -1,0 +1,24 @@
+<app-reloj-inicio [demo]="true" />
+
+<div class="controles" role="group" aria-label="Controles de la demo">
+  <button type="button" class="principal" (click)="empezar()">
+    {{ carrera.estado() === 'sin-carrera' ? 'Empezar demo' : 'Reiniciar' }}
+  </button>
+
+  <span id="etiqueta-velocidad">Velocidad</span>
+  <div class="velocidades" role="group" aria-labelledby="etiqueta-velocidad">
+    @for (v of velocidades; track v) {
+      <button
+        type="button"
+        [attr.aria-pressed]="velocidad() === v"
+        (click)="cambiarVelocidad(v)"
+      >
+        x{{ v }}
+      </button>
+    }
+  </div>
+
+  @if (error(); as mensaje) {
+    <p class="error" role="alert">{{ mensaje }}</p>
+  }
+</div>
